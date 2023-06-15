@@ -79,6 +79,7 @@ const Product: React.FC = () => {
   useEffect(() => {
     if (id) {
     setSelectedSymbol(id);
+    console.log(selectedSymbol);
     }
     subscribeTicks();
     const ticksButton = document.querySelector('#ticks');
