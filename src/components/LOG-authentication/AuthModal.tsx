@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../../styles/main.scss";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import { Route, Routes } from 'react-router-dom';
 import { AuthContextProvider } from '../account/AuthContext';
-import ProtectedRoute from '../account/ProtectedRoute';
+// import ProtectedRoute from '../account/ProtectedRoute';
 import AuthDetails from "./AuthDetails";
 
 // Define types for props

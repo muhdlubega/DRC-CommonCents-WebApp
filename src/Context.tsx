@@ -1,9 +1,8 @@
 import { createContext, useContext, useEffect, ReactNode } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "./firebase";
-import { onSnapshot, doc } from "firebase/firestore";
+import { auth } from "./firebase";
 import { useLocalObservable } from "mobx-react";
-import GlobalStore, { Alert, User } from "./GlobalStore";
+import GlobalStore from "./GlobalStore";
 
 interface GlobalState {
   store: GlobalStore;

@@ -1,4 +1,4 @@
-import { makeStyles, Theme } from "@mui/material/styles";
+// import { makeStyles, Theme } from "@mui/material/styles";
 import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
@@ -50,7 +50,7 @@ export default function AuthModal() {
 
   const [value, setValue] = useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 

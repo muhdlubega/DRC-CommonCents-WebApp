@@ -1,14 +1,14 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/main.scss";
 import AuthModal from "../authentication/AuthModal";
-import AuthDetails from "../LOG-authentication/AuthDetails";
 import UserSidebar from "../authentication/UserSidebar";
 import { useGlobalState } from "../../Context";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { currency, setCurrency, user } = useGlobalState();
+  const { 
+    // currency, setCurrency, 
+    user } = useGlobalState();
 
   return (
     <header className="header-main">

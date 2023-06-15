@@ -8,7 +8,7 @@ interface AuthDetailsProps {
   handleLogout: () => void;
 }
 
-const AuthDetails: React.FC<AuthDetailsProps> = ({ handleLogout }) => {
+const AuthDetails: React.FC<AuthDetailsProps> = ({ }) => {
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [alert, setAlert] = useState<{ open: boolean, message: string, type: string }>({
     open: false,

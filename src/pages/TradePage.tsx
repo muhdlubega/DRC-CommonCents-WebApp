@@ -1,8 +1,6 @@
-import React from 'react'
 import Navbar from '../components/navbar/Navbar'
 import Product from '../components/trade/Product'
 import Proposal from '../components/trade/Proposal'
-import Contract from '../components/trade/Contract'
 import '../App.css'
 import Symbols from '../components/trade/Symbols'
 

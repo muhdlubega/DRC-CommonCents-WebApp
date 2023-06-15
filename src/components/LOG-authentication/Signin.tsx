@@ -1,7 +1,7 @@
-import { signInWithEmailAndPassword} from 'firebase/auth';
+// import { signInWithEmailAndPassword} from 'firebase/auth';
 import React, { useState } from 'react'
-import {auth} from "../../firebase";
-import { Link, useNavigate } from 'react-router-dom';
+// import {auth} from "../../firebase";
+import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../account/AuthContext';
 import Signup from './Signup';
 
@@ -18,6 +18,7 @@ const Signin = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    console.log(error);
     try {
       await signIn(email, password);
       navigate('/');

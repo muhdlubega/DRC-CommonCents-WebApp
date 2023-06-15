@@ -1,12 +1,12 @@
 import React from "react";
 import { Snackbar } from "@mui/material";
-import MuiAlert, { AlertProps, AlertColor } from "@mui/lab/Alert";
+import MuiAlert, { AlertColor } from "@mui/lab/Alert";
 import { useGlobalState } from "../../Context";
 
 const Alert = () => {
   const { alert, setAlert } = useGlobalState();
 
-  const handleCloseAlert = (event: React.SyntheticEvent<any>, reason?: string) => {
+  const handleCloseAlert = (_event: React.SyntheticEvent<any>, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }

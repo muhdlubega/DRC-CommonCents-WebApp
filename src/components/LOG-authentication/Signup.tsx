@@ -1,7 +1,7 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+// import { createUserWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react'
-import {auth} from "../../firebase";
-import { Link, useNavigate } from 'react-router-dom';
+// import {auth} from "../../firebase";
+import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../account/AuthContext';
 
 export {};
@@ -21,6 +21,7 @@ const Signup = ({ handleClose }: SignupProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    console.log(error);
     try {
       await createUser(email, password);
       navigate('/')

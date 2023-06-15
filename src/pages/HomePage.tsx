@@ -1,4 +1,3 @@
-import React, { ReactNode } from 'react';
 import Navbar from '../components/navbar/Navbar'
 import Header from '../components/Header';
 
