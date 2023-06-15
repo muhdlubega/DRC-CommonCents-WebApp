@@ -1,0 +1,35 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "../../styles/main.scss";
+import AuthModal from "../authentication/AuthModal";
+import AuthDetails from "../LOG-authentication/AuthDetails";
+import UserSidebar from "../authentication/UserSidebar";
+import { useGlobalState } from "../../Context";
+
+const Header = () => {
+  const navigate = useNavigate();
+  const { currency, setCurrency, user } = useGlobalState();
+
+  return (
+    <header className="header-main">
+      <div className="header-container">
+        <nav className="header-nav">
+          <h1 className="header-title" onClick={() => navigate("/")}>
+            TraderHub
+          </h1>
+          <div className="header-nav">
+            <div className="header-title" onClick={() => navigate("/trade/1HZ10V")}>Trade</div>
+            <div className="header-title" onClick={() => navigate("/")}>News</div>
+            <div className="header-title" onClick={() => navigate("/")}>Forum</div>
+            <div className="header-title" onClick={() => navigate("/")}>About</div>
+            {/* <AuthModal/> */}
+            {/* <AuthDetails/> */}
+            {user ? <UserSidebar /> : <AuthModal />}
+          </div>
+        </nav>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
