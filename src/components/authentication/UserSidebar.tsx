@@ -68,7 +68,7 @@ export default function UserSidebar() {
   const [state, setState] = useState({
     right: false,
   });
-  const { user, setAlert } = useGlobalState();
+  const { user, balance, setAlert } = useGlobalState();
 
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
@@ -94,6 +94,8 @@ export default function UserSidebar() {
 
     toggleDrawer(false);
   };
+
+  console.log(user);
 
   const userDisplayName = user?.displayName || "";
   const userEmail = user?.email || "";
@@ -137,6 +139,18 @@ export default function UserSidebar() {
                   {userDisplayName || userEmail}
                 </span>
               </div>
+              <span
+  style={{
+    width: "100%",
+    fontSize: 25,
+    textAlign: "center",
+    fontWeight: "bolder",
+    wordWrap: "break-word",
+  }}
+>
+  Balance: {balance} USD
+</span>
+
               <Button
                 variant="contained"
                 className="sidebar-logout"

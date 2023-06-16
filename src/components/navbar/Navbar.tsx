@@ -15,7 +15,7 @@ const Header = () => {
       <div className="header-container">
         <nav className="header-nav">
           <h1 className="header-title" onClick={() => navigate("/")}>
-            TraderHub
+            CommonCents
           </h1>
           <div className="header-nav">
             <div className="header-title" onClick={() => navigate("/trade/1HZ10V")}>Trade</div>

@@ -1,3 +1,4 @@
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { makeAutoObservable } from "mobx";
 
 export interface Alert {
@@ -22,6 +23,9 @@ class GlobalStore {
   };
   user: User | null = null;
   loading: boolean = false;
+  balance: number = 10000;
+  firestore = getFirestore();
+  balanceDocRef = doc(this.firestore, "balances", "user-1");
 
   constructor() {
     makeAutoObservable(this);
@@ -43,6 +47,11 @@ class GlobalStore {
 
   setLoading(loading: boolean) {
     this.loading = loading;
+  }
+
+  async setBalance(newBalance: number) {
+    this.balance = newBalance;
+    await setDoc(this.balanceDocRef, { balance: newBalance });
   }
 }
 
