@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DerivAPIBasic from 'https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/main.scss'
 
 const app_id = 1089;
 const connection = new WebSocket(`wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`);
@@ -16,7 +17,7 @@ interface Symbol {
   display_name: string;
   market: string;
   symbol_type: string;
-  // Add any other properties you expect to receive
+  allow_forward_starting: number;
 }
 
 const Symbols: React.FC = () => {
@@ -56,24 +57,12 @@ const Symbols: React.FC = () => {
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', justifyItems: 'center' }}>
         {activeSymbols.map((symbol) => (
-          symbol.market === 'synthetic_index' && symbol.symbol_type === 'stockindex' && (
+          symbol.market === 'synthetic_index' && symbol.symbol_type === 'stockindex'
+          && symbol.allow_forward_starting === 1 && (
             <div
               key={symbol.symbol}
               onClick={() => handleClick(symbol.symbol)}
-              style={{
-                border: '1px solid darkorchid',
-                borderRadius: 5,
-                margin: 10,
-                padding: 10,
-                paddingLeft: 20,
-                paddingRight: 20,
-                fontFamily: 'Montserrat',
-                cursor: 'pointer',
-                backgroundColor: 'darkorchid',
-                color: 'white',
-                fontWeight: 'bold',
-                width: '80%',
-              }}
+              className='symbols-btn'
             >
               {symbol.display_name}
             </div>

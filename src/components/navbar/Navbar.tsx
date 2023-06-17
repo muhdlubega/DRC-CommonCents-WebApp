@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/main.scss";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
-import { useGlobalState } from "../../Context";
+import { useGlobalState } from "../../store/Context";
 
 const Header = () => {
   const navigate = useNavigate();

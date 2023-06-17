@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+// import { useGlobalState } from '../../store/Context';
+// import { observer } from 'mobx-react-lite';
+// import { useLocalObservable } from 'mobx-react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js/auto';
 import DerivAPIBasic from 'https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic';
@@ -99,13 +102,13 @@ const Product: React.FC = () => {
   }, [id]);
 
   const chartData = {
-    labels: ticks.slice(-100).map((tick) => tick.epoch.toString()),
+    labels: ticks.slice(-80).map((tick) => tick.epoch.toString()),
     datasets: [
       {
         label: 'Ticks',
-        data: ticks.slice(-100).map((tick) => tick.quote),
+        data: ticks.slice(-80).map((tick) => tick.quote),
         fill: false,
-        borderColor: 'darkorchid',
+        borderColor: 'blue',
         tension: 0.1,
       },
     ],
@@ -132,3 +135,4 @@ const Product: React.FC = () => {
 };
 
 export default Product;
+

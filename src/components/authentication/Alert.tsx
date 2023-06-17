@@ -1,7 +1,7 @@
 import React from "react";
 import { Snackbar } from "@mui/material";
 import MuiAlert, { AlertColor } from "@mui/lab/Alert";
-import { useGlobalState } from "../../Context";
+import { useGlobalState } from "../../store/Context";
 
 const Alert = () => {
   const { alert, setAlert } = useGlobalState();

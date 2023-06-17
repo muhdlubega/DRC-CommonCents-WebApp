@@ -6,7 +6,7 @@ import { Button, Tab, Tabs, AppBar, Box } from "@mui/material";
 import Signup from "./Signup";
 import Login from "./Login";
 import { useState } from "react";
-import { useGlobalState } from "../../Context";
+import { useGlobalState } from "../../store/Context";
 import { auth } from "../../firebase";
 import GoogleButton from "react-google-button";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";

@@ -62,8 +62,53 @@ a {
   margin-top: 16px;
 }
 
+.symbols-btn{
+  border: 1px solid blue;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: 'Montserrat';
+  cursor: pointer;
+  background-color: blue;
+  color: white;
+  font-weight: bold;
+  width: 80%;
+}
+
+.proposal-btn{
+  border: 1px solid blue;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 15px;
+  font-family: "Montserrat";
+  cursor: pointer;
+  background-color: blue;
+  color: white;
+  font-weight: bold;
+  width: 95%;
+}
+
+.proposal-options{
+  border: 1px solid blue;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 15px;
+  font-family: "Montserrat";
+  cursor: pointer;
+  font-weight: bold;
+  width: 45%;
+}
+
 .proposal-card{
-  background-color: rgb(107, 98, 112);
+  background-color: rgb(177, 194, 233);
   margin: 15px;
   margin-right: 35px;
   border-radius: 10px;

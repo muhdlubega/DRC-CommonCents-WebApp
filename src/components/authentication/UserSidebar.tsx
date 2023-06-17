@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // import { makeStyles } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import { Avatar, Button } from "@mui/material";
-import { useGlobalState } from "../../Context";
+import { useGlobalState } from "../../store/Context";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import '../../styles/main.scss';

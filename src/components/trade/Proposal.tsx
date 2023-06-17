@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useGlobalState } from '../../Context'
+import { useGlobalState } from '../../store/Context'
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
-import "../../App.css";
+import "../../styles/main.scss";
 import { getDoc, setDoc } from "firebase/firestore";
 
 const app_id = 1089;
@@ -14,24 +14,16 @@ const api = new DerivAPIBasic({ connection });
 const Proposal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
-  const [duration, setDuration] = useState<number>(5);
-  const [payout, setPayout] = useState<number>(100);
-  const [previousSpot, setPreviousSpot] = useState<number | null>(null);
-  const [data, setData] = useState<any>(null);
-  const [basis, setBasis] = useState<string>("payout");
-  const { balanceDocRef, setBalance } = useGlobalState();
-  const [proposalTicks, setProposalTicks] = useState<number>(0);
-  const [isDurationEnded, setIsDurationEnded] = useState<boolean>(false);
-  // const firestore = getFirestore();
+  const globalStore = useGlobalState();
 
   const proposal_request = {
     proposal: 1,
     subscribe: 1,
-    amount: payout,
-    basis: basis,
+    amount: globalStore.payout,
+    basis: globalStore.basis,
     contract_type: "CALL",
     currency: "USD",
-    duration: duration,
+    duration: globalStore.duration,
     duration_unit: "t",
     symbol: id,
     barrier: "+0.1",
@@ -55,10 +47,11 @@ const Proposal: React.FC = () => {
         `;
       }
     }
-    setData(data.proposal);
-    setPreviousSpot(parseFloat(data.proposal.spot));
-    setProposalTicks(data.proposal.duration);
-    console.log("ticks:", proposalTicks);
+    globalStore.setData(data.proposal);
+    globalStore.setPreviousSpot(parseFloat(data.proposal.spot));
+    globalStore.setProposalTicks(data.proposal.duration);
+    console.log("ticks:", globalStore.proposalTicks);
+    globalStore.setCurrentSpot(parseFloat(data.proposal.spot));
   };
 
   const getProposal = async () => {
@@ -72,17 +65,17 @@ const Proposal: React.FC = () => {
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.value, 10);
-    setDuration(newDuration);
+    globalStore.setDuration(newDuration);
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newPayout = parseInt(event.target.value, 10);
-    setPayout(newPayout);
+    globalStore.setPayout(newPayout);
   };
 
   const handleBuy = async () => {
     try {
-      const balanceSnapshot = await getDoc(balanceDocRef);
+      const balanceSnapshot = await getDoc(globalStore.balanceDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -94,9 +87,7 @@ const Proposal: React.FC = () => {
       }
       const currentBalance = balanceData.balance;
 
-      const payoutValue = parseInt(payout.toString(), 10);
-      // const proposalSpot = parseFloat(data?.spot);
-      // const proposalPayout = parseInt(data?.payout, 10);
+      const payoutValue = parseInt(globalStore.payout.toString(), 10);
 
       console.log(payoutValue);
       console.log(currentBalance);
@@ -106,13 +97,11 @@ const Proposal: React.FC = () => {
         return;
       }
 
-      // Deduct the balance based on the buy price
       const newBalance = currentBalance - payoutValue;
-      setBalance(newBalance);
-      await setDoc(balanceDocRef, { balance: newBalance });
+      globalStore.setBalance(newBalance);
+      await setDoc(globalStore.balanceDocRef, { balance: newBalance });
 
-      // Set a timeout to call handleSell after the tick duration
-      setTimeout(handleSell, duration * 1000);
+      setTimeout(handleSell, globalStore.duration * 1000);
 
       console.log("Buy successful");
     } catch (error) {
@@ -122,7 +111,7 @@ const Proposal: React.FC = () => {
 
   const handleSell = async () => {
     try {
-      const balanceSnapshot = await getDoc(balanceDocRef);
+      const balanceSnapshot = await getDoc(globalStore.balanceDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -133,33 +122,37 @@ const Proposal: React.FC = () => {
         return;
       }
       const currentBalance = balanceData.balance;
-
-      const payoutValue = parseInt(payout.toString(), 10);
-      const proposalSpot = parseFloat(data?.spot);
-      // const proposalPayout = parseInt(data?.payout, 10);
-
+  
+      const payoutValue = parseInt(globalStore.payout.toString(), 10);
+      const isDurationEnded = globalStore.isDurationEnded;
+      const proposalData = globalStore.data;
+  
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
-
+  
       if (isDurationEnded) {
         console.log("Duration ended");
-        return;
+        // return;
       }
-
-      if (previousSpot === null) {
+  
+      console.log("previous spot:", globalStore.previousSpot);
+      console.log("current spot:", globalStore.currentSpot);
+  
+      if (globalStore.previousSpot === null) {
         console.log("Previous spot is not available");
         return;
       }
-
-      console.log("previous spot:", previousSpot)
-      console.log("new spot:", proposalSpot)
-
-      // Add the proposal payout to the balance if proposal spot is higher after the duration
-      if (proposalSpot > previousSpot) {
-        const additionalAmount = parseInt(data?.payout, 10);
+  
+      if (globalStore.currentSpot === null) {
+        console.log("Current spot is not available");
+        return;
+      }
+  
+      if (globalStore.currentSpot > globalStore.previousSpot) {
+        const additionalAmount = parseInt(proposalData.payout, 10);
         const updatedBalance = currentBalance + additionalAmount;
-        setBalance(updatedBalance);
-        await setDoc(balanceDocRef, { balance: updatedBalance });
+        globalStore.setBalance(updatedBalance);
+        await setDoc(globalStore.balanceDocRef, { balance: updatedBalance });
         console.log("Sell successful");
       } else {
         console.log("Spot is not higher");
@@ -168,6 +161,7 @@ const Proposal: React.FC = () => {
       console.error("Error:", error);
     }
   };
+  
 
   useEffect(() => {
     const proposal = document.querySelector<HTMLButtonElement>("#proposal");
@@ -185,53 +179,38 @@ const Proposal: React.FC = () => {
         unsubscribeProposal
       );
     };
-  }, [id, payout, duration]);
+  }, [id, globalStore.payout, globalStore.duration]);
 
   useEffect(() => {
-    // Reset the duration status when the duration changes
-    setIsDurationEnded(false);
-  }, [duration]);
+    globalStore.setIsDurationEnded(false);
+  }, [globalStore.duration]);
+
+  useEffect(() => {
+    if (globalStore.proposalTicks === 0) {
+      globalStore.setIsDurationEnded(true);
+    }
+  }, [globalStore.proposalTicks]);
 
   return (
     <div>
       <div>
         <button
           style={{
-            border: "1px solid darkorchid",
-            borderRadius: 5,
-            margin: 10,
-            padding: 10,
-            paddingLeft: 20,
-            paddingRight: 20,
-            fontSize: 15,
-            fontFamily: "Montserrat",
-            cursor: "pointer",
-            backgroundColor: basis === "payout" ? "darkorchid" : "white",
-            color: basis === "payout" ? "white" : "darkorchid",
-            fontWeight: "bold",
-            width: "45%",
+            backgroundColor: globalStore.basis === "payout" ? "blue" : "white",
+            color: globalStore.basis === "payout" ? "white" : "blue",
           }}
-          onClick={() => setBasis("payout")}
+          className="proposal-options"
+          onClick={() => globalStore.setBasis("payout")}
         >
           Payout
         </button>
         <button
           style={{
-            border: "1px solid darkorchid",
-            borderRadius: 5,
-            margin: 10,
-            padding: 10,
-            paddingLeft: 20,
-            paddingRight: 20,
-            fontSize: 15,
-            fontFamily: "Montserrat",
-            cursor: "pointer",
-            backgroundColor: basis === "stake" ? "darkorchid" : "white",
-            color: basis === "stake" ? "white" : "darkorchid",
-            fontWeight: "bold",
-            width: "45%",
+            backgroundColor: globalStore.basis === "stake" ? "blue" : "white",
+            color: globalStore.basis === "stake" ? "white" : "blue",
           }}
-          onClick={() => setBasis("stake")}
+          className="proposal-options"
+          onClick={() => globalStore.setBasis("stake")}
         >
           Stake
         </button>
@@ -242,10 +221,10 @@ const Proposal: React.FC = () => {
           type="range"
           min="1"
           max="500"
-          value={payout}
+          value={globalStore.payout}
           onChange={handlePayoutChange}
         />
-        <span>{payout}</span>
+        <span>{globalStore.payout.toString()}</span>
       </div>
       <div>
         <span>Ticks: </span>
@@ -253,30 +232,15 @@ const Proposal: React.FC = () => {
           type="range"
           min="1"
           max="10"
-          value={duration}
+          value={globalStore.duration}
           onChange={handleDurationChange}
         />
-        <span>{duration}</span>
+        <span>{globalStore.duration.toString()}</span>
       </div>
 
       <button
-        style={{
-          border: "1px solid darkorchid",
-          borderRadius: 5,
-          margin: 10,
-          padding: 10,
-          paddingLeft: 20,
-          paddingRight: 20,
-          fontSize: 15,
-          fontFamily: "Montserrat",
-          cursor: "pointer",
-          backgroundColor: "darkorchid",
-          color: "white",
-          fontWeight: "bold",
-          width: "95%",
-        }}
         id="proposal"
-        className="submitBtn"
+        className="proposal-btn"
       >
         Subscribe proposal
       </button>
@@ -285,43 +249,14 @@ const Proposal: React.FC = () => {
       </button>
       <div ref={proposalContainerRef} id="proposalContainer"></div>
       <button
-        style={{
-          border: "1px solid darkorchid",
-          borderRadius: 5,
-          margin: 10,
-          padding: 10,
-          paddingLeft: 20,
-          paddingRight: 20,
-          fontSize: 15,
-          fontFamily: "Montserrat",
-          cursor: "pointer",
-          backgroundColor: "darkorchid",
-          color: "white",
-          fontWeight: "bold",
-          width: "95%",
-        }}
+        className="proposal-btn"
         onClick={handleBuy}
       >
         Buy
       </button>
-      <button
+      <button 
+        hidden
         onClick={handleSell}
-        // disabled={!isDurationEnded}
-        style={{
-          border: "1px solid darkorchid",
-          borderRadius: 5,
-          margin: 10,
-          padding: 10,
-          paddingLeft: 20,
-          paddingRight: 20,
-          fontSize: 15,
-          fontFamily: "Montserrat",
-          cursor: "pointer",
-          backgroundColor: "darkorchid",
-          color: "white",
-          fontWeight: "bold",
-          width: "95%",
-        }}
       >
         Sell
       </button>
@@ -330,3 +265,5 @@ const Proposal: React.FC = () => {
 };
 
 export default Proposal;
+
+
