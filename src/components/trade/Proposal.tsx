@@ -1,81 +1,28 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useGlobalState } from '../../store/Context'
-import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
 import "../../styles/main.scss";
 import { getDoc, setDoc } from "firebase/firestore";
-
-const app_id = 1089;
-const connection = new WebSocket(
-  `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
-);
-const api = new DerivAPIBasic({ connection });
+import apiStore from "../../store/ApiStore";
+import authStore from "../../store/AuthStore";
+import { observer } from "mobx-react";
 
 const Proposal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
-  const globalStore = useGlobalState();
-
-  const proposal_request = {
-    proposal: 1,
-    subscribe: 1,
-    amount: globalStore.payout,
-    basis: globalStore.basis,
-    contract_type: "CALL",
-    currency: "USD",
-    duration: globalStore.duration,
-    duration_unit: "t",
-    symbol: id,
-    barrier: "+0.1",
-  };
-
-  const proposalResponse = async (res: MessageEvent) => {
-    const data = JSON.parse(res.data);
-    if (data.error !== undefined) {
-      console.log("Error: %s ", data.error.message);
-      connection.removeEventListener("message", proposalResponse, false);
-      await api.disconnect();
-    } else if (data.msg_type === "proposal") {
-      if (proposalContainerRef.current) {
-        proposalContainerRef.current.innerHTML = `
-          <div class="proposal-card">
-            <p><strong>Details:</strong> ${data.proposal.longcode}</p>
-            <p><strong>Ask Price:</strong> ${data.proposal.display_value}</p>
-            <p><strong>Payout:</strong> ${data.proposal.payout}</p>
-            <p><strong>Spot:</strong> ${data.proposal.spot}</p>
-          </div>
-        `;
-      }
-    }
-    globalStore.setData(data.proposal);
-    globalStore.setPreviousSpot(parseFloat(data.proposal.spot));
-    globalStore.setProposalTicks(data.proposal.duration);
-    console.log("ticks:", globalStore.proposalTicks);
-    globalStore.setCurrentSpot(parseFloat(data.proposal.spot));
-  };
-
-  const getProposal = async () => {
-    connection.addEventListener("message", proposalResponse);
-    await api.proposal(proposal_request)
-  };
-
-  const unsubscribeProposal = () => {
-    connection.removeEventListener("message", proposalResponse, false);
-  };
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.value, 10);
-    globalStore.setDuration(newDuration);
+    apiStore.setDuration(newDuration);
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newPayout = parseInt(event.target.value, 10);
-    globalStore.setPayout(newPayout);
+    apiStore.setPayout(newPayout);
   };
 
   const handleBuy = async () => {
     try {
-      const balanceSnapshot = await getDoc(globalStore.balanceDocRef);
+      const balanceSnapshot = await getDoc(authStore.balanceDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -87,7 +34,7 @@ const Proposal: React.FC = () => {
       }
       const currentBalance = balanceData.balance;
 
-      const payoutValue = parseInt(globalStore.payout.toString(), 10);
+      const payoutValue = parseInt(apiStore.payout.toString(), 10);
 
       console.log(payoutValue);
       console.log(currentBalance);
@@ -98,10 +45,10 @@ const Proposal: React.FC = () => {
       }
 
       const newBalance = currentBalance - payoutValue;
-      globalStore.setBalance(newBalance);
-      await setDoc(globalStore.balanceDocRef, { balance: newBalance });
+      authStore.setBalance(newBalance);
+      await setDoc(authStore.balanceDocRef, { balance: newBalance });
 
-      setTimeout(handleSell, globalStore.duration * 1000);
+      setTimeout(handleSell, apiStore.duration * 1000);
 
       console.log("Buy successful");
     } catch (error) {
@@ -111,7 +58,7 @@ const Proposal: React.FC = () => {
 
   const handleSell = async () => {
     try {
-      const balanceSnapshot = await getDoc(globalStore.balanceDocRef);
+      const balanceSnapshot = await getDoc(authStore.balanceDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -123,94 +70,100 @@ const Proposal: React.FC = () => {
       }
       const currentBalance = balanceData.balance;
   
-      const payoutValue = parseInt(globalStore.payout.toString(), 10);
-      const isDurationEnded = globalStore.isDurationEnded;
-      const proposalData = globalStore.data;
+      const payoutValue = parseInt(apiStore.payout.toString(), 10);
   
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
+      console.log("proposal data", apiStore.proposalData)
   
-      if (isDurationEnded) {
-        console.log("Duration ended");
-        // return;
-      }
+        if (apiStore.proposalData.length > 0) {
+          console.log("testing", apiStore.proposalData[apiStore.proposalData.length - 1]);
+          const previousSpot = apiStore.proposalData[apiStore.proposalData.length - apiStore.duration].spot;
+          const currentSpot = apiStore.proposalData[apiStore.proposalData.length - 1].spot;
+          
   
-      console.log("previous spot:", globalStore.previousSpot);
-      console.log("current spot:", globalStore.currentSpot);
+          if (previousSpot && currentSpot) {
+            const previousSpotValue = previousSpot;
+            const currentSpotValue = currentSpot;
   
-      if (globalStore.previousSpot === null) {
-        console.log("Previous spot is not available");
-        return;
-      }
+            console.log("previous spot:", previousSpotValue);
+            console.log("current spot:", currentSpotValue);
   
-      if (globalStore.currentSpot === null) {
-        console.log("Current spot is not available");
-        return;
-      }
-  
-      if (globalStore.currentSpot > globalStore.previousSpot) {
-        const additionalAmount = parseInt(proposalData.payout, 10);
-        const updatedBalance = currentBalance + additionalAmount;
-        globalStore.setBalance(updatedBalance);
-        await setDoc(globalStore.balanceDocRef, { balance: updatedBalance });
-        console.log("Sell successful");
-      } else {
-        console.log("Spot is not higher");
-      }
+            if (currentSpotValue > previousSpotValue) {
+              const additionalAmount = (apiStore.proposalData[apiStore.proposalData.length - apiStore.duration].payout);
+              const updatedBalance = currentBalance + additionalAmount;
+              authStore.setBalance(updatedBalance);
+              await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
+              console.log("Sell successful");
+            } else {
+              console.log("Spot is not higher");
+            }
+          } else {
+            console.log("Previous spot or current spot is not available");
+          }
+        } else {
+          console.log("Not enough data to compare spot prices");
+        }
+      
     } catch (error) {
       console.error("Error:", error);
     }
   };
-  
 
   useEffect(() => {
+    apiStore.getProposal(id!);
+  }, [id])
+  
+  
+  useEffect(() => {
+    if(id){
     const proposal = document.querySelector<HTMLButtonElement>("#proposal");
-    proposal?.addEventListener("click", getProposal);
+    proposal?.addEventListener("click", () => apiStore.getProposal(id));
 
     const proposal_unsubscribe = document.querySelector<HTMLButtonElement>(
       "#proposal-unsubscribe"
     );
-    proposal_unsubscribe?.addEventListener("click", unsubscribeProposal);
+    proposal_unsubscribe?.addEventListener("click", apiStore.unsubscribeProposal);
 
     return () => {
-      proposal?.removeEventListener("click", getProposal);
+      proposal?.removeEventListener("click", () => apiStore.getProposal(id));
       proposal_unsubscribe?.removeEventListener(
         "click",
-        unsubscribeProposal
+        apiStore.unsubscribeProposal
       );
-    };
-  }, [id, globalStore.payout, globalStore.duration]);
+    };}
+  }, [id, apiStore.payout, apiStore.duration]);
 
-  useEffect(() => {
-    globalStore.setIsDurationEnded(false);
-  }, [globalStore.duration]);
+  // useEffect(() => {
+  //   apiStore.setIsDurationEnded(false);
+  // }, [apiStore.duration]);
 
-  useEffect(() => {
-    if (globalStore.proposalTicks === 0) {
-      globalStore.setIsDurationEnded(true);
-    }
-  }, [globalStore.proposalTicks]);
+  // useEffect(() => {
+  //   if (apiStore.proposalTicks === 0) {
+  //     apiStore.setIsDurationEnded(true);
+  //   }
+  // }, [apiStore.proposalTicks]);
 
   return (
     <div>
       <div>
         <button
           style={{
-            backgroundColor: globalStore.basis === "payout" ? "blue" : "white",
-            color: globalStore.basis === "payout" ? "white" : "blue",
+            backgroundColor: apiStore.basis === "payout" ? "blue" : "white",
+            color: apiStore.basis === "payout" ? "white" : "blue",
           }}
           className="proposal-options"
-          onClick={() => globalStore.setBasis("payout")}
+          onClick={() => apiStore.setBasis("payout")}
         >
           Payout
         </button>
         <button
           style={{
-            backgroundColor: globalStore.basis === "stake" ? "blue" : "white",
-            color: globalStore.basis === "stake" ? "white" : "blue",
+            backgroundColor: apiStore.basis === "stake" ? "blue" : "white",
+            color: apiStore.basis === "stake" ? "white" : "blue",
           }}
           className="proposal-options"
-          onClick={() => globalStore.setBasis("stake")}
+          onClick={() => apiStore.setBasis("stake")}
         >
           Stake
         </button>
@@ -221,10 +174,10 @@ const Proposal: React.FC = () => {
           type="range"
           min="1"
           max="500"
-          value={globalStore.payout}
+          value={apiStore.payout}
           onChange={handlePayoutChange}
         />
-        <span>{globalStore.payout.toString()}</span>
+        <span>{apiStore.payout}</span>
       </div>
       <div>
         <span>Ticks: </span>
@@ -232,13 +185,13 @@ const Proposal: React.FC = () => {
           type="range"
           min="1"
           max="10"
-          value={globalStore.duration}
+          value={apiStore.duration}
           onChange={handleDurationChange}
         />
-        <span>{globalStore.duration.toString()}</span>
+        <span>{apiStore.duration}</span>
       </div>
 
-      <button
+      <button hidden
         id="proposal"
         className="proposal-btn"
       >
@@ -264,6 +217,6 @@ const Proposal: React.FC = () => {
   );
 };
 
-export default Proposal;
+export default observer(Proposal);
 
 

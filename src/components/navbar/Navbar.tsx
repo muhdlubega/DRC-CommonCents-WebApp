@@ -2,13 +2,15 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/main.scss";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
-import { useGlobalState } from "../../store/Context";
+// import { useGlobalState } from "../../store/Context";
+import globalStore from "../../store/AuthStore";
+import { observer } from "mobx-react";
 
 const Header = () => {
   const navigate = useNavigate();
   const { 
     // currency, setCurrency, 
-    user } = useGlobalState();
+    user } = globalStore;
 
   return (
     <header className="header-main">
@@ -32,4 +34,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default observer(Header);

@@ -2,10 +2,12 @@ import React, { useState } from "react";
 // import { makeStyles } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import { Avatar, Button } from "@mui/material";
-import { useGlobalState } from "../../store/Context";
+// import { useGlobalState } from "../../store/Context";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import '../../styles/main.scss';
+import globalStore from "../../store/AuthStore";
+import { observer } from "mobx-react";
 
 // const useStyles = makeStyles({
 //   container: {
@@ -63,12 +65,12 @@ import '../../styles/main.scss';
 //   },
 // });
 
-export default function UserSidebar() {
+function UserSidebar() {
 //   const classes = useStyles();
   const [state, setState] = useState({
     right: false,
   });
-  const { user, balance, setAlert } = useGlobalState();
+  const { user, balance, setAlert } = globalStore;
 
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
@@ -94,8 +96,6 @@ export default function UserSidebar() {
 
     toggleDrawer(false);
   };
-
-  console.log(user);
 
   const userDisplayName = user?.displayName || "";
   const userEmail = user?.email || "";
@@ -163,3 +163,5 @@ export default function UserSidebar() {
     </div>
   );
 }
+
+export default observer(UserSidebar);

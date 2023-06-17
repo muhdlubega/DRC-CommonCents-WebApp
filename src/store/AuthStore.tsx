@@ -1,5 +1,7 @@
+import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { makeAutoObservable } from "mobx";
+import { auth } from "../firebase";
 
 export interface Alert {
   open: boolean;
@@ -13,7 +15,7 @@ export interface User {
   photoURL: string | null | undefined;
 }
 
-class GlobalStore {
+class AuthStore {
   currency: string = "INR";
   symbol: string = "₹";
   alert: Alert = {
@@ -24,20 +26,17 @@ class GlobalStore {
   user: User | null = null;
   loading: boolean = false;
   balance: number | null = null;
-  duration: number = 5;
-  payout: number = 100;
-  previousSpot: number | null = null;
-  currentSpot: number | null = null;
-  data: any = null;
-  basis: string = "stake";
-  proposalTicks: number = 0;
-  isDurationEnded: boolean = false;
   firestore = getFirestore();
   balanceDocRef = doc(this.firestore, "balances", "user-1");
 
   constructor() {
     makeAutoObservable(this);
     this.initializeBalance();
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) this.setUser(user);
+      else this.setUser(null);
+    });
   }
 
   setCurrency(currency: string) {
@@ -48,6 +47,7 @@ class GlobalStore {
 
   setAlert(alert: Alert) {
     this.alert = alert;
+    console.log(alert);
   }
 
   setUser(user: User | null) {
@@ -56,43 +56,6 @@ class GlobalStore {
 
   setLoading(loading: boolean) {
     this.loading = loading;
-  }
-
-  setDuration(duration: number) {
-    this.duration = duration;
-  }
-
-  setPayout(payout: number) {
-    this.payout = payout;
-  }
-
-  setBasis(basis: string) {
-    this.basis = basis;
-  }
-
-  setPreviousSpot(previousSpot: number) {
-    this.previousSpot = previousSpot;
-  }
-
-  setCurrentSpot(currentSpot: number) {
-    this.currentSpot = currentSpot;
-  }
-  
-  setProposalTicks(proposalTicks: number) {
-    this.proposalTicks = proposalTicks;
-  }
-
-  setIsDurationEnded(isDurationEnded: boolean) {
-    this.isDurationEnded = isDurationEnded;
-  }
-
-  setData(data: any) {
-    this.duration = parseInt(data.duration, 10);
-    this.payout = parseInt(data.display_value, 10);
-    this.basis = data.basis;
-    this.previousSpot = parseFloat(data.spot);
-    this.currentSpot = parseFloat(data.spot);
-    this.proposalTicks = parseInt(data.duration, 10);
   }
 
   async initializeBalance() {
@@ -111,4 +74,6 @@ class GlobalStore {
   }
 }
 
-export default GlobalStore;
+const authStore = new AuthStore;
+
+export default authStore;

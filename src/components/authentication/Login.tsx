@@ -1,8 +1,10 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
-import { useGlobalState } from "../../store/Context";
+// import { useGlobalState } from "../../store/Context";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import globalStore from "../../store/AuthStore";
+import { observer } from "mobx-react";
 
 interface LoginProps {
   handleClose: () => void;
@@ -12,7 +14,7 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const { setAlert } = useGlobalState();
+  const { alert, setAlert } = globalStore;
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -31,6 +33,7 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
         message: `Sign Up Successful. Welcome ${result.user.email}`,
         type: "success",
       });
+      console.log(alert);
 
       handleClose();
     } catch (error: any) {
@@ -80,4 +83,4 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
   );
 };
 
-export default Login;
+export default observer(Login);

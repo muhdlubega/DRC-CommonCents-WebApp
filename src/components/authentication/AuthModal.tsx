@@ -6,10 +6,12 @@ import { Button, Tab, Tabs, AppBar, Box } from "@mui/material";
 import Signup from "./Signup";
 import Login from "./Login";
 import { useState } from "react";
-import { useGlobalState } from "../../store/Context";
+// import { useGlobalState } from "../../store/Context";
 import { auth } from "../../firebase";
 import GoogleButton from "react-google-button";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import globalStore from "../../store/AuthStore";
+import { observer } from "mobx-react";
 
 // const useStyles = makeStyles((theme: Theme) => ({
 //   modal: {
@@ -34,11 +36,11 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 //   },
 // }));
 
-export default function AuthModal() {
+function AuthModal() {
 //   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  const { setAlert } = useGlobalState();
+  const { setAlert } = globalStore;
 
   const handleOpen = () => {
     setOpen(true);
@@ -137,3 +139,5 @@ export default function AuthModal() {
     </div>
   );
 }
+
+export default observer(AuthModal);

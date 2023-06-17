@@ -1,12 +1,14 @@
-import React from "react";
+// import React from "react";
 import { Snackbar } from "@mui/material";
 import MuiAlert, { AlertColor } from "@mui/lab/Alert";
-import { useGlobalState } from "../../store/Context";
+// import { useGlobalState } from "../../store/Context";
+import globalStore from "../../store/AuthStore";
+import { observer } from "mobx-react";
 
 const Alert = () => {
-  const { alert, setAlert } = useGlobalState();
+  const { alert, setAlert } = globalStore;
 
-  const handleCloseAlert = (_event: React.SyntheticEvent<any>, reason?: string) => {
+  const handleCloseAlert = (_event: any, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }
@@ -18,7 +20,7 @@ const Alert = () => {
     <Snackbar
       open={alert.open}
       autoHideDuration={3000}
-    //   onClose={handleCloseAlert}
+      onClose={handleCloseAlert}
     >
       <MuiAlert
         onClose={handleCloseAlert}
@@ -32,4 +34,4 @@ const Alert = () => {
   );
 };
 
-export default Alert;
+export default observer(Alert);
