@@ -108,9 +108,9 @@ function UserSidebar() {
             style={{
               height: 38,
               width: 38,
-              marginLeft: 15,
+              margin: 10,
               cursor: "pointer",
-              backgroundColor: "#EEBC1D",
+              backgroundColor: "#0033ff",
             }}
             src={userPhotoURL}
             alt={userDisplayName || userEmail}
@@ -142,7 +142,7 @@ function UserSidebar() {
               <span
   style={{
     width: "100%",
-    fontSize: 25,
+    fontSize: 20,
     textAlign: "center",
     fontWeight: "bolder",
     wordWrap: "break-word",

@@ -21,11 +21,9 @@ const Header = () => {
           </h1>
           <div className="header-nav">
             <div className="header-title" onClick={() => navigate("/trade/1HZ10V")}>Trade</div>
-            <div className="header-title" onClick={() => navigate("/")}>News</div>
-            <div className="header-title" onClick={() => navigate("/")}>Forum</div>
-            <div className="header-title" onClick={() => navigate("/")}>About</div>
-            {/* <AuthModal/> */}
-            {/* <AuthDetails/> */}
+            <div className="header-title" onClick={() => navigate("/news")}>News</div>
+            <div className="header-title" onClick={() => navigate("/learn")}>Learn</div>
+            <div className="header-title" onClick={() => navigate("/about")}>About</div>
             {user ? <UserSidebar /> : <AuthModal />}
           </div>
         </nav>

@@ -59,43 +59,6 @@ class ApiStore {
     this.proposalTicks = parseInt(data.duration, 10);
   }
 
-//   getProposal = async (id: string) => {
-//     const proposal_request = {
-//       proposal: 1,
-//       subscribe: 1,
-//       amount: this.payout,
-//       basis: this.basis,
-//       contract_type: "CALL",
-//       currency: "USD",
-//       duration: this.duration,
-//       duration_unit: "t",
-//       symbol: id,
-//       barrier: "+0.1",
-//     };
-
-//     const proposalResponse = async (res: MessageEvent) => {
-//       const data = JSON.parse(res.data);
-//       if (data.error !== undefined) {
-//         console.log("Error: %s ", data.error.message);
-//         connection.removeEventListener("message", proposalResponse, false);
-//         await api.disconnect();
-//       } else if (data.msg_type === "proposal") {
-//         this.setData(data.proposal);
-//         this.setPreviousSpot(parseFloat(data.proposal.spot));
-//         this.setProposalTicks(data.proposal.duration);
-//       }
-//     };
-
-//     connection.addEventListener("message", proposalResponse);
-//     await api.proposal(proposal_request);
-//   };
-
-//   unsubscribeProposal = () => {
-//     if (this.proposalResponse) {
-//         connection.removeEventListener("message", this.proposalResponse, false);
-//       }
-//   };
-
   proposalResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
@@ -113,8 +76,6 @@ class ApiStore {
       //   this.proposalData.splice(0, 1);
       // }
       // this.proposalData = updatedData;
-      // console.log("api store array", data.proposal)
-      // console.log("updated data", updatedData)
     }
   };
 

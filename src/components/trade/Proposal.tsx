@@ -75,9 +75,11 @@ const Proposal: React.FC = () => {
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
       console.log("proposal data", apiStore.proposalData)
+
+      // await apiStore.getProposal(id!); 
   
         if (apiStore.proposalData.length > 0) {
-          console.log("testing", apiStore.proposalData[apiStore.proposalData.length - 1]);
+          console.log("testing", apiStore.proposalData[apiStore.proposalData.length - apiStore.duration]);
           const previousSpot = apiStore.proposalData[apiStore.proposalData.length - apiStore.duration].spot;
           const currentSpot = apiStore.proposalData[apiStore.proposalData.length - 1].spot;
           
