@@ -82,7 +82,7 @@ const Signup: React.FC<SignupProps> = ({ handleClose }) => {
       <Button
         variant="contained"
         size="large"
-        style={{ backgroundColor: "#EEBC1D" }}
+        style={{ backgroundColor: "#0033ff" }}
         onClick={handleSubmit}
       >
         Sign Up

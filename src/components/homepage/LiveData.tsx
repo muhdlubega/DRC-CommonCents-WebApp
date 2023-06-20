@@ -107,23 +107,7 @@ const LiveData: React.FC = () => {
         tension: 0.1,
       },
     ],
-    options: {
-      scales: {
-        x: {
-          display: false, // Hide x-axis labels
-        },
-        y: {
-          display: false, // Hide y-axis labels
-        },
-      },
-      plugins: {
-        legend: {
-          display: false, // Hide legend
-        },
-      },
-    },
   }));
-  
 
   return (
     <div>

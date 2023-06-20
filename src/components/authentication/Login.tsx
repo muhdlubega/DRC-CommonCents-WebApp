@@ -75,7 +75,7 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
         variant="contained"
         size="large"
         onClick={handleSubmit}
-        style={{ backgroundColor: "#EEBC1D" }}
+        style={{ backgroundColor: "#0033ff" }}
       >
         Login
       </Button>
