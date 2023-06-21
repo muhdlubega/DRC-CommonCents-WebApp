@@ -20,7 +20,7 @@ const Proposal: React.FC = () => {
     apiStore.setPayout(newPayout);
   };
 
-  const handleBuy = async () => {
+  const handleBuy = async (isHigher: boolean) => {
     try {
       const balanceSnapshot = await getDoc(authStore.balanceDocRef);
       if (!balanceSnapshot.exists()) {
@@ -48,7 +48,7 @@ const Proposal: React.FC = () => {
       authStore.setBalance(newBalance);
       await setDoc(authStore.balanceDocRef, { balance: newBalance });
 
-      setTimeout(handleSell, apiStore.duration * 1000);
+      setTimeout(() => handleSell(isHigher), apiStore.duration * 1000);
 
       console.log("Buy successful");
     } catch (error) {
@@ -56,7 +56,7 @@ const Proposal: React.FC = () => {
     }
   };
 
-  const handleSell = async () => {
+  const handleSell = async (isHigher: boolean) => {
     try {
       const balanceSnapshot = await getDoc(authStore.balanceDocRef);
       if (!balanceSnapshot.exists()) {
@@ -69,30 +69,40 @@ const Proposal: React.FC = () => {
         return;
       }
       const currentBalance = balanceData.balance;
-  
+
       const payoutValue = parseInt(apiStore.payout.toString(), 10);
-  
+
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
-      console.log("proposal data", apiStore.proposalData)
+      console.log("proposal data", apiStore.proposalData);
 
-      // await apiStore.getProposal(id!); 
-  
-        if (apiStore.proposalData.length > 0) {
-          console.log("testing", apiStore.proposalData[apiStore.proposalData.length - apiStore.duration]);
-          const previousSpot = apiStore.proposalData[apiStore.proposalData.length - apiStore.duration].spot;
-          const currentSpot = apiStore.proposalData[apiStore.proposalData.length - 1].spot;
-          
-  
-          if (previousSpot && currentSpot) {
-            const previousSpotValue = previousSpot;
-            const currentSpotValue = currentSpot;
-  
-            console.log("previous spot:", previousSpotValue);
-            console.log("current spot:", currentSpotValue);
-  
+      if (apiStore.proposalData.length > 0) {
+        console.log(
+          "testing",
+          apiStore.proposalData[
+            apiStore.proposalData.length - apiStore.duration
+          ]
+        );
+        const previousSpot =
+          apiStore.proposalData[
+            apiStore.proposalData.length - apiStore.duration
+          ].spot;
+        const currentSpot =
+          apiStore.proposalData[apiStore.proposalData.length - 1].spot;
+
+        if (previousSpot && currentSpot) {
+          const previousSpotValue = previousSpot;
+          const currentSpotValue = currentSpot;
+
+          console.log("previous spot:", previousSpotValue);
+          console.log("current spot:", currentSpotValue);
+
+          if (isHigher) {
             if (currentSpotValue > previousSpotValue) {
-              const additionalAmount = (apiStore.proposalData[apiStore.proposalData.length - apiStore.duration].payout);
+              const additionalAmount =
+                apiStore.proposalData[
+                  apiStore.proposalData.length - apiStore.duration
+                ].payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
               await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
@@ -101,12 +111,25 @@ const Proposal: React.FC = () => {
               console.log("Spot is not higher");
             }
           } else {
-            console.log("Previous spot or current spot is not available");
+            if (previousSpotValue > currentSpotValue) {
+              const additionalAmount =
+                apiStore.proposalData[
+                  apiStore.proposalData.length - apiStore.duration
+                ].payout;
+              const updatedBalance = currentBalance + additionalAmount;
+              authStore.setBalance(updatedBalance);
+              await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
+              console.log("Sell successful");
+            } else {
+              console.log("Spot is not lower");
+            }
           }
         } else {
-          console.log("Not enough data to compare spot prices");
+          console.log("Previous spot or current spot is not available");
         }
-      
+      } else {
+        console.log("Not enough data to compare spot prices");
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -114,41 +137,34 @@ const Proposal: React.FC = () => {
 
   useEffect(() => {
     apiStore.getProposal(id!);
-  }, [id])
-  
-  
+  }, [id]);
+
   useEffect(() => {
-    if(id){
-    const proposal = document.querySelector<HTMLButtonElement>("#proposal");
-    proposal?.addEventListener("click", () => apiStore.getProposal(id));
+    if (id) {
+      const proposal = document.querySelector<HTMLButtonElement>("#proposal");
+      proposal?.addEventListener("click", () => apiStore.getProposal(id));
 
-    const proposal_unsubscribe = document.querySelector<HTMLButtonElement>(
-      "#proposal-unsubscribe"
-    );
-    proposal_unsubscribe?.addEventListener("click", apiStore.unsubscribeProposal);
-
-    return () => {
-      proposal?.removeEventListener("click", () => apiStore.getProposal(id));
-      proposal_unsubscribe?.removeEventListener(
+      const proposal_unsubscribe = document.querySelector<HTMLButtonElement>(
+        "#proposal-unsubscribe"
+      );
+      proposal_unsubscribe?.addEventListener(
         "click",
         apiStore.unsubscribeProposal
       );
-    };}
+
+      return () => {
+        proposal?.removeEventListener("click", () => apiStore.getProposal(id));
+        proposal_unsubscribe?.removeEventListener(
+          "click",
+          apiStore.unsubscribeProposal
+        );
+      };
+    }
   }, [id, apiStore.payout, apiStore.duration]);
-
-  // useEffect(() => {
-  //   apiStore.setIsDurationEnded(false);
-  // }, [apiStore.duration]);
-
-  // useEffect(() => {
-  //   if (apiStore.proposalTicks === 0) {
-  //     apiStore.setIsDurationEnded(true);
-  //   }
-  // }, [apiStore.proposalTicks]);
 
   return (
     <div>
-      <div>
+      <div className="proposal-btn-group">
         <button
           style={{
             backgroundColor: apiStore.basis === "payout" ? "blue" : "white",
@@ -193,32 +209,23 @@ const Proposal: React.FC = () => {
         <span>{apiStore.duration}</span>
       </div>
 
-      <button hidden
-        id="proposal"
-        className="proposal-btn"
-      >
+      <button hidden id="proposal" className="proposal-btn">
         Subscribe proposal
       </button>
       <button hidden id="proposal-unsubscribe" className="resetBtn">
         Unsubscribe proposal
       </button>
       <div ref={proposalContainerRef} id="proposalContainer"></div>
-      <button
-        className="proposal-btn"
-        onClick={handleBuy}
-      >
-        Buy
-      </button>
-      <button 
-        hidden
-        onClick={handleSell}
-      >
-        Sell
-      </button>
+      <span className="proposal-btn-group">
+        <button className="proposal-btn-higher" onClick={() => handleBuy(true)}>
+          Higher
+        </button>
+        <button className="proposal-btn-lower" onClick={() => handleBuy(false)}>
+          Lower
+        </button>
+      </span>
     </div>
   );
 };
 
 export default observer(Proposal);
-
-

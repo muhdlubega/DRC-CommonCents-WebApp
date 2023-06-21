@@ -62,23 +62,22 @@ a {
   margin-top: 16px;
 }
 
-.symbols-btn{
-  border: 1px solid blue;
+.symbols-dropdown{
+  border: 0.2vw solid blue;
   border-radius: 5px;
   margin: 10px;
   padding: 10px;
   padding-left: 20px;
   padding-right: 20px;
   font-family: 'Montserrat';
-  cursor: pointer;
-  background-color: blue;
-  color: white;
+  font-size: 0.8vw;
   font-weight: bold;
-  width: 80%;
+  cursor: pointer;
+  width: 96%;
 }
 
-.proposal-btn{
-  border: 1px solid blue;
+.proposal-btn-higher{
+  border: 1px solid green;
   border-radius: 5px;
   margin: 10px;
   padding: 10px;
@@ -87,10 +86,30 @@ a {
   font-size: 15px;
   font-family: "Montserrat";
   cursor: pointer;
-  background-color: blue;
+  background-color: green;
   color: white;
   font-weight: bold;
-  width: 95%;
+  width: 90%;
+}
+
+.proposal-btn-lower{
+  border: 1px solid red;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 15px;
+  font-family: "Montserrat";
+  cursor: pointer;
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  width: 90%;
+}
+
+.proposal-btn-group{
+  display: flex;
 }
 
 .proposal-options{
@@ -104,7 +123,7 @@ a {
   font-family: "Montserrat";
   cursor: pointer;
   font-weight: bold;
-  width: 45%;
+  width: 90%;
 }
 
 .proposal-card{
@@ -242,7 +261,7 @@ a {
   font-weight: bold;
   margin-bottom: 1vw;
   font-family: 'Montserrat';
-  font-size: 8vw;
+  font-size: 6vw;
   color: white;
   text-shadow: 0.2vw 0.3vw #0033ff;
 }

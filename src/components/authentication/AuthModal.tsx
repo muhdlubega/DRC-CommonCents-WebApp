@@ -1,5 +1,4 @@
 import Modal from "@mui/material/Modal";
-import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
 import { Button, Tab, Tabs, AppBar, Box } from "@mui/material";
 import Signup from "./Signup";
@@ -60,7 +59,7 @@ function AuthModal() {
         style={{
           width: 85,
           height: 40,
-          marginLeft: 15,
+          margin: 10,
           backgroundColor: "#0033ff",
         }}
         onClick={handleOpen}
@@ -74,10 +73,6 @@ function AuthModal() {
         open={open}
         onClose={handleClose}
         closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
       >
         <Fade in={open}>
           <div className="auth-modal-paper">
