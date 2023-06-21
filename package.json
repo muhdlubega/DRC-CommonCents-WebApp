@@ -27,6 +27,7 @@
     "react-google-button": "^0.7.2",
     "react-icons": "^4.9.0",
     "react-router-dom": "^6.12.1",
+    "react-slick": "^0.29.0",
     "sass": "^1.63.4"
   },
   "devDependencies": {

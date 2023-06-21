@@ -34,7 +34,7 @@ const LatestNews = () => {
     0: {
       items: 1,
     },
-    512: {
+    1024: {
       items: 2,
     },
   };

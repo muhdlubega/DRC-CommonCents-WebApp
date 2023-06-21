@@ -16,7 +16,7 @@ interface Tick {
   quote: number;
 }
 
-const ticks_array = ['1HZ10V', 'R_10', '1HZ25V', 'R25', '1HZ50V'];
+const ticks_array = ['1HZ10V', 'R_10', '1HZ25V', 'R_25', '1HZ50V'];
 
 const LiveData: React.FC = () => {
   const [ticks, setTicks] = useState<Tick[]>([]);

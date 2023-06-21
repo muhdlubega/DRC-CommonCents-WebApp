@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DerivAPIBasic from 'https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/main.scss'
+import '../../styles/main.scss';
 
 const app_id = 1089;
 const connection = new WebSocket(`wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`);
@@ -49,26 +49,27 @@ const Symbols: React.FC = () => {
     getActiveSymbols();
   }, []);
 
-  const handleClick = (symbol: string) => {
+  const handleSelect = (symbol: string) => {
     navigate(`/trade/${symbol}`);
   };
 
   return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', justifyItems: 'center' }}>
+      <select
+        className='symbols-dropdown'
+        onChange={(e) => handleSelect(e.target.value)}
+        value="1HZ10V"
+      >
         {activeSymbols.map((symbol) => (
-          symbol.market === 'synthetic_index' && symbol.symbol_type === 'stockindex'
-          && symbol.allow_forward_starting === 1 && (
-            <div
-              key={symbol.symbol}
-              onClick={() => handleClick(symbol.symbol)}
-              className='symbols-btn'
-            >
+          symbol.market === 'synthetic_index' &&
+          symbol.symbol_type === 'stockindex' &&
+          symbol.allow_forward_starting === 1 && (
+            <option key={symbol.symbol} value={symbol.symbol}>
               {symbol.display_name}
-            </div>
+            </option>
           )
         ))}
-      </div>
+      </select>
     </div>
   );
 };
