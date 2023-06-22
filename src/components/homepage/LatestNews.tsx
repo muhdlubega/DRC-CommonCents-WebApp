@@ -69,7 +69,7 @@ const LatestNews = () => {
         autoPlay
         autoPlayInterval={2000}
         animationDuration={2000}
-        disableDotsControls
+        // disableDotsControls
         disableButtonsControls
         responsive={responsive}
         items={items}

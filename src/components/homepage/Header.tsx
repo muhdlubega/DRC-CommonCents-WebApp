@@ -1,4 +1,5 @@
 import '../../styles/main.scss';
+import bitcoin from '../../assets/bitcoin.gif'
 
 const Header = () => {
   const handleRegisterClick = () => {
@@ -8,7 +9,7 @@ const Header = () => {
   return (
     <div className="trade-info-container">
       <div className="trade-info-left1">
-        <img src="https://o.remove.bg/downloads/ffde9485-71cb-4efc-82f3-78ddd7b456b6/pexels-photo-6765247-removebg-preview.png" alt="Trading Image(Coin)" />
+        <img src={bitcoin} alt="Trading Image(Coin)" />
       </div>
     
       <div className="trade-info-right">
