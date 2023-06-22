@@ -449,3 +449,173 @@ a {
   opacity: 20%;
   position: absolute;
 }
+
+
+.footer{
+  
+  padding: 2rem 0;
+  background:#000;
+  color:#fff;
+  
+}
+.footer-column{
+  width:30%;
+
+}
+.footer-column button{
+  padding: 10px 20px;
+  font-size: 22px;
+  background-color: #3366ff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  margin-left: 50px;
+}
+.footer-icon i{
+  padding:0.4rem 0.5rem;
+  margin:0 0.5rem;
+  border-radius:50%;
+}
+.footer-icon i:hover{
+  padding:0.4rem 0.5rem;
+  margin:0 0.5rem;
+  border-radius:50%;
+  background:#f60838;
+  color:#fff;
+  transition: 0.6s;
+}
+.footer h4{
+  color:#f60818;
+  color:#fff;
+
+}
+.footer-column ul{
+ list-style: none;
+ padding-left: 0;
+
+}
+.footer-column ul li{
+  padding: 0.35rem 0;
+  font-weight: 500;
+}
+.footer-column ul a{
+  text-decoration: none;
+  padding: 1rem 0;
+  color: #000;
+  font-size: 13px; 
+}
+.footer-column p{
+  font-weight: 500;
+  padding: 0.1rem 0;
+}
+.footer-column i{
+  padding-right: 0.5rem;
+}
+.footer-bottom{
+  background:#504f4f;
+  text-align:center;
+  padding: 1rem 0;
+
+}
+.footer-bottom p{
+  margin-bottom: 0;
+  font-size:14px;
+  font-weight:700;
+  color:#fff;
+} 
+
+.trade-info-left img {
+  max-width: 100%;
+ max-height: 500;
+ height: auto;
+ border-radius: 8px;
+ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.trade-info-right h2 {
+bottom:50px;
+z-index: 2;
+color: #000;
+padding: 10px;
+
+}
+.trade-info-container {
+ display: flex;
+ align-items: center;
+}
+.trade-info-left1 img {
+ max-width: 100%;
+ max-height: auto;
+ height:500px;
+ height: cover;
+ 
+}
+.trade-info-left1 {
+ flex: 1;
+ padding-right: 20px;
+}
+
+.trade-info-left {
+ flex: 1;
+ padding-right: 20px;
+}
+.trade-info-right {
+ flex: 1;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+}
+
+.trade-info-right p {
+ margin-bottom: 20px;
+}
+.register-button1{
+ padding: 10px 20px;
+ font-size: 16px;
+ background-color: #ae0d0d;
+ color: #fff;
+ border: none;
+ border-radius: 10px;
+ cursor: pointer;
+ position: relative;
+ overflow: hidden;
+}
+.register-button {
+ padding: 10px 20px;
+ font-size: 16px;
+ background-color: #ae0d0d;
+ color: #fff;
+ border: none;
+ border-radius: 10px;
+ cursor: pointer;
+ position: relative;
+ overflow: hidden;
+}
+.register-button:before {
+ content: '';
+ position: absolute;
+ top: -50%;
+ left: -50%;
+ width: 200%;
+ height: 200%;
+ background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 80%);
+ transform: translate(-25%, -25%);
+ opacity: 0;
+ pointer-events: none;
+ transition: opacity 0.3s ease;
+}
+
+.register-button:hover:before {
+ opacity: 1;
+}
+
+.register-button:hover {
+ background-color: #a90e0e;
+}
+
+
+
+

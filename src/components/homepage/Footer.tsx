@@ -61,7 +61,7 @@
 // export default Footer;
 
 import React from 'react';
-import '../../styles/CSS/footer.css';
+import '../../styles/main.scss';
 
 const Footer: React.FC = () => {
     const handleScrollToTop = () => {
