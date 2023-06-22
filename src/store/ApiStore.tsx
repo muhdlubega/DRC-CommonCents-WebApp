@@ -7,9 +7,15 @@ const connection = new WebSocket(
 );
 const api = new DerivAPIBasic({ connection });
 
+interface Tick {
+  epoch: number;
+  quote: number;
+}
+
 class ApiStore {
   duration: number = 5;
   payout: number = 100;
+  activeSymbols: any[] = [];
   previousSpot: number | null = null;
   currentSpot: number | null = null;
   data: any = null;
@@ -17,6 +23,18 @@ class ApiStore {
   proposalTicks: number = 0;
   isDurationEnded: boolean = false;
   proposalData: any[] = [];
+  selectedSymbol: string = '';
+  loadedTicks: number = 0;
+  ticks: Tick[] = [];
+
+  ticks_history_request = {
+    ticks_history: '',
+    adjust_start_time: 1,
+    count: 100,
+    end: 'latest',
+    start: 1,
+    style: 'ticks',
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -33,6 +51,10 @@ class ApiStore {
   setBasis(basis: string) {
     this.basis = basis;
   }
+
+  setActiveSymbols = (symbols: []) => {
+    this.activeSymbols = symbols;
+  };
 
   setPreviousSpot(previousSpot: number) {
     this.previousSpot = previousSpot;
@@ -59,6 +81,102 @@ class ApiStore {
     this.proposalTicks = parseInt(data.duration, 10);
   }
 
+  handleActiveSymbolsResponse = async (res: MessageEvent) => {
+    const data = JSON.parse(res.data);
+
+    if (data.error !== undefined) {
+      console.log('Error: ', data.error?.message);
+      connection.removeEventListener('message', this.handleActiveSymbolsResponse, false);
+      await api.disconnect();
+    }
+
+    if (data.msg_type === 'active_symbols') {
+      this.setActiveSymbols(data.active_symbols);
+      // console.log(data.active_symbols);
+      connection.removeEventListener('message', this.handleActiveSymbolsResponse, false);
+    }
+  };
+
+  getActiveSymbols = async () => {
+    const active_symbols_request = {
+      active_symbols: 'brief',
+      product_type: 'basic',
+    };
+
+    connection.addEventListener('message', this.handleActiveSymbolsResponse);
+    await api.activeSymbols(active_symbols_request);
+  };
+
+  setSelectedSymbol(symbol: string) {
+    this.selectedSymbol = symbol;
+    this.ticks_history_request.ticks_history = symbol;
+  }
+
+  subscribeTicks = async () => {
+  await this.tickSubscriber();
+  await this.getTicksHistory();
+  connection.addEventListener('message', this.tickResponse);
+};
+
+
+  unsubscribeTicks = () => {
+    connection.removeEventListener('message', this.tickResponse, false);
+    this.tickSubscriber().unsubscribe();
+  };
+
+  getTicksHistory = async () => {
+    const start = Math.max(0, this.loadedTicks - 80);
+    this.ticks_history_request.start = start;
+    this.ticks_history_request.count = 100;
+  
+    connection.addEventListener('message', this.ticksHistoryResponse);
+    await api.ticksHistory(this.ticks_history_request);
+  };
+  
+
+  tickSubscriber = () => {
+    const ticksSubscriber = api.subscribe(this.ticks_history_request);
+    return ticksSubscriber;
+  };  
+
+  ticksHistoryResponse = async (res: MessageEvent) => {
+    const data = JSON.parse(res.data);
+    if (data.error !== undefined) {
+      console.log('Error : ', data.error.message);
+      connection.removeEventListener('message', this.ticksHistoryResponse, false);
+      await api.disconnect();
+    }
+    if (data.msg_type === 'history') {
+      const historyTicks = data.history.prices.map((price: number, index: number) => ({
+        epoch: data.history.times[index],
+        quote: price,
+      }));
+  
+      this.setTicks([...this.ticks, ...historyTicks]);
+      this.loadedTicks += historyTicks.length;
+  
+      connection.removeEventListener('message', this.ticksHistoryResponse, false);
+    }
+  };
+  
+
+  tickResponse = async (res: MessageEvent) => {
+    const data = JSON.parse(res.data);
+    if (data.error !== undefined) {
+      console.log('Error: ', data.error.message);
+      connection.removeEventListener('message', this.tickResponse, false);
+      await api.disconnect();
+    }
+    if (data.msg_type === 'tick') {
+      this.setTicks([...this.ticks, data.tick]);
+      // console.log("come to tick", this.ticks)
+    }
+  };
+
+  setTicks(ticks: Tick[]) {
+    this.ticks = ticks;
+  }
+
   proposalResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
@@ -82,7 +200,6 @@ class ApiStore {
   getProposal = async (id: string) => {
     const proposal_request = {
       proposal: 1,
-      subscribe: 1,
       amount: this.payout,
       basis: this.basis,
       contract_type: "CALL",
@@ -92,9 +209,12 @@ class ApiStore {
       symbol: id,
       barrier: "+0.1",
     };
-
-    connection.addEventListener("message", this.proposalResponse);
-    await api.proposal(proposal_request);
+  
+    try {
+      await api.proposal(proposal_request);
+    } catch (error) {
+      console.log("Error: ", error);
+    }
   };
 
   unsubscribeProposal = () => {
