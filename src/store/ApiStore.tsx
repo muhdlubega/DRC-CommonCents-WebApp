@@ -8,8 +8,9 @@ const connection = new WebSocket(
 const api = new DerivAPIBasic({ connection });
 
 interface Tick {
-  epoch: number;
+  epoch: EpochTimeStamp;
   quote: number;
+  symbol: string;
 }
 
 class ApiStore {
@@ -128,11 +129,11 @@ class ApiStore {
     const start = Math.max(0, this.loadedTicks - 80);
     this.ticks_history_request.start = start;
     this.ticks_history_request.count = 100;
-  
+    this.ticks_history_request.ticks_history = this.selectedSymbol;
+    
     connection.addEventListener('message', this.ticksHistoryResponse);
     await api.ticksHistory(this.ticks_history_request);
-  };
-  
+  };  
 
   tickSubscriber = () => {
     const ticksSubscriber = api.subscribe(this.ticks_history_request);

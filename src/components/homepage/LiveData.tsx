@@ -1,113 +1,98 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from 'chart.js/auto';
-import DerivAPIBasic from 'https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic';
-import '../../styles/main.scss';
+import React, { useEffect, useRef } from 'react';
+import apiStore from '../../store/ApiStore';
+import { observer } from 'mobx-react';
+import HighchartsReact from 'highcharts-react-official';
+import Highcharts from 'highcharts/highstock';
+import AliceCarousel from 'react-alice-carousel';
+import 'react-alice-carousel/lib/alice-carousel.css';
 
-ChartJS.register(...registerables);
-
-const app_id = 1089;
-const connection = new WebSocket(`wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`);
-const api = new DerivAPIBasic({ connection });
-
-interface Tick {
-  epoch: number;
-  quote: number;
-}
-
-const ticks_array = ['1HZ10V', 'R_10', '1HZ25V', 'R_25', '1HZ50V'];
+const id_array = ['1HZ10V', '1HZ25V', '1HZ50V', '1HZ75V', '1HZ100V', 'R_10', 'R_25', 'R_50', 'R_75', 'R_100', 'JD10', 'JD25', 'JD50', 'JD75', 'JD100', 'RDBEAR', 'RDBULL'];
 
 const LiveData: React.FC = () => {
-  const [ticks, setTicks] = useState<Tick[]>([]);
-  const { id } = useParams();
-  const [selectedSymbol, setSelectedSymbol] = useState<string>('');
-
-  const ticks_history_requests = {
-    ticks_history: ticks_array[0],
-    adjust_start_time: 1,
-    count: 100,
-    end: 'latest',
-    start: 1,
-    style: 'ticks',
-  };
-
-  const tickSubscriber = () => api.subscribe(ticks_history_requests);
-
-  const ticksHistoryResponse = async (res: MessageEvent) => {
-    const data = JSON.parse(res.data);
-    if (data.error !== undefined) {
-      console.log('Error : ', data.error.message);
-      connection.removeEventListener('message', ticksHistoryResponse, false);
-      await api.disconnect();
-    }
-    if (data.msg_type === 'history') {
-      console.log(data.history);
-    }
-    connection.removeEventListener('message', ticksHistoryResponse, false);
-  };
-
-  const tickResponse = async (res: MessageEvent) => {
-    const data = JSON.parse(res.data);
-    if (data.error !== undefined) {
-      console.log('Error: ', data.error.message);
-      connection.removeEventListener('message', tickResponse, false);
-      await api.disconnect();
-    }
-    if (data.msg_type === 'tick') {
-      setTicks((prevTicks) => [...prevTicks, data.tick]);
-    }
-  };
-
-  const subscribeTicks = async () => {
-    await tickSubscriber();
-    connection.addEventListener('message', tickResponse);
-  };
-
-  const unsubscribeTicks = () => {
-    connection.removeEventListener('message', tickResponse, false);
-    tickSubscriber().unsubscribe();
-  };
-
-  const getTicksHistory = async () => {
-    connection.addEventListener('message', ticksHistoryResponse);
-    await api.ticksHistory(ticks_history_requests);
-  };
+  const carouselRef = useRef<AliceCarousel>(null);
 
   useEffect(() => {
-    if (id) {
-      setSelectedSymbol(id);
-      console.log(selectedSymbol);
-    }
-    subscribeTicks();
-    const ticksButton = document.querySelector('#ticks');
-    const unsubscribeButton = document.querySelector('#ticks-unsubscribe');
+    apiStore.getActiveSymbols();
 
-    ticksButton?.addEventListener('click', subscribeTicks);
-    unsubscribeButton?.addEventListener('click', unsubscribeTicks);
-
-    const ticks_history_button = document.querySelector('#ticks-history');
-    ticks_history_button?.addEventListener('click', getTicksHistory);
+    id_array.forEach((id) => {
+      apiStore.setSelectedSymbol(id);
+      apiStore.subscribeTicks();
+    });
 
     return () => {
-      ticksButton?.removeEventListener('click', subscribeTicks);
-      unsubscribeButton?.removeEventListener('click', unsubscribeTicks);
-      ticks_history_button?.removeEventListener('click', getTicksHistory);
+      id_array.forEach((id) => {
+        apiStore.setSelectedSymbol(id);
+        apiStore.unsubscribeTicks();
+      });
     };
-  }, [id]);
+  }, []);
 
-  const chartData = ticks_array.map((symbol) => ({
-    labels: ticks.slice(-10).map((tick) => tick.epoch.toString()),
-    datasets: [
+  const chartData = id_array.map((id) => ({
+    series: [
       {
-        label: symbol,
-        data: ticks.slice(-10).map((tick) => tick.quote),
-        fill: false,
-        borderColor: 'blue',
-        tension: 0.1,
+        name: id,
+        data: apiStore.ticks
+          .filter((tick) => tick.symbol === id)
+          .slice(-15)
+          .map((tick) => [tick.epoch*1000, tick.quote]),
+        type: 'line',
+        color: 'blue',
+        lineWidth: 1,
       },
     ],
+    title: {
+      text: id
+  },
+    time: {
+      useUTC: false,
+    },
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+      series: {
+        marker: {
+          enabled: false
+        }
+      }
+    },
+    xAxis: {
+      labels: {
+        enabled: false,
+      },
+      lineWidth: 0,
+      tickWidth: 0
+    },
+    yAxis: {
+      labels: {
+        enabled: false,
+      },
+      title: {
+        enabled: false
+      },
+      gridLineWidth: 0
+    },
   }));
+
+  const slideTo = (index: number) => {
+    if (carouselRef.current) {
+      carouselRef.current.slideTo(index);
+    }
+  };
+
+  const handleSlideChanged = (e: any) => {
+    const currentIndex = e.item;
+    apiStore.setSelectedSymbol(id_array[currentIndex]);
+  };
+
+  const responsive = {
+    0: {
+      items: 2,
+    },
+    1024: {
+      items: 5,
+    },
+  };
 
   return (
     <div>
@@ -122,15 +107,33 @@ const LiveData: React.FC = () => {
           Get Tick History
         </button>
       </div>
-      <div className='livedata-container'>
+      <AliceCarousel
+        mouseTracking
+        infinite
+        autoPlay
+        autoPlayInterval={1000}
+        animationDuration={1000}
+        disableButtonsControls
+        ref={carouselRef}
+        responsive={responsive}
+        onSlideChanged={handleSlideChanged}
+      >
         {chartData.map((data, index) => (
-          <div key={index}>
-            <Line data={data} className="livedata-chart" />
-          </div>
+  <div key={index}>
+    <HighchartsReact highcharts={Highcharts} options={data} />
+    <div>{apiStore.ticks.find((tick) => tick.symbol === id_array[index])?.quote}</div>
+  </div>
+))}
+      </AliceCarousel>
+      <div>
+        {id_array.map((id, index) => (
+          <button style={{width: "5%"}} key={index} onClick={() => slideTo(index)}>
+            {id}
+          </button>
         ))}
       </div>
     </div>
   );
 };
 
-export default LiveData;
+export default observer(LiveData);

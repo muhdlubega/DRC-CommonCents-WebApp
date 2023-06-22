@@ -2,6 +2,7 @@
 
 import LatestNews from "../components/homepage/LatestNews"
 import Navbar from "../components/navbar/Navbar"
+import NewsTopic from "../components/newspage/NewsTopic"
 import '../styles/main.scss'
 
 const NewsPage = () => {
@@ -15,6 +16,7 @@ const NewsPage = () => {
         </div>
       </div></div>
         <LatestNews/>
+        <NewsTopic/>
     </div>
   )
 }
