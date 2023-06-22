@@ -27,52 +27,65 @@ const LiveData: React.FC = () => {
     };
   }, []);
 
-  const chartData = id_array.map((id) => ({
-    series: [
-      {
-        name: id,
-        data: apiStore.ticks
-          .filter((tick) => tick.symbol === id)
-          .slice(-15)
-          .map((tick) => [tick.epoch*1000, tick.quote]),
-        type: 'line',
-        color: 'blue',
-        lineWidth: 1,
-      },
-    ],
-    title: {
-      text: id
-  },
-    time: {
-      useUTC: false,
-    },
-    credits: {
-      enabled: false
-    },
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false
-        }
-      }
-    },
-    xAxis: {
-      labels: {
-        enabled: false,
-      },
-      lineWidth: 0,
-      tickWidth: 0
-    },
-    yAxis: {
-      labels: {
-        enabled: false,
-      },
+  // const latestQuote = apiStore.ticks[apiStore.ticks.length - 1]?.quote;
+  // const previousQuote = apiStore.ticks[apiStore.ticks.length - 2]?.quote;
+  // const isHigher = latestQuote > previousQuote;
+
+  const chartData = id_array.map((id) => {
+    const filteredTicks = apiStore.ticks.filter((tick) => tick.symbol === id);
+    const latestQuote = filteredTicks[filteredTicks.length - 1]?.quote;
+    const previousQuote = filteredTicks[filteredTicks.length - 2]?.quote;
+    const isHigher = latestQuote > previousQuote;
+  
+    return {
+      series: [
+        {
+          name: id,
+          data: filteredTicks
+            .slice(-15)
+            .map((tick) => [tick.epoch * 1000, tick.quote]),
+          type: 'line',
+          color: isHigher ? 'green' : 'red',
+          lineWidth: 5,
+        },
+      ],
       title: {
-        enabled: false
+        text: id,
       },
-      gridLineWidth: 0
-    },
-  }));
+      time: {
+        useUTC: false,
+      },
+      credits: {
+        enabled: false,
+      },
+      plotOptions: {
+        series: {
+          marker: {
+            enabled: false,
+          },
+        },
+      },
+      xAxis: {
+        labels: {
+          enabled: false,
+        },
+        lineWidth: 0,
+        tickWidth: 0,
+      },
+      yAxis: {
+        labels: {
+          enabled: false,
+        },
+        title: {
+          enabled: false,
+        },
+        gridLineWidth: 0,
+      },
+      latestQuote,
+      previousQuote,
+    };
+  });
+  
 
   const slideTo = (index: number) => {
     if (carouselRef.current) {
@@ -90,7 +103,7 @@ const LiveData: React.FC = () => {
       items: 2,
     },
     1024: {
-      items: 5,
+      items: 4,
     },
   };
 
@@ -107,12 +120,13 @@ const LiveData: React.FC = () => {
           Get Tick History
         </button>
       </div>
+      <div>Stock Indices Live Data</div>
       <AliceCarousel
         mouseTracking
         infinite
         autoPlay
-        autoPlayInterval={1000}
-        animationDuration={1000}
+        autoPlayInterval={2000}
+        animationDuration={2000}
         disableButtonsControls
         ref={carouselRef}
         responsive={responsive}
@@ -121,13 +135,15 @@ const LiveData: React.FC = () => {
         {chartData.map((data, index) => (
   <div key={index}>
     <HighchartsReact highcharts={Highcharts} options={data} />
-    <div>{apiStore.ticks.find((tick) => tick.symbol === id_array[index])?.quote}</div>
+    <div style={{ color: data.latestQuote > data.previousQuote ? 'green' : 'red' }}>
+      {data.latestQuote}
+    </div>
   </div>
 ))}
       </AliceCarousel>
       <div>
         {id_array.map((id, index) => (
-          <button style={{width: "5%"}} key={index} onClick={() => slideTo(index)}>
+          <button style={{width: "5%", margin: 5}} key={index} onClick={() => slideTo(index)}>
             {id}
           </button>
         ))}

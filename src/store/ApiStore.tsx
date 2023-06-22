@@ -25,15 +25,14 @@ class ApiStore {
   isDurationEnded: boolean = false;
   proposalData: any[] = [];
   selectedSymbol: string = '';
-  loadedTicks: number = 0;
   ticks: Tick[] = [];
 
   ticks_history_request = {
     ticks_history: '',
     adjust_start_time: 1,
-    count: 100,
+    count: 300,
     end: 'latest',
-    start: 1,
+    start: 300,
     style: 'ticks',
   };
 
@@ -126,9 +125,6 @@ class ApiStore {
   };
 
   getTicksHistory = async () => {
-    const start = Math.max(0, this.loadedTicks - 80);
-    this.ticks_history_request.start = start;
-    this.ticks_history_request.count = 100;
     this.ticks_history_request.ticks_history = this.selectedSymbol;
     
     connection.addEventListener('message', this.ticksHistoryResponse);
@@ -154,12 +150,24 @@ class ApiStore {
       }));
   
       this.setTicks([...this.ticks, ...historyTicks]);
-      this.loadedTicks += historyTicks.length;
   
       connection.removeEventListener('message', this.ticksHistoryResponse, false);
     }
   };
   
+
+  // tickResponse = async (res: MessageEvent) => {
+  //   const data = JSON.parse(res.data);
+  //   if (data.error !== undefined) {
+  //     console.log('Error: ', data.error.message);
+  //     connection.removeEventListener('message', this.tickResponse, false);
+  //     await api.disconnect();
+  //   }
+  //   if (data.msg_type === 'tick') {
+  //     this.setTicks([...this.ticks, data.tick]);
+  //     // console.log("come to tick", this.ticks)
+  //   }
+  // };
 
   tickResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
@@ -169,10 +177,15 @@ class ApiStore {
       await api.disconnect();
     }
     if (data.msg_type === 'tick') {
-      this.setTicks([...this.ticks, data.tick]);
-      // console.log("come to tick", this.ticks)
+      const newTick = {
+        epoch: data.tick.epoch,
+        quote: data.tick.quote,
+        symbol: data.tick.symbol,
+      };
+      this.setTicks([...this.ticks, newTick]);
     }
   };
+  
 
   setTicks(ticks: Tick[]) {
     this.ticks = ticks;

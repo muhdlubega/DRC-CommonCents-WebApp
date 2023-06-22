@@ -20,14 +20,6 @@ const Product: React.FC = () => {
   }, [id]);
 
   const chartData = {
-    // chart: {
-    //   events: {load: function() {apiStore.ticks[apiStore.ticks.length]}},
-    // },
-  //   rangeSelector: {
-  //     verticalAlign: 'top',
-  //   x: 0,
-  //   y: 0
-  // },
     time: {
       useUTC: false,
     },
@@ -37,7 +29,7 @@ const Product: React.FC = () => {
     series: [
       {
         name: apiStore.selectedSymbol,
-        data: apiStore.ticks.slice(-80).map((tick) => [tick.epoch*1000, tick.quote]),
+        data: apiStore.ticks.slice(-300).map((tick) => [tick.epoch*1000, tick.quote]),
         type: 'line',
         color: 'blue',
         lineWidth: 1,
