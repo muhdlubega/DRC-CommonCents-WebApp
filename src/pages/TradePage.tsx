@@ -9,7 +9,7 @@ const TradePage = () => {
     <div>
         <Navbar/>
         <div className="product-container">
-        <div style={{ flex: 2 }}>
+        <div style={{ flex: 3 }}>
         <Product/>
         </div>
         <div style={{ flex: 1 }}>

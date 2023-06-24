@@ -2,6 +2,8 @@ import axios from "axios";
 
 export type Query = {
   topic?: string;
+  pageSize?: number;
+  page?: number;
 }
 
 const BASE_URL = "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&limit=200";

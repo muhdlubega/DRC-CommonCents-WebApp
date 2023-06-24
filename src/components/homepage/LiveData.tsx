@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import apiStore from '../../store/ApiStore';
+import chartsStore from '../../store/ChartsStore';
 import { observer } from 'mobx-react';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
@@ -12,27 +12,23 @@ const LiveData: React.FC = () => {
   const carouselRef = useRef<AliceCarousel>(null);
 
   useEffect(() => {
-    apiStore.getActiveSymbols();
+    chartsStore.getActiveSymbols();
 
     id_array.forEach((id) => {
-      apiStore.setSelectedSymbol(id);
-      apiStore.subscribeTicks();
+      chartsStore.setSelectedSymbol(id);
+      chartsStore.subscribeTicksGroup();
     });
 
     return () => {
       id_array.forEach((id) => {
-        apiStore.setSelectedSymbol(id);
-        apiStore.unsubscribeTicks();
+        chartsStore.setSelectedSymbol(id);
+        chartsStore.unsubscribeTicksGroup();
       });
     };
   }, []);
 
-  // const latestQuote = apiStore.ticks[apiStore.ticks.length - 1]?.quote;
-  // const previousQuote = apiStore.ticks[apiStore.ticks.length - 2]?.quote;
-  // const isHigher = latestQuote > previousQuote;
-
   const chartData = id_array.map((id) => {
-    const filteredTicks = apiStore.ticks.filter((tick) => tick.symbol === id);
+    const filteredTicks = chartsStore.ticks.filter((tick) => tick.symbol === id);
     const latestQuote = filteredTicks[filteredTicks.length - 1]?.quote;
     const previousQuote = filteredTicks[filteredTicks.length - 2]?.quote;
     const isHigher = latestQuote > previousQuote;
@@ -95,7 +91,7 @@ const LiveData: React.FC = () => {
 
   const handleSlideChanged = (e: any) => {
     const currentIndex = e.item;
-    apiStore.setSelectedSymbol(id_array[currentIndex]);
+    chartsStore.setSelectedSymbol(id_array[currentIndex]);
   };
 
   const responsive = {
