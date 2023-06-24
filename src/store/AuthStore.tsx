@@ -1,5 +1,11 @@
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { makeAutoObservable } from "mobx";
 import { auth } from "../firebase";
 
@@ -26,12 +32,13 @@ class AuthStore {
   user: User | null = null;
   loading: boolean = false;
   balance: number | null = null;
+  leaderboard: User[] = [];
   firestore = getFirestore();
-  balanceDocRef = doc(this.firestore, "balances", "user-1");
+  userDocRef = doc(this.firestore, "users", "user-1");
 
   constructor() {
     makeAutoObservable(this);
-    this.initializeBalance();
+    this.initializeUser();
 
     onAuthStateChanged(auth, (user) => {
       if (user) this.setUser(user);
@@ -58,22 +65,31 @@ class AuthStore {
     this.loading = loading;
   }
 
-  async initializeBalance() {
-    const balanceSnapshot = await getDoc(this.balanceDocRef);
-    if (balanceSnapshot.exists()) {
-      const balanceData = balanceSnapshot.data();
-      if (balanceData && typeof balanceData.balance === "number") {
-        this.balance = balanceData.balance;
+  async initializeUser() {
+    const userSnapshot = await getDoc(this.userDocRef);
+    if (userSnapshot.exists()) {
+      const userData = userSnapshot.data();
+      if (userData) {
+        this.balance = userData.balance || null;
       }
     }
   }
 
+  async updateUser(user: User) {
+    await setDoc(this.userDocRef, user);
+  }
+
   async setBalance(newBalance: number) {
-    this.balance = newBalance;
-    await setDoc(this.balanceDocRef, { balance: newBalance });
+    this.balance = parseFloat(newBalance.toFixed(2)); ;
+    await updateDoc(this.userDocRef, { balance: newBalance });
+  }
+
+  async setResetBalance(resetBalance: number) {
+    this.balance = parseFloat(resetBalance.toFixed(2)); ;
+    await updateDoc(this.userDocRef, { balance: resetBalance });
   }
 }
 
-const authStore = new AuthStore;
+const authStore = new AuthStore();
 
 export default authStore;

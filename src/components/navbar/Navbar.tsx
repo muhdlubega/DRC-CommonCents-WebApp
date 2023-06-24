@@ -33,7 +33,7 @@ const Header = () => {
     borderRadius: 5
   }}
 >
-  {AuthStore.balance} USD
+  {AuthStore.balance?.toFixed(2)} USD
 </div>
               <UserSidebar /></div> : <AuthModal />}
           </div>

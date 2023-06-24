@@ -2,15 +2,15 @@ import { makeAutoObservable } from "mobx";
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
 
 const app_id = 1089;
-const connection = new WebSocket(
-  `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
-);
-const api = new DerivAPIBasic({ connection });
 
 interface Tick {
   epoch: EpochTimeStamp;
   quote: number;
   symbol: string;
+  // high?: number;
+  // low?: number;
+  // open?: number;
+  // close?: number;
 }
 
 class ApiStore {
@@ -26,6 +26,12 @@ class ApiStore {
   proposalData: any[] = [];
   selectedSymbol: string = "";
   ticks: Tick[] = [];
+  sellSuccessful: boolean = false;
+  additionalAmount: number = 0;
+  sellFailed: boolean = false;
+  deductedAmount: number = 0;
+  totalAmountWon: number = 0;
+  totalAmountLost: number = 0;
 
   ticks_history_request = {
     ticks_history: "",
@@ -45,7 +51,6 @@ class ApiStore {
   }
 
   connectWebSocket() {
-    const app_id = 1089;
     this.connection = new WebSocket(
       `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
     );
@@ -61,10 +66,12 @@ class ApiStore {
 
   setDuration(duration: number) {
     this.duration = duration;
+    // this.unsubscribeProposal();
   }
 
   setPayout(payout: number) {
     this.payout = payout;
+    // this.unsubscribeProposal();
   }
 
   setBasis(basis: string) {
@@ -89,6 +96,30 @@ class ApiStore {
 
   setIsDurationEnded(isDurationEnded: boolean) {
     this.isDurationEnded = isDurationEnded;
+  }
+
+  setSellSuccessful(sellSuccessful: boolean) {
+    this.sellSuccessful = sellSuccessful;
+  }
+
+  setAdditionalAmount(additionalAmount: number) {
+    this.additionalAmount = additionalAmount;
+  }
+
+  setSellFailed(sellFailed: boolean) {
+    this.sellFailed = sellFailed;
+  }
+
+  setDeductedAmount(deductedAmount: number) {
+    this.deductedAmount = deductedAmount;
+  }
+
+  setTotalAmountWon(totalAmountWon: number) {
+    this.totalAmountWon = totalAmountWon;
+  }
+
+  setTotalAmountLost(totalAmountLost: number) {
+    this.totalAmountLost = totalAmountLost;
   }
 
   setData(data: any) {
@@ -129,7 +160,10 @@ class ApiStore {
       product_type: "basic",
     };
 
-    this.connection?.addEventListener("message", this.handleActiveSymbolsResponse);
+    this.connection?.addEventListener(
+      "message",
+      this.handleActiveSymbolsResponse
+    );
     await this.api.activeSymbols(active_symbols_request);
   };
 
@@ -150,7 +184,7 @@ class ApiStore {
   unsubscribeTicks = () => {
     this.connection?.removeEventListener("message", this.tickResponse, false);
     this.tickSubscriber().unsubscribe();
-    this.disconnectWebSocket(); 
+    this.disconnectWebSocket();
   };
 
   getTicksHistory = async () => {
@@ -177,10 +211,12 @@ class ApiStore {
       await this.api.disconnect();
     }
     if (data.msg_type === "history") {
-      const historyTicks = data.history.prices.map((price: number, index: number) => ({
-        epoch: data.history.times[index],
-        quote: price,
-      }));
+      const historyTicks = data.history.prices.map(
+        (price: number, index: number) => ({
+          epoch: data.history.times[index],
+          quote: price,
+        })
+      );
 
       this.setTicks([...this.ticks, ...historyTicks]);
 
@@ -217,16 +253,16 @@ class ApiStore {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
       console.log("Error: ", data.error.message);
-      connection.removeEventListener("message", this.proposalResponse, false);
-      await api.disconnect();
+      this.connection?.removeEventListener("message", this.proposalResponse, false);
+      await this.api.disconnect();
     } else if (data.msg_type === "proposal") {
       this.setPreviousSpot(parseFloat(data.proposal.spot));
       // this.setProposalTicks(data.proposal.duration);
       this.proposalData.push(data.proposal);
       const updatedData = [...this.proposalData, data.proposal];
-      if (this.proposalData.length > 20) {
-        this.proposalData.splice(0, 1);
-      }
+      // if (this.proposalData.length > 20) {
+      //   this.proposalData.splice(14, 1);
+      // }
       this.proposalData = updatedData;
       // console.log('ask price', data.proposal.display_value, 'spot', data.proposal.spot, 'payout', data.proposal.payout);
       // console.log('array:', updatedData)
@@ -249,15 +285,26 @@ class ApiStore {
 
     try {
       this.unsubscribeProposal();
-      connection.addEventListener("message", this.proposalResponse);
-      await api.proposal(proposal_request);
+      this.connection?.addEventListener("message", this.proposalResponse);
+      await this.api.proposal(proposal_request);
     } catch (error) {
       console.log("Error fetching proposal: ", error);
     }
   };
 
-  unsubscribeProposal = () => {
-      connection.removeEventListener("message", this.proposalResponse, false);
+  // subscribeProposal = async () => {
+  //   const selectedSymbol = this.selectedSymbol;
+  
+  //   if (!selectedSymbol) {
+  //     return;
+  //   }
+  
+  //   await this.getProposal(selectedSymbol);
+  // };
+
+  unsubscribeProposal = async () => {
+    this.connection?.removeEventListener("message", this.proposalResponse, false);
+    // await this.api.disconnect();
   }
 }
 
