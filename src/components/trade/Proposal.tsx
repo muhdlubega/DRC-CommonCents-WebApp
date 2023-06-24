@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
 import { getDoc, setDoc } from "firebase/firestore";
@@ -6,29 +6,33 @@ import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
-
 const Proposal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
-  const [sellSuccessful, setSellSuccessful] = React.useState(false);
-const [additionalAmount, setAdditionalAmount] = React.useState(0);
-const [sellFailed, setSellFailed] = React.useState(false);
-const [deductedAmount, setDeductedAmount] = React.useState(0);
-
+  const [isProcessing, setIsProcessing] = useState(false);
+  // const [sellSuccessful, setSellSuccessful] = useState(false);
+  // const [additionalAmount, setAdditionalAmount] = useState(0);
+  // const [sellFailed, setSellFailed] = useState(false);
+  // const [deductedAmount, setDeductedAmount] = useState(0);
+  // const [totalAmountWon, setTotalAmountWon] = useState(0);
+  // const [totalAmountLost, setTotalAmountLost] = useState(0);
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.value, 10);
     apiStore.setDuration(newDuration);
+    // apiStore.subscribeProposal();
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newPayout = parseInt(event.target.value, 10);
     apiStore.setPayout(newPayout);
+    // apiStore.subscribeProposal();
   };
 
   const handleBuy = async (isHigher: boolean) => {
+    setIsProcessing(true); 
     try {
-      const balanceSnapshot = await getDoc(authStore.balanceDocRef);
+      const balanceSnapshot = await getDoc(authStore.userDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -52,19 +56,21 @@ const [deductedAmount, setDeductedAmount] = React.useState(0);
 
       const newBalance = currentBalance - payoutValue;
       authStore.setBalance(newBalance);
-      await setDoc(authStore.balanceDocRef, { balance: newBalance });
+      await setDoc(authStore.userDocRef, { balance: newBalance });
 
       setTimeout(() => handleSell(isHigher), apiStore.duration * 1000);
 
       console.log("Buy successful");
     } catch (error) {
       console.error("Error:", error);
+      setIsProcessing(false);
     }
   };
 
   const handleSell = async (isHigher: boolean) => {
+    setIsProcessing(true); 
     try {
-      const balanceSnapshot = await getDoc(authStore.balanceDocRef);
+      const balanceSnapshot = await getDoc(authStore.userDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -95,6 +101,10 @@ const [deductedAmount, setDeductedAmount] = React.useState(0);
           ].spot;
         const currentSpot =
           apiStore.proposalData[apiStore.proposalData.length - 1].spot;
+          const additionalAmount =
+          apiStore.proposalData[
+            apiStore.proposalData.length - apiStore.duration
+          ].payout;
 
         if (previousSpot && currentSpot) {
           const previousSpotValue = previousSpot;
@@ -105,20 +115,18 @@ const [deductedAmount, setDeductedAmount] = React.useState(0);
 
           if (isHigher) {
             if (currentSpotValue > previousSpotValue) {
-              const additionalAmount =
-                apiStore.proposalData[
-                  apiStore.proposalData.length - apiStore.duration
-                ].payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
-              console.log("Sell successful");
-    setSellSuccessful(true);
-    setAdditionalAmount(additionalAmount);
+              await setDoc(authStore.userDocRef, { balance: updatedBalance });
+              console.log("Sell successful", additionalAmount);
+              apiStore.setSellSuccessful(true);
+              apiStore.setAdditionalAmount(additionalAmount);
+              apiStore.setTotalAmountWon(apiStore.totalAmountWon + additionalAmount); 
             } else {
-              console.log("Spot is not higher");
-              setSellFailed(true);
-              setDeductedAmount(payoutValue);
+              console.log("Spot is not higher", additionalAmount);
+              apiStore.setSellFailed(true);
+              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setTotalAmountLost(apiStore.totalAmountLost + payoutValue);
             }
           } else {
             if (previousSpotValue > currentSpotValue) {
@@ -128,14 +136,16 @@ const [deductedAmount, setDeductedAmount] = React.useState(0);
                 ].payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
+              await setDoc(authStore.userDocRef, { balance: updatedBalance });
               console.log("Sell successful");
-    setSellSuccessful(true);
-    setAdditionalAmount(additionalAmount);
+              apiStore.setSellSuccessful(true);
+              apiStore.setAdditionalAmount(additionalAmount);
+              apiStore.setTotalAmountWon(apiStore.totalAmountWon + additionalAmount); 
             } else {
-              console.log("Spot is not lower");
-              setSellFailed(true);
-              setDeductedAmount(payoutValue);
+              console.log("Spot is not lower", additionalAmount);
+              apiStore.setSellFailed(true);
+              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setTotalAmountLost(apiStore.totalAmountLost + payoutValue);
             }
           }
         } else {
@@ -144,23 +154,21 @@ const [deductedAmount, setDeductedAmount] = React.useState(0);
       } else {
         console.log("Not enough data to compare spot prices");
       }
+      setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
+      setIsProcessing(false);
     }
   };
 
   // useEffect(() => {
   //   apiStore.getProposal(id!);
-  // }, [id]);
+  // }, []);
 
   useEffect(() => {
-    let initialLoad = true; 
 
     if (id) {
-      if (initialLoad) {
         apiStore.getProposal(id);
-        initialLoad = false;
-      }
       const proposal = document.querySelector<HTMLButtonElement>("#proposal");
       proposal?.addEventListener("click", () => apiStore.getProposal(id));
 
@@ -180,7 +188,7 @@ const [deductedAmount, setDeductedAmount] = React.useState(0);
         );
       };
     }
-  }, [id]);
+  }, [id, apiStore.payout, apiStore.duration]);
 
   return (
     <div>
@@ -237,23 +245,29 @@ const [deductedAmount, setDeductedAmount] = React.useState(0);
       </button>
       <div ref={proposalContainerRef} id="proposalContainer"></div>
       <span className="proposal-btn-group">
-        <button className="proposal-btn-higher" onClick={() => handleBuy(true)}>
+        <button className={`proposal-btn-higher ${isProcessing ? "processing" : ""}`}
+          onClick={() => handleBuy(true)}
+          disabled={isProcessing}>
           Higher
         </button>
-        <button className="proposal-btn-lower" onClick={() => handleBuy(false)}>
+        <button className={`proposal-btn-lower ${isProcessing ? "processing" : ""}`}
+          onClick={() => handleBuy(false)}
+          disabled={isProcessing}>
           Lower
         </button>
       </span>
-      {sellSuccessful && (
-  <div>
-    <span>Total Won: {additionalAmount} USD</span>
-  </div>
-)}
-{sellFailed && (
-<div>
-<span>Total Lost: {deductedAmount} USD</span>
-</div>
-)}
+      {/* {apiStore.sellSuccessful && ( */}
+        <div>
+          <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+          <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
+        </div>
+      {/* )} */}
+      {/* {apiStore.sellFailed && ( */}
+        <div>
+          <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+          <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
+        </div>
+      {/* )} */}
     </div>
   );
 };
