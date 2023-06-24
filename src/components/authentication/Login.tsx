@@ -3,7 +3,7 @@ import { useState } from "react";
 // import { useGlobalState } from "../../store/Context";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import globalStore from "../../store/AuthStore";
+import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
 interface LoginProps {
@@ -14,11 +14,9 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const { alert, setAlert } = globalStore;
-
   const handleSubmit = async () => {
     if (!email || !password) {
-      setAlert({
+      authStore.setAlert({
         open: true,
         message: "Please fill all the Fields",
         type: "error",
@@ -28,7 +26,7 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
 
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      setAlert({
+      authStore.setAlert({
         open: true,
         message: `Sign Up Successful. Welcome ${result.user.email}`,
         type: "success",
@@ -37,7 +35,7 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
 
       handleClose();
     } catch (error: any) {
-      setAlert({
+      authStore.setAlert({
         open: true,
         message: error.message,
         type: "error",

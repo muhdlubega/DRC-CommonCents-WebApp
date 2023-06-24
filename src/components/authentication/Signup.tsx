@@ -3,7 +3,7 @@ import { useState } from "react";
 // import { useGlobalState } from "../../store/Context";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
-import globalStore from "../../store/AuthStore";
+import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
 interface SignupProps {
@@ -15,11 +15,9 @@ const Signup: React.FC<SignupProps> = ({ handleClose }) => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const { setAlert } = globalStore;
-
   const handleSubmit = async () => {
     if (password !== confirmPassword) {
-      setAlert({
+      authStore.setAlert({
         open: true,
         message: "Passwords do not match",
         type: "error",
@@ -29,7 +27,7 @@ const Signup: React.FC<SignupProps> = ({ handleClose }) => {
 
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      setAlert({
+      authStore.setAlert({
         open: true,
         message: `Sign Up Successful. Welcome ${result.user.email}`,
         type: "success",
@@ -37,7 +35,7 @@ const Signup: React.FC<SignupProps> = ({ handleClose }) => {
 
       handleClose();
     } catch (error: any) {
-      setAlert({
+      authStore.setAlert({
         open: true,
         message: error.message,
         type: "error",

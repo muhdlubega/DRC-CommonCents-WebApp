@@ -6,9 +6,15 @@ import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
+
 const Proposal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
+  const [sellSuccessful, setSellSuccessful] = React.useState(false);
+const [additionalAmount, setAdditionalAmount] = React.useState(0);
+const [sellFailed, setSellFailed] = React.useState(false);
+const [deductedAmount, setDeductedAmount] = React.useState(0);
+
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.value, 10);
@@ -107,8 +113,12 @@ const Proposal: React.FC = () => {
               authStore.setBalance(updatedBalance);
               await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
               console.log("Sell successful");
+    setSellSuccessful(true);
+    setAdditionalAmount(additionalAmount);
             } else {
               console.log("Spot is not higher");
+              setSellFailed(true);
+              setDeductedAmount(payoutValue);
             }
           } else {
             if (previousSpotValue > currentSpotValue) {
@@ -120,8 +130,12 @@ const Proposal: React.FC = () => {
               authStore.setBalance(updatedBalance);
               await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
               console.log("Sell successful");
+    setSellSuccessful(true);
+    setAdditionalAmount(additionalAmount);
             } else {
               console.log("Spot is not lower");
+              setSellFailed(true);
+              setDeductedAmount(payoutValue);
             }
           }
         } else {
@@ -135,12 +149,18 @@ const Proposal: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    apiStore.getProposal(id!);
-  }, [id]);
+  // useEffect(() => {
+  //   apiStore.getProposal(id!);
+  // }, [id]);
 
   useEffect(() => {
+    let initialLoad = true; 
+
     if (id) {
+      if (initialLoad) {
+        apiStore.getProposal(id);
+        initialLoad = false;
+      }
       const proposal = document.querySelector<HTMLButtonElement>("#proposal");
       proposal?.addEventListener("click", () => apiStore.getProposal(id));
 
@@ -160,7 +180,7 @@ const Proposal: React.FC = () => {
         );
       };
     }
-  }, [id, apiStore.payout, apiStore.duration]);
+  }, [id]);
 
   return (
     <div>
@@ -224,6 +244,16 @@ const Proposal: React.FC = () => {
           Lower
         </button>
       </span>
+      {sellSuccessful && (
+  <div>
+    <span>Total Won: {additionalAmount} USD</span>
+  </div>
+)}
+{sellFailed && (
+<div>
+<span>Total Lost: {deductedAmount} USD</span>
+</div>
+)}
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { Avatar, Button } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import '../../styles/main.scss';
-import globalStore from "../../store/AuthStore";
+import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
 
@@ -12,7 +12,6 @@ function UserSidebar() {
   const [state, setState] = useState({
     right: false,
   });
-  const { user, balance, setAlert } = globalStore;
 
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
@@ -30,7 +29,7 @@ function UserSidebar() {
 
   const logOut = () => {
     signOut(auth);
-    setAlert({
+    authStore.setAlert({
       open: true,
       type: "success",
       message: "Logout Successful!",
@@ -39,9 +38,9 @@ function UserSidebar() {
     toggleDrawer(false);
   };
 
-  const userDisplayName = user?.displayName || "";
-  const userEmail = user?.email || "";
-  const userPhotoURL = user?.photoURL || "";
+  const userDisplayName = authStore.user?.displayName || "";
+  const userEmail = authStore.user?.email || "";
+  const userPhotoURL = authStore.user?.photoURL || "";
 
   return (
     <div>
@@ -90,7 +89,7 @@ function UserSidebar() {
     wordWrap: "break-word",
   }}
 >
-  Balance: {balance} USD
+  Balance: {authStore.balance} USD
 </span>
 
               <Button

@@ -3,14 +3,11 @@ import "../../styles/main.scss";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
 // import { useGlobalState } from "../../store/Context";
-import globalStore from "../../store/AuthStore";
+import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { 
-    // currency, setCurrency, 
-    user } = globalStore;
 
   return (
     <header className="header-main">
@@ -24,7 +21,21 @@ const Header = () => {
             <div className="header-title" onClick={() => navigate("/news")}>News</div>
             {/* <div className="header-title" onClick={() => navigate("/learn")}>Learn</div> */}
             <div className="header-title" onClick={() => navigate("/about")}>About</div>
-            {user ? <UserSidebar /> : <AuthModal />}
+            {AuthStore.user ? <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <div
+  style={{
+    width: "100%",
+    fontSize: 24,
+    textAlign: "center",
+    padding: 8,
+    margin: 5,
+    backgroundColor: "white",
+    borderRadius: 5
+  }}
+>
+  {AuthStore.balance} USD
+</div>
+              <UserSidebar /></div> : <AuthModal />}
           </div>
         </nav>
       </div>
