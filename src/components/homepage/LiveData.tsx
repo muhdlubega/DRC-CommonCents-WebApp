@@ -5,6 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
+import { Link } from 'react-router-dom';
 
 const id_array = ['1HZ10V', '1HZ25V', '1HZ50V', '1HZ75V', '1HZ100V', 'R_10', 'R_25', 'R_50', 'R_75', 'R_100', 'JD10', 'JD25', 'JD50', 'JD75', 'JD100', 'RDBEAR', 'RDBULL'];
 
@@ -129,12 +130,12 @@ const LiveData: React.FC = () => {
         onSlideChanged={handleSlideChanged}
       >
         {chartData.map((data, index) => (
-  <div key={index}>
+  <Link to={`/trade/${data.series[0].name}`} key={index}>
     <HighchartsReact highcharts={Highcharts} options={data} />
     <div style={{ color: data.latestQuote > data.previousQuote ? 'green' : 'red' }}>
       {data.latestQuote}
     </div>
-  </div>
+  </Link>
 ))}
       </AliceCarousel>
       <div>
