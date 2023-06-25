@@ -48,13 +48,7 @@ function UserSidebar() {
     <div>
       <Avatar
         onClick={toggleDrawer(true)}
-        style={{
-          height: 38,
-          width: 38,
-          margin: 10,
-          cursor: "pointer",
-          backgroundColor: "#0033ff",
-        }}
+        className="sidebar-picture"
         src={userPhotoURL}
         alt={userDisplayName || userEmail}
       />
