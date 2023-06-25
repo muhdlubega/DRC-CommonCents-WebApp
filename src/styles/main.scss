@@ -456,84 +456,59 @@ a {
   opacity: 20%;
   position: absolute;
 }
-
-
 .footer{
-  
-  padding: 2rem 0;
   background:#000;
   color:#fff;
-  
+  padding: 2rem 0;
 }
-.footer-column{
-  width:30%;
-
+.container{
+    margin-left:0px;
+    margin-right: 0px;
 }
-.footer-column button{
-  padding: 10px 20px;
-  font-size: 22px;
-  background-color: #3366ff;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  border-radius: 5px;
-  margin-left: 50px;
+.ft-1{
+    padding-top:20px;
+    padding-left:80px;  
+    padding-right:80px; 
 }
-.footer-icon i{
-  padding:0.4rem 0.5rem;
-  margin:0 0.5rem;
-  border-radius:50%;
+.ft-1 button{
+    font-weight: 700;
+    padding-left:30px;
+    padding-right:30px;
+    font-size:24px;
+    align-items: center;
 }
-.footer-icon i:hover{
-  padding:0.4rem 0.5rem;
-  margin:0 0.5rem;
-  border-radius:50%;
-  background:#f60838;
-  color:#fff;
-  transition: 0.6s;
+.ft-2{
+    padding-left:50px;
 }
-.footer h4{
-  color:#f60818;
-  color:#fff;
-
+.ft-2 h4{
+    padding-left:45px;
 }
-.footer-column ul{
- list-style: none;
- padding-left: 0;
-
+.ft-2 ul{
+    list-style: none;
 }
-.footer-column ul li{
-  padding: 0.35rem 0;
-  font-weight: 500;
+.ft-2 li{
+    padding-right: 50px;
 }
-.footer-column ul a{
-  text-decoration: none;
-  padding: 1rem 0;
-  color: #000;
-  font-size: 13px; 
+.ft-2 a{
+    color:white;
 }
-.footer-column p{
-  font-weight: 500;
-  padding: 0.1rem 0;
+.ft-3 {
+    padding-left:80px;
 }
-.footer-column i{
-  padding-right: 0.5rem;
+.ft-4{
+    padding-left:70px;
 }
-.footer-bottom{
-  background:#504f4f;
-  text-align:center;
-  padding: 1rem 0;
-
+.ft-4 i{
+    margin-top:20px;
+    margin-right:10px;
+    font-size:40px;
 }
 .footer-bottom p{
-  margin-bottom: 0;
-  font-size:14px;
-  font-weight:700;
-  color:#fff;
-} 
-
+    margin-bottom:0px;
+    margin-top: 15px;
+    text-align:center;
+    font-size:15px;
+}
 .trade-info-left img {
   max-width: 100%;
  max-height: 500;
@@ -634,6 +609,12 @@ padding: 10px;
     border-radius: 0.5vw;
     cursor: pointer;
   }
+}
+
+.processing {
+  background-color: gray;
+  border: gray;
+  color: white;
 }
 
 

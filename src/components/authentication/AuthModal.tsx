@@ -7,13 +7,11 @@ import { useState } from "react";
 import { auth } from "../../firebase";
 import GoogleButton from "react-google-button";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import globalStore from "../../store/AuthStore";
+import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
 function AuthModal() {
   const [open, setOpen] = useState(false);
-
-  const { setAlert } = globalStore;
 
   const handleOpen = () => {
     setOpen(true);
@@ -34,7 +32,7 @@ function AuthModal() {
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
       .then((res) => {
-        setAlert({
+        authStore.setAlert({
           open: true,
           message: `Sign Up Successful. Welcome ${res.user.email}`,
           type: "success",
@@ -43,7 +41,7 @@ function AuthModal() {
         handleClose();
       })
       .catch((error) => {
-        setAlert({
+        authStore.setAlert({
           open: true,
           message: error.message,
           type: "error",

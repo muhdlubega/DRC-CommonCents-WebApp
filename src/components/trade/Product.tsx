@@ -26,6 +26,9 @@ const Product: React.FC = () => {
     credits: {
       enabled: false
     },
+    chart: {
+      height: (9 / 16 * 100) + '%'
+  },
     series: [
       {
         name: apiStore.selectedSymbol,

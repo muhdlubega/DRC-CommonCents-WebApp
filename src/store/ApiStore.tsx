@@ -2,15 +2,15 @@ import { makeAutoObservable } from "mobx";
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
 
 const app_id = 1089;
-const connection = new WebSocket(
-  `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
-);
-const api = new DerivAPIBasic({ connection });
 
 interface Tick {
   epoch: EpochTimeStamp;
   quote: number;
   symbol: string;
+  // high?: number;
+  // low?: number;
+  // open?: number;
+  // close?: number;
 }
 
 class ApiStore {
@@ -21,31 +21,57 @@ class ApiStore {
   currentSpot: number | null = null;
   data: any = null;
   basis: string = "stake";
-  proposalTicks: number = 0;
+  // proposalTicks: number = 0;
   isDurationEnded: boolean = false;
   proposalData: any[] = [];
-  selectedSymbol: string = '';
+  selectedSymbol: string = "";
   ticks: Tick[] = [];
+  sellSuccessful: boolean = false;
+  additionalAmount: number = 0;
+  sellFailed: boolean = false;
+  deductedAmount: number = 0;
+  totalAmountWon: number = 0;
+  totalAmountLost: number = 0;
 
   ticks_history_request = {
-    ticks_history: '',
+    ticks_history: "",
     adjust_start_time: 1,
     count: 300,
-    end: 'latest',
+    end: "latest",
     start: 300,
-    style: 'ticks',
+    style: "ticks",
   };
+
+  connection: WebSocket | null = null;
+  api: any = null;
 
   constructor() {
     makeAutoObservable(this);
+    this.connectWebSocket();
+  }
+
+  connectWebSocket() {
+    this.connection = new WebSocket(
+      `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
+    );
+    this.api = new DerivAPIBasic({ connection: this.connection });
+  }
+
+  disconnectWebSocket() {
+    if (this.connection) {
+      this.connection.close();
+      this.connection = null;
+    }
   }
 
   setDuration(duration: number) {
     this.duration = duration;
+    // this.unsubscribeProposal();
   }
 
   setPayout(payout: number) {
     this.payout = payout;
+    // this.unsubscribeProposal();
   }
 
   setBasis(basis: string) {
@@ -63,13 +89,37 @@ class ApiStore {
   setCurrentSpot(currentSpot: number) {
     this.currentSpot = currentSpot;
   }
-  
-  setProposalTicks(proposalTicks: number) {
-    this.proposalTicks = proposalTicks;
-  }
+
+  // setProposalTicks(proposalTicks: number) {
+  //   this.proposalTicks = proposalTicks;
+  // }
 
   setIsDurationEnded(isDurationEnded: boolean) {
     this.isDurationEnded = isDurationEnded;
+  }
+
+  setSellSuccessful(sellSuccessful: boolean) {
+    this.sellSuccessful = sellSuccessful;
+  }
+
+  setAdditionalAmount(additionalAmount: number) {
+    this.additionalAmount = additionalAmount;
+  }
+
+  setSellFailed(sellFailed: boolean) {
+    this.sellFailed = sellFailed;
+  }
+
+  setDeductedAmount(deductedAmount: number) {
+    this.deductedAmount = deductedAmount;
+  }
+
+  setTotalAmountWon(totalAmountWon: number) {
+    this.totalAmountWon = totalAmountWon;
+  }
+
+  setTotalAmountLost(totalAmountLost: number) {
+    this.totalAmountLost = totalAmountLost;
   }
 
   setData(data: any) {
@@ -78,33 +128,43 @@ class ApiStore {
     this.basis = data.basis;
     this.previousSpot = parseFloat(data.spot);
     this.currentSpot = parseFloat(data.spot);
-    this.proposalTicks = parseInt(data.duration, 10);
+    // this.proposalTicks = parseInt(data.duration, 10);
   }
 
   handleActiveSymbolsResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
 
     if (data.error !== undefined) {
-      console.log('Error: ', data.error?.message);
-      connection.removeEventListener('message', this.handleActiveSymbolsResponse, false);
-      await api.disconnect();
+      console.log("Error: ", data.error?.message);
+      this.connection?.removeEventListener(
+        "message",
+        this.handleActiveSymbolsResponse,
+        false
+      );
+      await this.api.disconnect();
     }
 
-    if (data.msg_type === 'active_symbols') {
+    if (data.msg_type === "active_symbols") {
       this.setActiveSymbols(data.active_symbols);
-      // console.log(data.active_symbols);
-      connection.removeEventListener('message', this.handleActiveSymbolsResponse, false);
+      this.connection?.removeEventListener(
+        "message",
+        this.handleActiveSymbolsResponse,
+        false
+      );
     }
   };
 
   getActiveSymbols = async () => {
     const active_symbols_request = {
-      active_symbols: 'brief',
-      product_type: 'basic',
+      active_symbols: "brief",
+      product_type: "basic",
     };
 
-    connection.addEventListener('message', this.handleActiveSymbolsResponse);
-    await api.activeSymbols(active_symbols_request);
+    this.connection?.addEventListener(
+      "message",
+      this.handleActiveSymbolsResponse
+    );
+    await this.api.activeSymbols(active_symbols_request);
   };
 
   setSelectedSymbol(symbol: string) {
@@ -113,70 +173,69 @@ class ApiStore {
   }
 
   subscribeTicks = async () => {
-  await this.tickSubscriber();
-  await this.getTicksHistory();
-  connection.addEventListener('message', this.tickResponse);
-};
+    this.unsubscribeTicks();
+    this.connectWebSocket();
 
+    await this.tickSubscriber();
+    await this.getTicksHistory();
+    this.connection?.addEventListener("message", this.tickResponse);
+  };
 
   unsubscribeTicks = () => {
-    connection.removeEventListener('message', this.tickResponse, false);
+    this.connection?.removeEventListener("message", this.tickResponse, false);
     this.tickSubscriber().unsubscribe();
+    this.disconnectWebSocket();
   };
 
   getTicksHistory = async () => {
     this.ticks_history_request.ticks_history = this.selectedSymbol;
-    
-    connection.addEventListener('message', this.ticksHistoryResponse);
-    await api.ticksHistory(this.ticks_history_request);
-  };  
+
+    this.connection?.addEventListener("message", this.ticksHistoryResponse);
+    await this.api.ticksHistory(this.ticks_history_request);
+  };
 
   tickSubscriber = () => {
-    const ticksSubscriber = api.subscribe(this.ticks_history_request);
+    const ticksSubscriber = this.api.subscribe(this.ticks_history_request);
     return ticksSubscriber;
-  };  
+  };
 
   ticksHistoryResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
-      console.log('Error : ', data.error.message);
-      connection.removeEventListener('message', this.ticksHistoryResponse, false);
-      await api.disconnect();
+      console.log("Error : ", data.error.message);
+      this.connection?.removeEventListener(
+        "message",
+        this.ticksHistoryResponse,
+        false
+      );
+      await this.api.disconnect();
     }
-    if (data.msg_type === 'history') {
-      const historyTicks = data.history.prices.map((price: number, index: number) => ({
-        epoch: data.history.times[index],
-        quote: price,
-      }));
-  
+    if (data.msg_type === "history") {
+      const historyTicks = data.history.prices.map(
+        (price: number, index: number) => ({
+          epoch: data.history.times[index],
+          quote: price,
+        })
+      );
+
       this.setTicks([...this.ticks, ...historyTicks]);
-  
-      connection.removeEventListener('message', this.ticksHistoryResponse, false);
+
+      this.connection?.removeEventListener(
+        "message",
+        this.ticksHistoryResponse,
+        false
+      );
     }
   };
-  
-
-  // tickResponse = async (res: MessageEvent) => {
-  //   const data = JSON.parse(res.data);
-  //   if (data.error !== undefined) {
-  //     console.log('Error: ', data.error.message);
-  //     connection.removeEventListener('message', this.tickResponse, false);
-  //     await api.disconnect();
-  //   }
-  //   if (data.msg_type === 'tick') {
-  //     this.setTicks([...this.ticks, data.tick]);
-  //     // console.log("come to tick", this.ticks)
-  //   }
-  // };
 
   tickResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
-      console.log('Error: ', data.error.message);
-      connection.removeEventListener('message', this.tickResponse, false);
-      await api.disconnect();
+      console.log("Error: ", data.error.message);
+      this.connection?.removeEventListener("message", this.tickResponse, false);
+      await this.api.disconnect();
     }
-    if (data.msg_type === 'tick') {
+    if (data.msg_type === "tick") {
       const newTick = {
         epoch: data.tick.epoch,
         quote: data.tick.quote,
@@ -185,7 +244,6 @@ class ApiStore {
       this.setTicks([...this.ticks, newTick]);
     }
   };
-  
 
   setTicks(ticks: Tick[]) {
     this.ticks = ticks;
@@ -194,26 +252,27 @@ class ApiStore {
   proposalResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
-      console.log("Error: %s ", data.error.message);
-      connection.removeEventListener("message", this.proposalResponse, false);
-      await api.disconnect();
+      console.log("Error: ", data.error.message);
+      this.connection?.removeEventListener("message", this.proposalResponse, false);
+      await this.api.disconnect();
     } else if (data.msg_type === "proposal") {
-    //   this.setData(data.proposal);
       this.setPreviousSpot(parseFloat(data.proposal.spot));
-      this.setProposalTicks(data.proposal.duration);
+      // this.setProposalTicks(data.proposal.duration);
       this.proposalData.push(data.proposal);
-
-      // const updatedData = [...this.proposalData, data.proposal];
+      const updatedData = [...this.proposalData, data.proposal];
       // if (this.proposalData.length > 20) {
-      //   this.proposalData.splice(0, 1);
+      //   this.proposalData.splice(14, 1);
       // }
-      // this.proposalData = updatedData;
+      this.proposalData = updatedData;
+      // console.log('ask price', data.proposal.display_value, 'spot', data.proposal.spot, 'payout', data.proposal.payout);
+      // console.log('array:', updatedData)
     }
   };
 
   getProposal = async (id: string) => {
     const proposal_request = {
       proposal: 1,
+      subscribe: 1,
       amount: this.payout,
       basis: this.basis,
       contract_type: "CALL",
@@ -223,21 +282,32 @@ class ApiStore {
       symbol: id,
       barrier: "+0.1",
     };
-  
+
     try {
-      await api.proposal(proposal_request);
+      this.unsubscribeProposal();
+      this.connection?.addEventListener("message", this.proposalResponse);
+      await this.api.proposal(proposal_request);
     } catch (error) {
-      console.log("Error: ", error);
+      console.log("Error fetching proposal: ", error);
     }
   };
 
-  unsubscribeProposal = () => {
-    if (this.proposalResponse) {
-        connection.removeEventListener("message", this.proposalResponse, false);
-      }
-  };
+  // subscribeProposal = async () => {
+  //   const selectedSymbol = this.selectedSymbol;
+  
+  //   if (!selectedSymbol) {
+  //     return;
+  //   }
+  
+  //   await this.getProposal(selectedSymbol);
+  // };
+
+  unsubscribeProposal = async () => {
+    this.connection?.removeEventListener("message", this.proposalResponse, false);
+    // await this.api.disconnect();
+  }
 }
 
-const apiStore = new ApiStore;
+const apiStore = new ApiStore();
 
 export default apiStore;

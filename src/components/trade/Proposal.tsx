@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
 import { getDoc, setDoc } from "firebase/firestore";
@@ -9,20 +9,30 @@ import { observer } from "mobx-react";
 const Proposal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  // const [sellSuccessful, setSellSuccessful] = useState(false);
+  // const [additionalAmount, setAdditionalAmount] = useState(0);
+  // const [sellFailed, setSellFailed] = useState(false);
+  // const [deductedAmount, setDeductedAmount] = useState(0);
+  // const [totalAmountWon, setTotalAmountWon] = useState(0);
+  // const [totalAmountLost, setTotalAmountLost] = useState(0);
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.value, 10);
     apiStore.setDuration(newDuration);
+    // apiStore.subscribeProposal();
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newPayout = parseInt(event.target.value, 10);
     apiStore.setPayout(newPayout);
+    // apiStore.subscribeProposal();
   };
 
   const handleBuy = async (isHigher: boolean) => {
+    setIsProcessing(true); 
     try {
-      const balanceSnapshot = await getDoc(authStore.balanceDocRef);
+      const balanceSnapshot = await getDoc(authStore.userDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -46,19 +56,21 @@ const Proposal: React.FC = () => {
 
       const newBalance = currentBalance - payoutValue;
       authStore.setBalance(newBalance);
-      await setDoc(authStore.balanceDocRef, { balance: newBalance });
+      await setDoc(authStore.userDocRef, { balance: newBalance });
 
       setTimeout(() => handleSell(isHigher), apiStore.duration * 1000);
 
       console.log("Buy successful");
     } catch (error) {
       console.error("Error:", error);
+      setIsProcessing(false);
     }
   };
 
   const handleSell = async (isHigher: boolean) => {
+    setIsProcessing(true); 
     try {
-      const balanceSnapshot = await getDoc(authStore.balanceDocRef);
+      const balanceSnapshot = await getDoc(authStore.userDocRef);
       if (!balanceSnapshot.exists()) {
         console.log("Balance document does not exist");
         return;
@@ -89,6 +101,10 @@ const Proposal: React.FC = () => {
           ].spot;
         const currentSpot =
           apiStore.proposalData[apiStore.proposalData.length - 1].spot;
+          const additionalAmount =
+          apiStore.proposalData[
+            apiStore.proposalData.length - apiStore.duration
+          ].payout;
 
         if (previousSpot && currentSpot) {
           const previousSpotValue = previousSpot;
@@ -99,16 +115,18 @@ const Proposal: React.FC = () => {
 
           if (isHigher) {
             if (currentSpotValue > previousSpotValue) {
-              const additionalAmount =
-                apiStore.proposalData[
-                  apiStore.proposalData.length - apiStore.duration
-                ].payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
-              console.log("Sell successful");
+              await setDoc(authStore.userDocRef, { balance: updatedBalance });
+              console.log("Sell successful", additionalAmount);
+              apiStore.setSellSuccessful(true);
+              apiStore.setAdditionalAmount(additionalAmount);
+              apiStore.setTotalAmountWon(apiStore.totalAmountWon + additionalAmount); 
             } else {
-              console.log("Spot is not higher");
+              console.log("Spot is not higher", additionalAmount);
+              apiStore.setSellFailed(true);
+              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setTotalAmountLost(apiStore.totalAmountLost + payoutValue);
             }
           } else {
             if (previousSpotValue > currentSpotValue) {
@@ -118,10 +136,16 @@ const Proposal: React.FC = () => {
                 ].payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              await setDoc(authStore.balanceDocRef, { balance: updatedBalance });
+              await setDoc(authStore.userDocRef, { balance: updatedBalance });
               console.log("Sell successful");
+              apiStore.setSellSuccessful(true);
+              apiStore.setAdditionalAmount(additionalAmount);
+              apiStore.setTotalAmountWon(apiStore.totalAmountWon + additionalAmount); 
             } else {
-              console.log("Spot is not lower");
+              console.log("Spot is not lower", additionalAmount);
+              apiStore.setSellFailed(true);
+              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setTotalAmountLost(apiStore.totalAmountLost + payoutValue);
             }
           }
         } else {
@@ -130,17 +154,21 @@ const Proposal: React.FC = () => {
       } else {
         console.log("Not enough data to compare spot prices");
       }
+      setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
+      setIsProcessing(false);
     }
   };
 
-  useEffect(() => {
-    apiStore.getProposal(id!);
-  }, [id]);
+  // useEffect(() => {
+  //   apiStore.getProposal(id!);
+  // }, []);
 
   useEffect(() => {
+
     if (id) {
+        apiStore.getProposal(id);
       const proposal = document.querySelector<HTMLButtonElement>("#proposal");
       proposal?.addEventListener("click", () => apiStore.getProposal(id));
 
@@ -217,13 +245,29 @@ const Proposal: React.FC = () => {
       </button>
       <div ref={proposalContainerRef} id="proposalContainer"></div>
       <span className="proposal-btn-group">
-        <button className="proposal-btn-higher" onClick={() => handleBuy(true)}>
+        <button className={`proposal-btn-higher ${isProcessing ? "processing" : ""}`}
+          onClick={() => handleBuy(true)}
+          disabled={isProcessing}>
           Higher
         </button>
-        <button className="proposal-btn-lower" onClick={() => handleBuy(false)}>
+        <button className={`proposal-btn-lower ${isProcessing ? "processing" : ""}`}
+          onClick={() => handleBuy(false)}
+          disabled={isProcessing}>
           Lower
         </button>
       </span>
+      {/* {apiStore.sellSuccessful && ( */}
+        <div>
+          <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+          <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
+        </div>
+      {/* )} */}
+      {/* {apiStore.sellFailed && ( */}
+        <div>
+          <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+          <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
+        </div>
+      {/* )} */}
     </div>
   );
 };
