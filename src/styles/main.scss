@@ -616,6 +616,133 @@ padding: 10px;
   color: white;
 }
 
+//footer css
+.footer{
+  background:#000;
+  color:#fff;
+  padding: 2rem 0;
+  margin-bottom:0;
+}
+.footer-container{
+    margin-left:0px;
+    margin-right: 0px;
+}
+.scroll-to-top{
+  position: absolute;
+  bottom: -154%;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  color: #fff;
+  background-color: #838080;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.scroll-to-top i {
+  font-size: 22px;
+}
+.ft-1{
+  padding-left:80px;  
+  padding-right:80px; 
+}
+.ft-1 img{
+  width:300px;
+  align-items: center;
+}
+.ft-2{
+    padding-left:70px;
+}
+.ft-2 h4{
+    padding-left:45px;
+}
+.ft-2 ul{
+    list-style: none;
+}
+.ft-2 li{
+    padding-top:0px;
+    padding-right: 50px;
+}
+.ft-2 a{
+    color:white;
+}
+.ft-3 {
+  padding-left:80px;
+}
+.ft-4{
+  padding-left:80px;
+}
+
+.ft-4 img{
+  width:50px;
+  height:50px;
+  border-radius: 10px;
+  margin-top:8px;
+  margin-right:10px;
+  font-size:40px; 
+}
+
+.footer-bottom p{
+  margin-bottom:0px;
+  margin-top: 20px;
+  text-align:center;
+  font-size:15px;
+  margin-bottom:0px;
+}
+
+//About Us css
+.about-us {
+  padding: 0 50px;
+  margin-top: 50px;
+  margin-bottom: 80px;
+}
+
+.about-us h2 {
+  text-align: center;
+  font-weight: 400;
+}
+
+.row {
+  display: flex;
+  justify-content: center; 
+  margin: 10px 20px; 
+}
+
+.column {
+  width: 20%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  padding: 0 20px; 
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 20px; 
+  width: 100%;
+  padding: 10px;
+  border: solid black 2px;
+}
 
 
+.card img {
+  display: block;
+  border-radius: 20px;
+  width: 100%;
+  height:220px;
+  object-fit: cover;
+}
+.container {
+  padding: 15px;
+  text-align: center;
+}
 
+.container h2 {
+  font-size: 20px;
+}
+
+.title {
+  color: grey;
+}
