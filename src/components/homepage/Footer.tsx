@@ -45,8 +45,10 @@ const Footer: React.FC = () => {
                          <a href="/"><img src={SocialMedia1} alt="Image Button" style={{ width: '70px',marginLeft:-5,marginRight:3,height:'72px',marginTop:'11px'}}></img></a>
                          <a href="/"><img src={SocialMedia2} alt="Image Button"></img></a>
                          <a href="/"><img src={SocialMedia3} alt="Image Button"></img></a>
+                         
                         </div>
                     </div>
+                    <button style={{padding:10, borderRadius: 100, backgroundColor: 'blue', color: 'white', fontWeight: 'bold'}} onClick={handleScrollToTop}>Back to Top</button>
                 </div>
             </div>
             <div className="footer-bottom">

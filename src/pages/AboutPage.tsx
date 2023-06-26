@@ -2,7 +2,7 @@
 
 import Navbar from "../components/navbar/Navbar"
 import member1 from "../assets/images/bega.jpeg"
-import member2 from "../assets/images/cass.jpeg";
+import member2 from "../assets/images/cass.jpeg"
 import member3 from "../assets/images/vino2.jpeg"
 import member4 from "../assets/images/bentley.jpeg"
 import Footer from "../components/homepage/Footer"
