@@ -5,12 +5,12 @@ const app_id = 1089;
 
 interface Tick {
   epoch: EpochTimeStamp;
-  quote: number;
-  symbol: string;
-  // high?: number;
-  // low?: number;
-  // open?: number;
-  // close?: number;
+  quote?: number;
+  symbol?: string;
+  high?: number;
+  low?: number;
+  open?: number;
+  close?: number;
 }
 
 class ApiStore {
@@ -21,6 +21,7 @@ class ApiStore {
   currentSpot: number | null = null;
   data: any = null;
   basis: string = "stake";
+  chartType: string = "candlestick";
   // proposalTicks: number = 0;
   isDurationEnded: boolean = false;
   proposalData: any[] = [];
@@ -39,7 +40,7 @@ class ApiStore {
     count: 300,
     end: "latest",
     start: 300,
-    style: "ticks",
+    style: "candles"
   };
 
   connection: WebSocket | null = null;
@@ -76,6 +77,10 @@ class ApiStore {
 
   setBasis(basis: string) {
     this.basis = basis;
+  }
+
+  setChartType(chartType: string) {
+    this.chartType = chartType;
   }
 
   setActiveSymbols = (symbols: []) => {
@@ -210,24 +215,69 @@ class ApiStore {
       );
       await this.api.disconnect();
     }
-    if (data.msg_type === "history") {
-      const historyTicks = data.history.prices.map(
-        (price: number, index: number) => ({
-          epoch: data.history.times[index],
-          quote: price,
-        })
-      );
-
-      this.setTicks([...this.ticks, ...historyTicks]);
-
+    if (data.msg_type === "candles") {
+      // if (this.chartType === "candlestick"){
+      const candles = data.candles;
+  
+      const candlesticks: Tick[] = [];
+      let currentMinute: number | null = null;
+      let currentCandle: Tick | null = null;
+  
+      for (const candle of candles) {
+        const epoch = candle.epoch;
+        const minute = new Date(epoch * 1000).getMinutes();
+  
+        if (currentMinute === null || minute !== currentMinute) {
+          // Start a new candle
+          if (currentCandle !== null) {
+            // Add the completed candle to the list
+            candlesticks.push(currentCandle);
+          }
+  
+          // Create a new candle
+          currentCandle = {
+            epoch: epoch,
+            open: candle.open,
+            high: candle.high,
+            low: candle.low,
+            close: candle.close,
+          };
+          currentMinute = minute;
+        } else {
+          // Update the current candle with new values
+          currentCandle!.high = Math.max(currentCandle!.high!, candle.high);
+          currentCandle!.low = Math.min(currentCandle!.low!, candle.low);
+          currentCandle!.close = candle.close;
+        }
+      }
+  
+      if (currentCandle !== null) {
+        // Add the last completed candle to the list
+        candlesticks.push(currentCandle);
+      }
+  
+      this.setTicks(candlesticks);
+  
       this.connection?.removeEventListener(
         "message",
         this.ticksHistoryResponse,
         false
       );
+    // } 
+    // else if (this.chartType === "line") {
+    //   this.ticks = data.candles;
+
+    //   this.setTicks([...this.ticks]);
+
+    //   this.connection?.removeEventListener(
+    //     "message",
+    //     this.ticksHistoryResponse,
+    //     false
+    //   );
+    //   }
     }
   };
-
+  
   tickResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
@@ -235,15 +285,46 @@ class ApiStore {
       this.connection?.removeEventListener("message", this.tickResponse, false);
       await this.api.disconnect();
     }
-    if (data.msg_type === "tick") {
-      const newTick = {
-        epoch: data.tick.epoch,
-        quote: data.tick.quote,
-        symbol: data.tick.symbol,
+    if (data.msg_type === "ohlc") {
+      // if(this.chartType === "candlestick") {
+        const newTick = {
+        epoch: data.ohlc.epoch,
+        close: data.ohlc.close,
+        open: data.ohlc.open,
+        high: data.ohlc.high,
+        low: data.ohlc.low,
       };
-      this.setTicks([...this.ticks, newTick]);
+  
+      const currentMinute = new Date(newTick.epoch * 1000).getMinutes();
+  
+      if (this.ticks.length === 0) {
+        // If there are no previous ticks, add the current tick
+        this.setTicks([newTick]);
+      } else {
+        const lastTick = this.ticks[this.ticks.length - 1];
+        const lastMinute = new Date(lastTick.epoch * 1000).getMinutes();
+  
+        if (currentMinute !== lastMinute) {
+          // If the current tick belongs to a different minute, add it to the list
+          this.setTicks([...this.ticks, newTick]);
+        } else {
+          // Update the previous tick with the new values
+          lastTick.high = Math.max(lastTick.high as number, newTick.high);
+          lastTick.low = Math.min(lastTick.low as number, newTick.low);
+          lastTick.close = newTick.close;
+        }
+      }
+    // } 
+    // else if (this.chartType === "line") {
+    //     const newTick = {
+    //       epoch: data.ohlc.epoch,
+    //       close: data.ohlc.close,
+    //     };
+    //     this.setTicks([...this.ticks, newTick]);
+    //   }
     }
   };
+  
 
   setTicks(ticks: Tick[]) {
     this.ticks = ticks;
