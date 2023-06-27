@@ -18,6 +18,7 @@
     "firebase": "^9.22.2",
     "framer-motion": "^10.12.16",
     "highcharts": "^11.1.0",
+    "highcharts-accessibility": "^0.1.7",
     "highcharts-react-official": "^3.2.0",
     "mobx": "^6.9.0",
     "mobx-react": "^7.6.0",
@@ -31,11 +32,13 @@
     "react-icons": "^4.9.0",
     "react-router-dom": "^6.12.1",
     "react-slick": "^0.29.0",
-    "sass": "^1.63.4"
+    "sass": "^1.63.4",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
+    "@types/react-slick": "^0.23.10",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^4.0.0",

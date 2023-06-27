@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
 import { useParams } from "react-router-dom";
+import { observer } from "mobx-react";
 
 const app_id = 1089;
 const connection = new WebSocket(
@@ -8,7 +9,7 @@ const connection = new WebSocket(
 );
 const api = new DerivAPIBasic({ connection });
 
-const Contract: React.FC = () => {
+const Contract = observer(() => {
   const { id } = useParams<{ id: string }>();
   const [selectedContract, setSelectedContract] = useState<string>("");
   const contracts_for_symbol_request = {
@@ -110,6 +111,6 @@ const Contract: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Contract;

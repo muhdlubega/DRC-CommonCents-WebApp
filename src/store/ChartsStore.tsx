@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeObservable, observable, runInAction } from "mobx";
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
 
 const app_id = 1089;
@@ -14,13 +14,8 @@ interface Tick {
 }
 
 class ChartsStore {
-  duration: number = 5;
-  payout: number = 100;
   activeSymbols: any[] = [];
-  previousSpot: number | null = null;
-  currentSpot: number | null = null;
   data: any = null;
-  basis: string = "stake";
   proposalTicks: number = 0;
   isDurationEnded: boolean = false;
   proposalData: any[] = [];
@@ -37,7 +32,15 @@ class ChartsStore {
   };
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this,{
+      activeSymbols: observable,
+      data: observable,
+      proposalTicks: observable,
+      isDurationEnded: observable,
+      proposalData: observable,
+      selectedSymbol: observable,
+      ticks: observable,
+    });
   }
 
   setProposalTicks(proposalTicks: number) {
@@ -53,14 +56,14 @@ class ChartsStore {
   };
 
 
-  setData(data: any) {
-    this.duration = parseInt(data.duration, 10);
-    this.payout = parseInt(data.display_value, 10);
-    this.basis = data.basis;
-    this.previousSpot = parseFloat(data.spot);
-    this.currentSpot = parseFloat(data.spot);
-    this.proposalTicks = parseInt(data.duration, 10);
-  }
+  // setData(data: any) {
+  //   this.duration = parseInt(data.duration, 10);
+  //   this.payout = parseInt(data.display_value, 10);
+  //   this.basis = data.basis;
+  //   this.previousSpot = parseFloat(data.spot);
+  //   this.currentSpot = parseFloat(data.spot);
+  //   this.proposalTicks = parseInt(data.duration, 10);
+  // }
 
   getActiveSymbols = async () => {
     const active_symbols_request = {
@@ -127,15 +130,17 @@ class ChartsStore {
   ticksHistoryResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
+      runInAction(() => {
       console.log("Error : ", data.error.message);
       connection?.removeEventListener(
         "message",
         this.ticksHistoryResponse,
         false
-      );
+      );})
       await api.disconnect();
     }
     if (data.msg_type === "history") {
+      runInAction(() => {
       const historyTicks = data.history.prices.map((price: number, index: number) => ({
         epoch: data.history.times[index],
         quote: price,
@@ -147,24 +152,28 @@ class ChartsStore {
         "message",
         this.ticksHistoryResponse,
         false
-      );
+      );})
     }
   };
 
   tickResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
+      runInAction(() => {
       console.log("Error: ", data.error.message);
       connection?.removeEventListener("message", this.tickResponse, false);
+      })
       await api.disconnect();
     }
     if (data.msg_type === "tick") {
+      runInAction(() => {
       const newTick = {
         epoch: data.tick.epoch,
         quote: data.tick.quote,
         symbol: data.tick.symbol,
       };
       this.setTicks([...this.ticks, newTick]);
+    })
     }
   };
 
