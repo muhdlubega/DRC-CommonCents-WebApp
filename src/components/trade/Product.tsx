@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import apiStore from '../../store/ApiStore';
 import { observer } from 'mobx-react';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
+import AccessibilityModule from 'highcharts/modules/accessibility';
 
-const Product: React.FC = () => {
+const Product = observer(() => {
   const { id } = useParams();
   // const [chartType, setChartType] = useState('candlestick');
 
@@ -19,6 +20,8 @@ const Product: React.FC = () => {
       apiStore.unsubscribeTicks();
     };
   }, [id]);
+
+  AccessibilityModule(Highcharts);
 
   const chartData = {
     time: {
@@ -46,12 +49,20 @@ const Product: React.FC = () => {
         type: apiStore.chartType,
         color: 'blue',
         lineWidth: 1,
+        accessibility: {
+          enabled: false,
+        },
       },
     ],
   };
 
   const handleChartTypeChange = (newChartType: string) => {
     apiStore.setChartType(newChartType);
+  };
+
+  const handleToggleGranularity = () => {
+    apiStore.toggleGranularity();
+    apiStore.subscribeTicks();
   };
   
 
@@ -74,11 +85,14 @@ const Product: React.FC = () => {
         <button onClick={() => handleChartTypeChange('candlestick')}>
           Candlestick Chart
         </button>
+        <button onClick={handleToggleGranularity}>
+        {apiStore.isHourlyGranularity ? 'Switch to Minutes' : 'Switch to Hours'}
+      </button>
       <div>
       <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={chartData} />
     </div>
     </div>
   );
-};
+});
 
-export default observer(Product);
+export default Product;

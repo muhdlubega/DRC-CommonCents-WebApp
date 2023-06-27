@@ -10,7 +10,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
 
-function AuthModal() {
+const AuthModal = observer(() => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -37,6 +37,8 @@ function AuthModal() {
           message: `Sign Up Successful. Welcome ${res.user.email}`,
           type: "success",
         });
+        
+        authStore.initializeUser(100000, res.user.email as string, res.user.displayName as string, res.user.photoURL as string)
 
         handleClose();
       })
@@ -105,6 +107,6 @@ function AuthModal() {
       </Modal>
     </div>
   );
-}
+});
 
-export default observer(AuthModal);
+export default AuthModal;
