@@ -104,7 +104,7 @@ class ChartsStore {
   };
 
   subscribeTicksGroup = async () => {
-    await this.tickSubscriberGroup();
+  await this.tickSubscriberGroup();
   await this.getTicksHistoryGroup();
   connection.addEventListener('message', this.tickResponse);
   };
