@@ -1,13 +1,15 @@
 import { onAuthStateChanged } from "firebase/auth";
 import {
+  collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { makeAutoObservable } from "mobx";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 
 export interface Alert {
   open: boolean;
@@ -31,15 +33,19 @@ class AuthStore {
   };
   user: User | null = null;
   loading: boolean = false;
-  balance: number | null = null;
+  balance: number | null | undefined = null;
   leaderboard: User[] = [];
   firestore = getFirestore();
-  userDocRef = doc(this.firestore, "users", "user-1");
+  
+  // citiesRef = collection(this.firestore, "users");
+  usersRef = collection(this.firestore, "users");
+  docs = getDocs(collection(this.firestore, "users"));
 
   constructor() {
     makeAutoObservable(this);
+    
     this.initializeUser();
-
+    
     onAuthStateChanged(auth, (user) => {
       if (user) this.setUser(user);
       else this.setUser(null);
@@ -66,27 +72,43 @@ class AuthStore {
   }
 
   async initializeUser() {
-    const userSnapshot = await getDoc(this.userDocRef);
-    if (userSnapshot.exists()) {
-      const userData = userSnapshot.data();
-      if (userData) {
-        this.balance = userData.balance || null;
+    const querySnapshot = await getDocs(collection(db, "users"));
+    querySnapshot.forEach((doc) => {
+      if (auth.currentUser!.uid == doc.id) {
+        this.balance = doc.data().balance || null;
+        console.log(doc.id, " => ", doc.data().balance);
       }
-    }
+    });
+    // if (auth.currentUser) {
+    //   this.setUser(auth.currentUser);
+    //   const userSnapshot = await getDoc(doc(this.usersRef, auth.currentUser!.uid));
+    //   if (userSnapshot.exists()) {
+    //     const userData = userSnapshot.data();
+    //     if (userData) {
+    //       this.balance = this.currUser.balance || null ;
+    //     }
+    //   }
+    // }
   }
 
-  async updateUser(user: User) {
-    await setDoc(this.userDocRef, user);
-  }
+  // async updateUser(user: User) {
+  //   await setDoc(this.userDocRef, user);
+  // }
 
   async setBalance(newBalance: number) {
     this.balance = parseFloat(newBalance.toFixed(2)); ;
-    await updateDoc(this.userDocRef, { balance: newBalance });
+    // await setDoc(this.userDocRef, { balance: newBalance });
+    await setDoc(doc(db, "users", auth.currentUser!.uid), {
+      balance: newBalance
+    });
   }
 
   async setResetBalance(resetBalance: number) {
     this.balance = parseFloat(resetBalance.toFixed(2)); ;
-    await updateDoc(this.userDocRef, { balance: resetBalance });
+    // await setDoc(this.userDocRef, { balance: resetBalance });
+    await setDoc(doc(db, "users", auth.currentUser!.uid), {
+      balance: resetBalance
+    });
   }
 }
 
