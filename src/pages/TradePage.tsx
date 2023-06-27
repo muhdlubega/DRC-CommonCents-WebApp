@@ -1,8 +1,8 @@
 import Navbar from '../components/navbar/Navbar'
 import Product from '../components/trade/Product'
 import Proposal from '../components/trade/Proposal'
-import '../App.css'
 import Symbols from '../components/trade/Symbols'
+import '../styles/main.scss'
 
 const TradePage = () => {
   return (
