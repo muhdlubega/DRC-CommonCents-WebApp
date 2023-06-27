@@ -3,6 +3,7 @@ import chartsStore from '../../store/ChartsStore';
 import { observer } from 'mobx-react';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
+import AccessibilityModule from 'highcharts/modules/accessibility';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import { Link } from 'react-router-dom';
@@ -20,13 +21,15 @@ const LiveData: React.FC = () => {
       chartsStore.subscribeTicksGroup();
     });
 
-    return () => {
-      id_array.forEach((id) => {
-        chartsStore.setSelectedSymbol(id);
-        chartsStore.unsubscribeTicksGroup();
-      });
-    };
+    // return () => {
+    //   id_array.forEach((id) => {
+    //     chartsStore.setSelectedSymbol(id);
+    //     chartsStore.unsubscribeTicksGroup();
+    //   });
+    // };
   }, []);
+
+  AccessibilityModule(Highcharts);
 
   const chartData = id_array.map((id) => {
     const filteredTicks = chartsStore.ticks.filter((tick) => tick.symbol === id);
@@ -53,6 +56,9 @@ const LiveData: React.FC = () => {
         useUTC: false,
       },
       credits: {
+        enabled: false,
+      },
+      accessibility: {
         enabled: false,
       },
       plotOptions: {
