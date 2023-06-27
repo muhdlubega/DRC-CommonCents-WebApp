@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
-import { getDoc, setDoc } from "firebase/firestore";
+import { collection, getDoc, getDocs, setDoc } from "firebase/firestore";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react";
+import { auth, db } from "../../firebase";
 
 const Proposal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,18 +32,25 @@ const Proposal: React.FC = () => {
 
   const handleBuy = async (isHigher: boolean) => {
     setIsProcessing(true); 
+    let balance = 0;
     try {
-      const balanceSnapshot = await getDoc(authStore.userDocRef);
-      if (!balanceSnapshot.exists()) {
-        console.log("Balance document does not exist");
-        return;
-      }
-      const balanceData = balanceSnapshot.data();
-      if (!balanceData || typeof balanceData.balance !== "number") {
-        console.log("Invalid balance data");
-        return;
-      }
-      const currentBalance = balanceData.balance;
+      // const balanceSnapshot = await getDoc(authStore.userDocRef);
+      // if (!balanceSnapshot.exists()) {
+      //   console.log("Balance document does not exist");
+      //   return;
+      // }
+      // const balanceData = balanceSnapshot.data();
+      // if (!balanceData || typeof balanceData.balance !== "number") {
+      //   console.log("Invalid balance data");
+      //   return;
+      // }
+      const balanceSnapshot = await getDocs(collection(db, "users"));
+      balanceSnapshot.forEach((doc) => {
+        if (auth.currentUser!.uid == doc.id) {
+          balance = doc.data().balance || null;
+        }
+      });
+      const currentBalance = balance;
 
       const payoutValue = parseInt(apiStore.payout.toString(), 10);
 
@@ -56,7 +64,7 @@ const Proposal: React.FC = () => {
 
       const newBalance = currentBalance - payoutValue;
       authStore.setBalance(newBalance);
-      await setDoc(authStore.userDocRef, { balance: newBalance });
+      // await setDoc(authStore.userDocRef, { balance: newBalance });
 
       setTimeout(() => handleSell(isHigher), apiStore.duration * 1000);
 
@@ -69,18 +77,25 @@ const Proposal: React.FC = () => {
 
   const handleSell = async (isHigher: boolean) => {
     setIsProcessing(true); 
+    let balance = 0;
     try {
-      const balanceSnapshot = await getDoc(authStore.userDocRef);
-      if (!balanceSnapshot.exists()) {
-        console.log("Balance document does not exist");
-        return;
-      }
-      const balanceData = balanceSnapshot.data();
-      if (!balanceData || typeof balanceData.balance !== "number") {
-        console.log("Invalid balance data");
-        return;
-      }
-      const currentBalance = balanceData.balance;
+      const balanceSnapshot = await getDocs(collection(db, "users"));
+      balanceSnapshot.forEach((doc) => {
+        if (auth.currentUser!.uid == doc.id) {
+          balance = doc.data().balance || null;
+        }
+      });
+      // const balanceSnapshot = await getDoc(authStore.userDocRef);
+      // if (!balanceSnapshot.exists()) {
+      //   console.log("Balance document does not exist");
+      //   return;
+      // }
+      // const balanceData = balanceSnapshot.data();
+      // if (!balanceData || typeof balanceData.balance !== "number") {
+      //   console.log("Invalid balance data");
+      //   return;
+      // }
+      const currentBalance = balance;
 
       const payoutValue = parseInt(apiStore.payout.toString(), 10);
 
@@ -117,7 +132,7 @@ const Proposal: React.FC = () => {
             if (currentSpotValue > previousSpotValue) {
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              await setDoc(authStore.userDocRef, { balance: updatedBalance });
+              // await setDoc(authStore.userDocRef, { balance: updatedBalance });
               console.log("Sell successful", additionalAmount);
               apiStore.setSellSuccessful(true);
               apiStore.setAdditionalAmount(additionalAmount);
@@ -136,7 +151,7 @@ const Proposal: React.FC = () => {
                 ].payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              await setDoc(authStore.userDocRef, { balance: updatedBalance });
+              // await setDoc(authStore.userDocRef, { balance: updatedBalance });
               console.log("Sell successful");
               apiStore.setSellSuccessful(true);
               apiStore.setAdditionalAmount(additionalAmount);
