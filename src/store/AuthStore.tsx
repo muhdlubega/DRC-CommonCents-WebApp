@@ -148,7 +148,8 @@ class AuthStore {
 
 
   async setBalance(newBalance: number) {
-    this.balance = parseFloat(newBalance.toFixed(2)); ;
+    runInAction(() => {
+    this.balance = parseFloat(newBalance.toFixed(2)); })
     // await setDoc(this.userDocRef, { balance: newBalance });
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: newBalance
@@ -156,7 +157,8 @@ class AuthStore {
   }
 
   async setResetBalance(resetBalance: number) {
-    this.balance = parseFloat(resetBalance.toFixed(2)); ;
+    runInAction(() => {
+    this.balance = parseFloat(resetBalance.toFixed(2)); })
     // await setDoc(this.userDocRef, { balance: resetBalance });
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: resetBalance

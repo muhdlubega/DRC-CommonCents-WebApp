@@ -222,7 +222,7 @@ class ApiStore {
 
   subscribeTicks = async () => {
     this.unsubscribeTicks();
-    // this.connectWebSocket();
+    this.connectWebSocket();
 
     await this.tickSubscriber();
     await this.getTicksHistory();
@@ -232,7 +232,7 @@ class ApiStore {
   unsubscribeTicks = () => {
     this.connection?.removeEventListener("message", this.tickResponse, false);
     this.tickSubscriber().unsubscribe();
-    // this.disconnectWebSocket();
+    this.disconnectWebSocket();
   };
 
   getTicksHistory = async () => {
