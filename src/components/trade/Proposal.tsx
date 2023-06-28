@@ -4,10 +4,9 @@ import "../../styles/main.scss";
 import { collection, getDocs } from "firebase/firestore";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
 
-//observer to mobx-react lite
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);

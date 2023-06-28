@@ -4,7 +4,7 @@ import { useState } from "react";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 interface LoginProps {
   handleClose: () => void;

@@ -5,7 +5,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 const UserSidebar = observer(() => {
   const [state, setState] = useState({
