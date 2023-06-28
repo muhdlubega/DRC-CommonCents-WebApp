@@ -1,22 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
-import { collection, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
 
-const Proposal: React.FC = () => {
+const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  // const [sellSuccessful, setSellSuccessful] = useState(false);
-  // const [additionalAmount, setAdditionalAmount] = useState(0);
-  // const [sellFailed, setSellFailed] = useState(false);
-  // const [deductedAmount, setDeductedAmount] = useState(0);
-  // const [totalAmountWon, setTotalAmountWon] = useState(0);
-  // const [totalAmountLost, setTotalAmountLost] = useState(0);
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.value, 10);
@@ -25,7 +19,9 @@ const Proposal: React.FC = () => {
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newPayout = parseInt(event.target.value, 10);
+    console.log('e', event.target.value);
+    
+    const newPayout = parseInt(event.target.value);
     apiStore.setPayout(newPayout);
     // apiStore.subscribeProposal();
   };
@@ -116,6 +112,11 @@ const Proposal: React.FC = () => {
           ].spot;
         const currentSpot =
           apiStore.proposalData[apiStore.proposalData.length - 1].spot;
+
+          console.log("prev", previousSpot);
+          console.log("next", currentSpot);
+          
+          
           const additionalAmount =
           apiStore.proposalData[
             apiStore.proposalData.length - apiStore.duration
@@ -184,24 +185,24 @@ const Proposal: React.FC = () => {
 
     if (id) {
         apiStore.getProposal(id);
-      const proposal = document.querySelector<HTMLButtonElement>("#proposal");
-      proposal?.addEventListener("click", () => apiStore.getProposal(id));
+      // const proposal = document.querySelector<HTMLButtonElement>("#proposal");
+      // proposal?.addEventListener("click", () => apiStore.getProposal(id));
 
-      const proposal_unsubscribe = document.querySelector<HTMLButtonElement>(
-        "#proposal-unsubscribe"
-      );
-      proposal_unsubscribe?.addEventListener(
-        "click",
-        apiStore.unsubscribeProposal
-      );
+      // const proposal_unsubscribe = document.querySelector<HTMLButtonElement>(
+      //   "#proposal-unsubscribe"
+      // );
+      // proposal_unsubscribe?.addEventListener(
+      //   "click",
+      //   apiStore.unsubscribeProposal
+      // );
 
-      return () => {
-        proposal?.removeEventListener("click", () => apiStore.getProposal(id));
-        proposal_unsubscribe?.removeEventListener(
-          "click",
-          apiStore.unsubscribeProposal
-        );
-      };
+      // return () => {
+      //   proposal?.removeEventListener("click", () => apiStore.getProposal(id));
+      //   proposal_unsubscribe?.removeEventListener(
+      //     "click",
+      //     apiStore.unsubscribeProposal
+      //   );
+      // };
     }
   }, [id, apiStore.payout, apiStore.duration]);
 
@@ -232,13 +233,12 @@ const Proposal: React.FC = () => {
       <div>
         <span>Set Price: </span>
         <input
-          type="range"
-          min="1"
-          max="500"
-          value={apiStore.payout}
-          onChange={handlePayoutChange}
-        />
-        <span>{apiStore.payout}</span>
+  type="number"
+  value={apiStore.payout}
+  onChange={handlePayoutChange}
+  min="1" max="500"
+/>
+        <span>Input number between 1 and 500</span>
       </div>
       <div>
         <span>Ticks: </span>
@@ -285,6 +285,6 @@ const Proposal: React.FC = () => {
       {/* )} */}
     </div>
   );
-};
+});
 
-export default observer(Proposal);
+export default Proposal;

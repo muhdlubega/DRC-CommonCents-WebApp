@@ -5,9 +5,9 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
-function UserSidebar() {
+const UserSidebar = observer(() => {
   const [state, setState] = useState({
     right: false,
   });
@@ -44,6 +44,20 @@ function UserSidebar() {
   const userEmail = authStore.user?.email || "";
   const userPhotoURL = authStore.user?.photoURL || "";
 
+  // async initializeUser() {
+  //   const querySnapshot = await getDocs(collection(db, "users"));
+  //   const leaderboardData = [];
+  //   querySnapshot.forEach((doc) => {
+  //     const { displayName, email, balance } = doc.data();
+  //     leaderboardData.push({ displayName, email, balance });
+  //     if (auth.currentUser && auth.currentUser.uid === doc.id) {
+  //       this.balance = balance || null;
+  //     }
+  //   });
+    
+  //     this.leaderboard = leaderboardData.sort((a, b) => b.balance - a.balance);
+  // }
+
   return (
     <div>
       <Avatar
@@ -71,6 +85,16 @@ function UserSidebar() {
             >
               {userDisplayName || userEmail}
             </span>
+          </div>
+          <div className="sidebar-leaderboard">
+            <h2>Leaderboard</h2>
+            <ol>
+              {authStore.leaderboard.map((user, index) => (
+                <li key={index}>
+                  {user.displayName || user.email} - {user.balance!.toFixed(2)} USD
+                </li>
+              ))}
+            </ol>
           </div>
           <span
             style={{
@@ -103,6 +127,6 @@ function UserSidebar() {
       </Drawer>
     </div>
   );
-}
+});
 
-export default observer(UserSidebar);
+export default UserSidebar;

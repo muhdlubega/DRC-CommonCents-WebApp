@@ -4,13 +4,13 @@ import { useState } from "react";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 interface LoginProps {
   handleClose: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ handleClose }) => {
+const Login = observer(({ handleClose }: LoginProps) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -79,6 +79,6 @@ const Login: React.FC<LoginProps> = ({ handleClose }) => {
       </Button>
     </Box>
   );
-};
+});
 
-export default observer(Login);
+export default Login;
