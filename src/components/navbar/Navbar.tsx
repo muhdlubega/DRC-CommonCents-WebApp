@@ -4,7 +4,7 @@ import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
 // import { useGlobalState } from "../../store/Context";
 import AuthStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 const Header = () => {
   const navigate = useNavigate();

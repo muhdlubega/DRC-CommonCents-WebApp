@@ -1,9 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LazyTradePage from './pages/TradePage'
 
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
-// const LazyTradePage = lazy(() => import("./pages/TradePage"));
+const LazyTradePage = lazy(() => import("./pages/TradePage"));
 const LazyNewsPage = lazy(() => import("./pages/NewsPage"));
 const LazyAboutPage = lazy(() => import("./pages/AboutPage"));
 

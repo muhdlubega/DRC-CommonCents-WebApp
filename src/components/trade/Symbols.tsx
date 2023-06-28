@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/main.scss';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import apiStore from '../../store/ApiStore';
 
-const Symbols: React.FC = () => {
+const Symbols = observer(() => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +34,6 @@ const Symbols: React.FC = () => {
       </select>
     </div>
   );
-};
+});
 
-export default observer(Symbols);
+export default Symbols;
