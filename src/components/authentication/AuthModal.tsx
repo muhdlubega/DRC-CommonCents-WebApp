@@ -8,7 +8,7 @@ import { auth } from "../../firebase";
 import GoogleButton from "react-google-button";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 const AuthModal = observer(() => {
   const [open, setOpen] = useState(false);

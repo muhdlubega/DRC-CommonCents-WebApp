@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import chartsStore from '../../store/ChartsStore';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import AccessibilityModule from 'highcharts/modules/accessibility';

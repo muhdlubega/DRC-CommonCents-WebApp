@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 interface SignupProps {
   handleClose: () => void;

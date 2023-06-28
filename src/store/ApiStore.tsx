@@ -24,7 +24,8 @@ class ApiStore {
   basis: string = "stake";
   chartType: string = "candlestick";
   isDurationEnded: boolean = false;
-  isHourlyGranularity: boolean = false;
+  // isHourlyGranularity: boolean = false;
+  isTicks: boolean = false;
   proposalData: any[] = [];
   selectedSymbol: string = "";
   ticks: Tick[] = [];
@@ -34,16 +35,6 @@ class ApiStore {
   deductedAmount: number = 0;
   totalAmountWon: number = 0;
   totalAmountLost: number = 0;
-
-  ticks_history_request = {
-    ticks_history: "",
-    adjust_start_time: 1,
-    count: 300,
-    granularity: this.granularity,
-    end: "latest",
-    start: 300,
-    style: "candles",
-  };
 
   connection: WebSocket | null = null;
   api: any = null;
@@ -60,7 +51,8 @@ class ApiStore {
       basis: observable,
       chartType: observable,
       isDurationEnded: observable,
-      isHourlyGranularity: observable,
+      // isHourlyGranularity: observable,
+      isTicks: observable,
       proposalData: observable,
       selectedSymbol: observable,
       ticks: observable,
@@ -98,7 +90,6 @@ class ApiStore {
   }
 
   setPayout(payout: number) {
-    
     this.payout = payout;
     // this.unsubscribeProposal();
   }
@@ -132,27 +123,39 @@ class ApiStore {
   }
 
   setSellSuccessful(sellSuccessful: boolean) {
+    runInAction(() => {
     this.sellSuccessful = sellSuccessful;
+    })
   }
 
   setAdditionalAmount(additionalAmount: number) {
+    runInAction(() => {
     this.additionalAmount = additionalAmount;
+    })
   }
 
   setSellFailed(sellFailed: boolean) {
+    runInAction(() => {
     this.sellFailed = sellFailed;
+    })
   }
 
   setDeductedAmount(deductedAmount: number) {
+    runInAction(() => {
     this.deductedAmount = deductedAmount;
+    })
   }
 
   setTotalAmountWon(totalAmountWon: number) {
+    runInAction(() => {
     this.totalAmountWon = totalAmountWon;
+    })
   }
 
   setTotalAmountLost(totalAmountLost: number) {
+    runInAction(() => {
     this.totalAmountLost = totalAmountLost;
+    })
   }
 
   // setData(data: any) {
@@ -164,11 +167,20 @@ class ApiStore {
   //   // this.proposalTicks = parseInt(data.duration, 10);
   // }
 
-  toggleGranularity() {
-    this.isHourlyGranularity = !this.isHourlyGranularity;
-    this.ticks_history_request.granularity = this.isHourlyGranularity
-      ? 3600
-      : 60;
+  // toggleGranularity() {
+  //   this.isHourlyGranularity = !this.isHourlyGranularity;
+  //   this.ticks_history_request.granularity = this.isHourlyGranularity
+  //     ? 3600
+  //     : 60;
+  // }
+
+  setGranularity(granularity: number){
+    this.granularity = granularity
+    this.ticks_history_request.granularity = granularity
+  }
+
+  toggleTicks(isTicks: boolean){
+    this.isTicks = isTicks;
   }
 
   handleActiveSymbolsResponse = async (res: MessageEvent) => {
@@ -226,6 +238,7 @@ class ApiStore {
 
     await this.tickSubscriber();
     await this.getTicksHistory();
+    
     this.connection?.addEventListener("message", this.tickResponse);
   };
 
@@ -235,12 +248,43 @@ class ApiStore {
     this.disconnectWebSocket();
   };
 
+  ticks_history_request = 
+  // this.isTicks ? {
+  //   ticks_history: "",
+  //   adjust_start_time: 1,
+  //   count: 1000,
+  //   end: "latest",
+  //   start: 1,
+  //   style: "ticks",
+  // } : 
+  {
+    ticks_history: "",
+    adjust_start_time: 1,
+    count: 1000,
+    granularity: this.granularity,
+    end: "latest",
+    start: this.granularity = 86400 ? 1680040550 : 1,
+    style: "candles",
+  };
+
+  ticks_history_request_ticks = 
+  {
+    ticks_history: "",
+    adjust_start_time: 1,
+    count: 1000,
+    end: "latest",
+    start: 1,
+    style: "ticks",
+  };
+
   getTicksHistory = async () => {
     runInAction(() => {
       this.ticks_history_request.ticks_history = this.selectedSymbol;
+      // this.ticks_history_request_ticks.ticks_history = this.selectedSymbol;
 
       this.connection?.addEventListener("message", this.ticksHistoryResponse);
     });
+    // await this.api.ticksHistory(this.isTicks ? this.ticks_history_request_ticks : this.ticks_history_request);
     await this.api.ticksHistory(this.ticks_history_request);
   };
 
@@ -251,6 +295,8 @@ class ApiStore {
 
   ticksHistoryResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
+    // console.log(data.msg_type);
+    
     if (data.error !== undefined) {
       runInAction(() => {
         console.log("Error : ", data.error.message);
@@ -262,20 +308,28 @@ class ApiStore {
       });
       await this.api.disconnect();
     }
-    if (data.msg_type === "candles") {
+    else if (data.msg_type === "candles") {
       runInAction(() => {
         // if (this.chartType === "candlestick"){
         const candles = data.candles;
 
         const candlesticks: Tick[] = [];
-        let currentMinute: number | null = null;
+        let currentTime: number | null = null;
         let currentCandle: Tick | null = null;
 
         for (const candle of candles) {
           const epoch = candle.epoch;
-          const minute = new Date(epoch * 1000).getMinutes();
+          // let time = 0;
+          // // const time = this.isHourlyGranularity ? new Date(epoch * 1000).getHours() : new Date(epoch * 1000).getMinutes();
+          // if(this.granularity = 60){
+          //   time = new Date(epoch * 1000).getMinutes();
+          // } else if (this.granularity = 3600){
+          //   time = new Date(epoch * 1000).getHours();
+          // } else if (this.granularity = 86400){
+          //   time = new Date(epoch * 1000).getDay();
+          // }
 
-          if (currentMinute === null || minute !== currentMinute) {
+          if (currentTime === null || (epoch * 1000) !== currentTime) {
             // Start a new candle
             if (currentCandle !== null) {
               // Add the completed candle to the list
@@ -285,17 +339,17 @@ class ApiStore {
             // Create a new candle
             currentCandle = {
               epoch: epoch,
-              open: candle.open,
-              high: candle.high,
-              low: candle.low,
-              close: candle.close,
+              open: Number(candle.open),
+              high: Number(candle.high),
+              low: Number(candle.low),
+              close: Number(candle.close),
             };
-            currentMinute = minute;
+            currentTime = epoch * 1000;
           } else {
             // Update the current candle with new values
             currentCandle!.high = Math.max(currentCandle!.high!, candle.high);
             currentCandle!.low = Math.min(currentCandle!.low!, candle.low);
-            currentCandle!.close = candle.close;
+            currentCandle!.close = Number(candle.close);
           }
         }
 
@@ -324,6 +378,16 @@ class ApiStore {
       //     false
       //   );
       //   }
+    } else if (data.msg_type === 'history') {
+      const historyTicks = data.history.prices.map((price: number, index: number) => ({
+        epoch: data.history.times[index],
+        quote: Number(price),
+      }));
+
+      this.setTicks([...this.ticks, ...historyTicks]);
+      // this.loadedTicks += historyTicks.length;
+
+      this.connection?.removeEventListener('message', this.ticksHistoryResponse, false);
     }
   };
 
@@ -340,37 +404,65 @@ class ApiStore {
       });
       await this.api.disconnect();
     }
-    if (data.msg_type === "ohlc") {
+    else if (data.msg_type === "ohlc") {
       runInAction(() => {
         // if(this.chartType === "candlestick") {
         const newTick = {
           epoch: data.ohlc.epoch,
-          close: data.ohlc.close,
-          open: data.ohlc.open,
-          high: data.ohlc.high,
-          low: data.ohlc.low,
+          close: Number(data.ohlc.close),
+          open: Number(data.ohlc.open),
+          high: Number(data.ohlc.high),
+          low: Number(data.ohlc.low),
         };
 
-        const currentMinute = new Date(newTick.epoch * 1000).getMinutes();
+        // const currentTime = this.isHourlyGranularity ? new Date(newTick.epoch * 1000).getHours() : new Date(newTick.epoch * 1000).getMinutes();
+        let currentTime = 0;
+        if(this.granularity = 60){
+          if (this.isTicks){
+            currentTime = newTick.epoch * 1000;  
+          } else{
+          currentTime = new Date(newTick.epoch * 1000).getMinutes();
+          }
+        } else if (this.granularity = 3600){
+          currentTime = new Date(newTick.epoch * 1000).getHours();
+        } else if (this.granularity = 86400){
+          currentTime = new Date(newTick.epoch * 1000).getDay();
+        }     
+        // const currentTime = newTick.epoch * 1000;   
 
         if (this.ticks.length === 0) {
           // If there are no previous ticks, add the current tick
           this.setTicks([newTick]);
         } else {
           const lastTick = this.ticks[this.ticks.length - 1];
-          const lastMinute = new Date(lastTick.epoch * 1000).getMinutes();
+          // const lastTime = this.isHourlyGranularity ? new Date(lastTick.epoch * 1000).getHours() : new Date(lastTick.epoch * 1000).getMinutes();
+          let lastTime = 0;
+        if(this.granularity = 60){
+          if (this.isTicks){
+            lastTime = lastTick.epoch * 1000;  
+          } else{
+          lastTime = new Date(lastTick.epoch * 1000).getMinutes();
+          }
+        } else if (this.granularity = 3600){
+          lastTime = new Date(lastTick.epoch * 1000).getHours();
+        } else if (this.granularity = 86400){
+          lastTime = new Date(lastTick.epoch * 1000).getDay();
+        }
+        // const lastTime = lastTick.epoch * 1000;
 
-          if (currentMinute !== lastMinute) {
+          if (currentTime !== lastTime) {
             // If the current tick belongs to a different minute, add it to the list
+            // console.log(this.ticks, "before");
             this.setTicks([...this.ticks, newTick]);
+            // console.log(this.ticks, "after");
           } else {
             // Update the previous tick with the new values
             lastTick.high = Math.max(lastTick.high as number, newTick.high);
             lastTick.low = Math.min(lastTick.low as number, newTick.low);
-            lastTick.close = newTick.close;
+            lastTick.close = Number(newTick.close);
           }
-        }
-      });
+        } 
+
       // }
       // else if (this.chartType === "line") {
       //     const newTick = {
@@ -379,7 +471,16 @@ class ApiStore {
       //     };
       //     this.setTicks([...this.ticks, newTick]);
       //   }
+
+      });
+    } else if (data.msg_type === 'tick') {
+      const newTick = {
+        epoch: data.tick.epoch,
+        quote: Number(data.tick.quote),
+      };
+      this.setTicks([...this.ticks, newTick]);
     }
+    
   };
 
   setTicks(ticks: Tick[]) {
@@ -429,8 +530,35 @@ class ApiStore {
       symbol: id,
     };
 
+    const keepAlive = () => proposal_request;
+
+    const keepAliveRes = async (res: any) => {
+      const data = JSON.parse(res.data);
+      if (data.error !== undefined) {
+        runInAction(() => {
+          console.log("Error: %s ", data.error.message);
+          this.connection?.removeEventListener(
+            "message",
+            keepAliveRes,
+            false
+          );
+        });
+        await this.api.disconnect();
+      } else if (data.msg_type === "ping") {
+        runInAction(() => {
+          console.log(data.msg_type);
+          console.log("ping");
+        });
+      }
+    };
+  
+    const checkSignal = async () => {
+      keepAlive();
+      this.connection?.addEventListener("message", keepAliveRes);
+    };
+
     try {
-      // this.checkSignal();
+      checkSignal();
       this.unsubscribeProposal();
       this.connection?.addEventListener("message", this.proposalResponse);
       await this.api.proposal(proposal_request);
@@ -460,45 +588,8 @@ class ApiStore {
     // await this.api.disconnect();
   };
 
-  // keepAlive = () => {
-  //   this.api.subscribe({
-  //     proposal: 1,
-  //     subscribe: 1,
-  //     amount: 10,
-  //     basis: "payout",
-  //     contract_type: "CALL",
-  //     currency: "USD",
-  //     duration: 1,
-  //     duration_unit: "m",
-  //     symbol: "R_100",
-  //     barrier: "+0.1",
-  //   });
-  // };
 
-  // keepAliveRes = async (res: any) => {
-  //   const data = JSON.parse(res.data);
-  //   if (data.error !== undefined) {
-  //     runInAction(() => {
-  //       console.log("Error: %s ", data.error.message);
-  //       this.connection?.removeEventListener(
-  //         "message",
-  //         this.keepAliveRes,
-  //         false
-  //       );
-  //     });
-  //     await this.api.disconnect();
-  //   } else if (data.msg_type === "ping") {
-  //     runInAction(() => {
-  //       console.log(data.msg_type);
-  //       console.log("ping");
-  //     });
-  //   }
-  // };
-
-  // checkSignal = async () => {
-  //   // this.keepAlive();
-  //   this.connection?.addEventListener("message", this.keepAliveRes);
-  // };
+  
 }
 
 const apiStore = new ApiStore();
