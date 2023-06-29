@@ -1,6 +1,6 @@
 // import React from 'react'
 
-import LatestNews from "../components/homepage/LatestNews"
+// import LatestNews from "../components/homepage/LatestNews"
 import Navbar from "../components/navbar/Navbar"
 import NewsTopic from "../components/newspage/NewsTopic"
 import '../styles/main.scss'
@@ -15,7 +15,7 @@ const NewsPage = () => {
           <p className="newspage-title">CommonCents NewsHub</p>
         </div>
       </div></div>
-        <LatestNews/>
+        {/* <LatestNews/> */}
         <NewsTopic/>
     </div>
   )

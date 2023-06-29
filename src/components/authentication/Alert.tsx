@@ -20,6 +20,11 @@ const Alert = observer(() => {
       open={authStore.alert.open}
       autoHideDuration={3000}
       onClose={handleCloseAlert}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "left",
+      }}
+      style={{ marginTop: "64px", marginRight: "16px" }} 
     >
       <MuiAlert
         onClose={handleCloseAlert}
