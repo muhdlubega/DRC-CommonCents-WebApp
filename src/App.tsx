@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Alert from './components/authentication/Alert';
 
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 const LazyTradePage = lazy(() => import("./pages/TradePage"));
@@ -16,6 +17,7 @@ function App() {
         <Route path="/news" element={<Suspense fallback={<div>Loading..</div>}><LazyNewsPage /></Suspense>}></Route>
         <Route path="/about" element={<Suspense fallback={<div>Loading..</div>}><LazyAboutPage /></Suspense>}></Route>
       </Routes>
+      <Alert/>
     </BrowserRouter>
   );
 }

@@ -7,7 +7,7 @@ import {
   setDoc,
   updateDoc
 } from "firebase/firestore";
-import { makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { auth, db } from "../firebase";
 
 export interface Alert {
@@ -24,8 +24,8 @@ export interface User {
 }
 
 class AuthStore {
-  currency: string = "INR";
-  symbol: string = "₹";
+  currency: string = "USD";
+  symbol: string = "$";
   alert: Alert = {
     open: false,
     message: "",
@@ -57,7 +57,15 @@ class AuthStore {
       leaderboard: observable,
       firestore: observable,
       usersRef: observable,
-      docs: observable
+      docs: observable,
+      setCurrency: action.bound,
+      setAlert: action.bound,
+      setUser: action.bound,
+      setLoading: action.bound,
+      initializeLeaderboard: action.bound,
+      initializeUser: action.bound,
+      setBalance: action.bound,
+      setResetBalance: action.bound,
     });
     
     this.initializeLeaderboard();
@@ -70,8 +78,8 @@ class AuthStore {
 
   setCurrency(currency: string) {
     this.currency = currency;
-    if (currency === "INR") this.symbol = "₹";
-    else if (currency === "USD") this.symbol = "$";
+    if (currency === "USD") this.symbol = "$";
+    else if (currency === "MYR") this.symbol = "RM";
   }
 
   setAlert(alert: Alert) {
@@ -80,9 +88,9 @@ class AuthStore {
   }
 
   setUser(user: User | null) {
-    runInAction(() => {
+    // runInAction(() => {
     this.user = user;
-    })
+    // })
   }
 
   setLoading(loading: boolean) {
@@ -148,8 +156,9 @@ class AuthStore {
 
 
   async setBalance(newBalance: number) {
-    runInAction(() => {
-    this.balance = parseFloat(newBalance.toFixed(2)); })
+    // runInAction(() => {
+    this.balance = parseFloat(newBalance.toFixed(2)); 
+  // })
     // await setDoc(this.userDocRef, { balance: newBalance });
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: newBalance
@@ -157,8 +166,9 @@ class AuthStore {
   }
 
   async setResetBalance(resetBalance: number) {
-    runInAction(() => {
-    this.balance = parseFloat(resetBalance.toFixed(2)); })
+    // runInAction(() => {
+    this.balance = parseFloat(resetBalance.toFixed(2)); 
+  // })
     // await setDoc(this.userDocRef, { balance: resetBalance });
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: resetBalance

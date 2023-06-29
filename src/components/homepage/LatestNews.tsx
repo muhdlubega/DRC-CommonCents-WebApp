@@ -1,24 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getNews } from "../../config/NewsApi";
 import AliceCarousel from "react-alice-carousel";
 import { Link } from "react-router-dom";
 import '../../styles/main.scss'
+import newsStore, { NewsItem } from "../../store/NewsStore";
 
-interface NewsItem{
-    title: string;
-    banner_image: string;
-    url: string;
-  }
 
 const LatestNews = () => {
-    const [news, setNews] = useState([]);
+    // const [news, setNews] = useState([]);
 
     const fetchNews = async () => {
         try {
           const response = await getNews();
           const { data } = response;
           const feed = data?.feed || [];
-          setNews(feed);
+          newsStore.setNews(feed);
           console.log(feed)
         } catch (error) {
           console.error('Error fetching news:', error);
@@ -39,7 +35,7 @@ const LatestNews = () => {
     },
   };
 
-  const items = news.map((article: NewsItem | null) => {
+  const items = newsStore.news.map((article: NewsItem | null) => {
     if (!article) return null;
     return (
       <Link

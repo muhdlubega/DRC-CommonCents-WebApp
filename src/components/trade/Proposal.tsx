@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
 import { collection, getDocs } from "firebase/firestore";
+import { Box, Button, Typography } from '@mui/material';
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
@@ -207,41 +208,36 @@ const Proposal = observer(() => {
   }, [id, apiStore.payout, apiStore.duration]);
 
   return (
-    <div>
-      <div className="proposal-btn-group">
-        <button
+    <Box>
+      <Box className="proposal-btn-group">
+        <Button
           style={{
-            backgroundColor: apiStore.basis === "payout" ? "blue" : "white",
-            color: apiStore.basis === "payout" ? "white" : "blue",
+            backgroundColor: apiStore.basis === 'payout' ? 'blue' : 'white',
+            color: apiStore.basis === 'payout' ? 'white' : 'blue',
           }}
           className="proposal-options"
-          onClick={() => apiStore.setBasis("payout")}
+          onClick={() => apiStore.setBasis('payout')}
         >
           Payout
-        </button>
-        <button
+        </Button>
+        <Button
           style={{
-            backgroundColor: apiStore.basis === "stake" ? "blue" : "white",
-            color: apiStore.basis === "stake" ? "white" : "blue",
+            backgroundColor: apiStore.basis === 'stake' ? 'blue' : 'white',
+            color: apiStore.basis === 'stake' ? 'white' : 'blue',
           }}
           className="proposal-options"
-          onClick={() => apiStore.setBasis("stake")}
+          onClick={() => apiStore.setBasis('stake')}
         >
           Stake
-        </button>
-      </div>
-      <div>
-        <span>Set Price: </span>
-        <input
-  type="number"
-  value={apiStore.payout}
-  onChange={handlePayoutChange}
-  min="1" max="500"
-/>
-        <span>Input number between 1 and 500</span>
-      </div>
-      <div>
-        <span>Ticks: </span>
+        </Button>
+      </Box>
+      <Box>
+        <Typography component="span">Set Price: </Typography>
+        <input type="number" value={apiStore.payout} onChange={handlePayoutChange} min="1" max="500" />
+        <Typography component="span">Input number between 1 and 500</Typography>
+      </Box>
+      <Box>
+        <Typography component="span">Ticks: </Typography>
         <input
           type="range"
           min="1"
@@ -249,41 +245,42 @@ const Proposal = observer(() => {
           value={apiStore.duration}
           onChange={handleDurationChange}
         />
-        <span>{apiStore.duration}</span>
-      </div>
-
-      <button hidden id="proposal" className="proposal-btn">
-        Subscribe proposal
-      </button>
-      <button hidden id="proposal-unsubscribe" className="resetBtn">
-        Unsubscribe proposal
-      </button>
-      <div ref={proposalContainerRef} id="proposalContainer"></div>
-      <span className="proposal-btn-group">
-        <button className={`proposal-btn-higher ${isProcessing ? "processing" : ""}`}
+      </Box>
+      
+      <Box ref={proposalContainerRef} id="proposalContainer"></Box>
+      <Box className="proposal-btn-group">
+        <Button
+          className={`proposal-btn-higher ${isProcessing ? 'processing' : ''}`}
           onClick={() => handleBuy(true)}
-          disabled={isProcessing}>
+          disabled={isProcessing}
+        >
           Higher
-        </button>
-        <button className={`proposal-btn-lower ${isProcessing ? "processing" : ""}`}
+        </Button>
+        <Button
+          className={`proposal-btn-lower ${isProcessing ? 'processing' : ''}`}
           onClick={() => handleBuy(false)}
-          disabled={isProcessing}>
+          disabled={isProcessing}
+        >
           Lower
-        </button>
-      </span>
-      {/* {apiStore.sellSuccessful && ( */}
-        <div>
-          <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
-          <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
-        </div>
-      {/* )} */}
-      {/* {apiStore.sellFailed && ( */}
-        <div>
-          <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
-          <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
-        </div>
-      {/* )} */}
-    </div>
+        </Button>
+      </Box>
+      <Box>
+        {apiStore.sellSuccessful && (
+          <div>
+            <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+            <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
+          </div>
+        )}
+      </Box>
+      <Box>
+        {apiStore.sellFailed && (
+          <div>
+            <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+            <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
+          </div>
+        )}
+      </Box>
+    </Box>
   );
 });
 

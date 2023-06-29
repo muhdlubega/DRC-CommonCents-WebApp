@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import apiStore from '../../store/ApiStore';
 import { observer } from 'mobx-react-lite';
+import { Box, Button } from '@mui/material';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import AccessibilityModule from 'highcharts/modules/accessibility';
+
+import apiStore from '../../store/ApiStore';
 
 const Chart = observer(() => {
   const { id } = useParams();
@@ -27,25 +29,30 @@ const Chart = observer(() => {
       useUTC: false,
     },
     credits: {
-      enabled: false
+      enabled: false,
+    },
+    rangeSelector: {
+      selected: 3,
+      enabled: false,
     },
     chart: {
-      height: (9 / 16 * 100) + '%'
-  },
+      height: `${(9 / 16) * 100}%`,
+    },
     series: [
       {
         name: apiStore.selectedSymbol,
-        data: 
-        apiStore.chartType === 'candlestick' ?
-        apiStore.ticks.slice(-1000).map((tick) => ({
-          x: tick.epoch * 1000,
-          open: Number(tick.open),
-          high: Number(tick.high),
-          low: Number(tick.low),
-          close: Number(tick.close),
-        })) : 
-        apiStore.ticks.slice(-1000)
-        .map((tick) => [tick.epoch * 1000, tick.close]),
+        data:
+          apiStore.chartType === 'candlestick'
+            ? apiStore.ticks
+                .slice(-1000)
+                .map((tick) => ({
+                  x: tick.epoch * 1000,
+                  open: Number(tick.open),
+                  high: Number(tick.high),
+                  low: Number(tick.low),
+                  close: Number(tick.close),
+                }))
+            : apiStore.ticks.slice(-1000).map((tick) => [tick.epoch * 1000, tick.close]),
         type: apiStore.chartType,
         color: apiStore.chartType === 'candlestick' ? 'red' : 'blue',
         upColor: 'green',
@@ -68,55 +75,59 @@ const Chart = observer(() => {
     apiStore.subscribeTicks();
   };
 
-  // const ToggleGranularity = () => {
-  //   apiStore.toggleGranularity();
-  //   apiStore.subscribeTicks;
-  // }
-
   const handleTicksChange = async () => {
-    apiStore.toggleTicks(true);    
+    apiStore.toggleTicks(true);
     await apiStore.subscribeTicks();
     apiStore.setChartType('line');
-  }; 
+  };
 
   return (
-    <div>
-      <div>
-        <button hidden id="ticks" className="submitBtn">
+    <Box>
+      <Box>
+        <Button hidden id="ticks" className="submitBtn">
           Subscribe Ticks
-        </button>
-        <button hidden id="ticks-unsubscribe" className="resetBtn">
+        </Button>
+        <Button hidden id="ticks-unsubscribe" className="resetBtn">
           Unsubscribe Ticks
-        </button>
-        <button hidden id="ticks-history" className="historyBtn">
+        </Button>
+        <Button hidden id="ticks-history" className="historyBtn">
           Get Tick History
-        </button>
-      </div>
-      <button style={{margin: 20, borderRadius: 5, height: 35, width: 100, cursor: 'pointer'}} onClick={() => handleChartTypeChange('line')}>
-          Line Chart
-        </button>
-        <button style={{margin: 20, borderRadius: 5, height: 35, width: 160, cursor: 'pointer'}} onClick={() => handleChartTypeChange('candlestick')}>
-          Candlestick Chart
-        </button>
-        <button style={{margin: 20, borderRadius: 5, height: 35, width: 150, cursor: 'pointer'}} onClick={handleTicksChange}>
+        </Button>
+      </Box>
+      <Button
+        onClick={() => handleChartTypeChange('line')}
+      >
+        Line Chart
+      </Button>
+      <Button
+        onClick={() => handleChartTypeChange('candlestick')}
+      >
+        Candlestick Chart
+      </Button>
+      <Button
+        onClick={handleTicksChange}
+      >
         Ticks
-      </button>
-      {/* <button style={{margin: 20, borderRadius: 5, height: 35, width: 150, cursor: 'pointer'}} onClick={ToggleGranularity}>
-        Switch Time
-      </button> */}
-        <button style={{margin: 20, borderRadius: 5, height: 35, width: 150, cursor: 'pointer'}} onClick={() => handleGranularityChange(60)}>
+      </Button>
+      <Button
+        onClick={() => handleGranularityChange(60)}
+      >
         Minutes
-      </button>
-      <button style={{margin: 20, borderRadius: 5, height: 35, width: 150, cursor: 'pointer'}} onClick={() => handleGranularityChange(3600)}>
+      </Button>
+      <Button
+        onClick={() => handleGranularityChange(3600)}
+      >
         Hours
-      </button>
-      <button style={{margin: 20, borderRadius: 5, height: 35, width: 150, cursor: 'pointer'}} onClick={() => handleGranularityChange(86400)}>
+      </Button>
+      <Button
+        onClick={() => handleGranularityChange(86400)}
+      >
         Days
-      </button>
-      <div>
-      <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={chartData} />
-    </div>
-    </div>
+      </Button>
+      <Box>
+        <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={chartData} />
+      </Box>
+    </Box>
   );
 });
 

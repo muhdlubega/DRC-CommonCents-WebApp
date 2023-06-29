@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import "../../styles/main.scss";
+import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
-// import { useGlobalState } from "../../store/Context";
 import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 
@@ -10,36 +9,69 @@ const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="header-main">
-      <div className="header-container">
-        <nav className="header-nav">
-          <h1 className="header-title" onClick={() => navigate("/")}>
-            CommonCents
-          </h1>
-          <div className="header-nav">
-            <div className="header-title" onClick={() => navigate("/trade/1HZ10V")}>Trade</div>
-            <div className="header-title" onClick={() => navigate("/news")}>News</div>
-            {/* <div className="header-title" onClick={() => navigate("/learn")}>Learn</div> */}
-            <div className="header-title" onClick={() => navigate("/about")}>About</div>
-            {AuthStore.user ? <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <div
-  style={{
-    width: "100%",
-    fontSize: 24,
-    textAlign: "center",
-    padding: 8,
-    margin: 5,
-    backgroundColor: "white",
-    borderRadius: 5
-  }}
->
-  {AuthStore.balance?.toFixed(2)} USD
-</div>
-              <UserSidebar /></div> : <AuthModal />}
-          </div>
-        </nav>
-      </div>
-    </header>
+    <AppBar position="static" className="header-main" sx={{backgroundColor: 'black'}}>
+      <Toolbar className="header-container">
+        <Typography
+          variant="h6"
+          component="h1"
+          onClick={() => navigate("/")}
+          className="header-title"
+        >
+          CommonCents
+        </Typography>
+        <Box className="header-nav">
+          <Button
+            onClick={() => navigate("/trade/1HZ10V")}
+            className="header-title"
+          >
+            Trade
+          </Button>
+          <Button
+            onClick={() => navigate("/news")}
+            className="header-title"
+          >
+            News
+          </Button>
+          {/* <Button
+            onClick={() => navigate("/learn")}
+            className="header-title"
+          >
+            Learn
+          </Button> */}
+          <Button
+            onClick={() => navigate("/about")}
+            className="header-title"
+          >
+            About
+          </Button>
+          {AuthStore.user ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  fontSize: 24,
+                  textAlign: "center",
+                  padding: 2,
+                  margin: 1,
+                  borderRadius: 5,
+                }}
+              >
+                {AuthStore.balance?.toFixed(2)} USD
+              </Box>
+              <UserSidebar />
+            </Box>
+          ) : (
+            <AuthModal />
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
