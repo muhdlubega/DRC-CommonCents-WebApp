@@ -1,26 +1,23 @@
 import { useEffect } from "react";
-import { getNews } from "../../config/NewsApi";
-import AliceCarousel from "react-alice-carousel";
 import { Link } from "react-router-dom";
-import '../../styles/main.scss'
+import { Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import AliceCarousel from "react-alice-carousel";
 import newsStore, { NewsItem } from "../../store/NewsStore";
-
+import { getNews } from "../../config/NewsApi";
 
 const LatestNews = () => {
-    // const [news, setNews] = useState([]);
-
-    const fetchNews = async () => {
-        try {
-          const response = await getNews();
-          const { data } = response;
-          const feed = data?.feed || [];
-          newsStore.setNews(feed);
-          console.log(feed)
-        } catch (error) {
-          console.error('Error fetching news:', error);
-        }
-      };
-      
+  const fetchNews = async () => {
+    try {
+      const response = await getNews();
+      const { data } = response;
+      const feed = data?.feed || [];
+      newsStore.setNews(feed);
+      console.log(feed);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    }
+  };
 
   useEffect(() => {
     fetchNews();
@@ -31,34 +28,29 @@ const LatestNews = () => {
       items: 1,
     },
     1024: {
-      items: 2,
+      items: 1,
     },
   };
 
   const items = newsStore.news.map((article: NewsItem | null) => {
     if (!article) return null;
     return (
-      <Link
-        className="news-card"
-        to={article?.url}
-        key={article?.title}
-      >
-        <img
-          src={article?.banner_image}
-          alt={article?.title}
-        />
-        <span>{article?.title}</span>
+      <Link className="news-card" to={article?.url} key={article?.title}>
+        <img src={article?.banner_image} alt={article?.title} />
+        <Typography component="span">{article?.title}</Typography>
       </Link>
     );
   });
-  
+
   return (
-    <div>
-    <span className="news-span">
-      <div>Latest News</div>
-      <Link to={'/news'}><span>See more...</span></Link>
-    </span>
-    <div className="news-carousel">
+    <Box>
+      <Typography component="span" className="news-span">
+        <Box className="news-title">Latest News</Box>
+        {/* <Link className="news" to={"/news"}>
+          <span>See more...</span>
+        </Link> */}
+      </Typography>
+      <Box className="news-carousel">
       <AliceCarousel
         mouseTracking
         infinite
@@ -70,7 +62,8 @@ const LatestNews = () => {
         responsive={responsive}
         items={items}
       />
-    </div></div>
+      </Box>
+    </Box>
   );
 };
 

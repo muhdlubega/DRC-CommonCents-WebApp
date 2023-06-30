@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Drawer from "@mui/material/Drawer";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Box, Button } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import "../../styles/main.scss";
@@ -54,18 +54,22 @@ const UserSidebar = observer(() => {
   //       this.balance = balance || null;
   //     }
   //   });
-    
+
   //     this.leaderboard = leaderboardData.sort((a, b) => b.balance - a.balance);
   // }
 
   return (
     <div>
-      <Avatar
-        onClick={toggleDrawer(true)}
-        className="sidebar-picture"
-        src={userPhotoURL}
-        alt={userDisplayName || userEmail}
-      />
+      <Box className="navbar-auth" onClick={toggleDrawer(true)}>
+        <Box className="navbar-balance">
+          {authStore.balance?.toFixed(2)} USD
+        </Box>
+        <Avatar
+          className="sidebar-picture"
+          src={userPhotoURL}
+          alt={userDisplayName || userEmail}
+        />
+      </Box>
       <Drawer anchor="right" open={state.right} onClose={toggleDrawer(false)}>
         <div className="sidebar-container">
           <div className="sidebar-profile">
@@ -91,7 +95,8 @@ const UserSidebar = observer(() => {
             <ol>
               {authStore.leaderboard.map((user, index) => (
                 <li key={index}>
-                  {user.displayName || user.email} - {user.balance!.toFixed(2)} USD
+                  {user.displayName || user.email} - {user.balance!.toFixed(2)}{" "}
+                  USD
                 </li>
               ))}
             </ol>

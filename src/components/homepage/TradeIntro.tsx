@@ -1,29 +1,34 @@
 // import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { motion } from "framer-motion";
+import champion from '../../assets/images/champion.png'
+import { useNavigate } from 'react-router-dom';
 
 const TradeIntro = () => {
-  const handleRegisterClick = () => {
-    console.log('Register button clicked!');
-  };
+  // const handleRegisterClick = () => {
+  //   console.log('Register button clicked!');
+  // };
+
+  const navigate = useNavigate();
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box sx={{ flex: 1 }}>
+    <Box className="trade-intro-main">
+      <Box className="trade-intro-imgbox" sx={{ flex: 1 }}>
         <img
-          src="https://images.pexels.com/photos/7567443/pexels-photo-7567443.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt="Trading Image"
+          src={champion}
+          alt="Trading Image" className="trade-intro-img"
         />
       </Box>
-      <Box sx={{ flex: 1 }}>
-        <Typography variant="h2" component="h2" sx={{ fontWeight: 'bold' }}>
-          Try out our Trading Stimulation
+      <Box className="trade-intro-box">
+        <Typography sx={{width: '25vw'}} variant="h5" component="h5">
+        Try our live trading simulation and gain a chance to be ranked on the leaderboard!
         </Typography>
-        <Typography>
-          Welcome to our trading platform! Here you can explore the world of trading and seize exciting investment opportunities.
-        </Typography>
-        <Button variant="contained" onClick={handleRegisterClick}>
-          Trade Now
-        </Button>
+        <motion.button
+        className="trade-intro-btn"
+        onClick={() => navigate("/trade/1HZ10V")}
+      >
+        Start Trading Now!
+      </motion.button>
       </Box>
     </Box>
   );

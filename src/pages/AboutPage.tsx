@@ -1,11 +1,11 @@
 // import React from 'react';
 import { Box, Typography } from '@mui/material';
-import Navbar from '../components/navbar/Navbar';
+// import Navbar from '../components/navbar/Navbar';
 import member1 from '../assets/images/bega.jpeg';
 import member2 from '../assets/images/cass.jpeg';
 import member3 from '../assets/images/vino2.jpeg';
 import member4 from '../assets/images/bentley.jpeg';
-import Footer from '../components/homepage/Footer';
+// import Footer from '../components/homepage/Footer';
 
 type TeamMemberProps = {
    name: string;
@@ -16,7 +16,7 @@ type TeamMemberProps = {
 const AboutPage = () => {
   return (
     <Box className="section-aboutus">
-      <Navbar />
+      {/* <Navbar /> */}
       <Box sx={{ padding: '2rem' }}>
         <Typography variant="h2" align="center" sx={{ mb: 4 }}>
           MEET OUR TEAM
@@ -28,7 +28,7 @@ const AboutPage = () => {
           <TeamMember name="Bentley Teh" title="Mobile Developer" image={member4} />
         </Box>
       </Box>
-      <Footer />
+      {/* <Footer /> */}
     </Box>
   );
 };
