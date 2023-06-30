@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/main.scss';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
+import { Select, MenuItem } from '@mui/material';
 import apiStore from '../../store/ApiStore';
 
-const Symbols: React.FC = () => {
+const Symbols = observer(() => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,23 +17,23 @@ const Symbols: React.FC = () => {
 
   return (
     <div>
-      <select
+      <Select
         className='symbols-dropdown'
+        value={apiStore.selectedSymbol}
         onChange={(e) => handleSelect(e.target.value)}
       >
-        <option value="">Select symbol</option>
         {apiStore.activeSymbols.map((symbol) => (
           symbol.market === 'synthetic_index' &&
           symbol.symbol_type === 'stockindex' &&
           symbol.allow_forward_starting === 1 && (
-            <option key={symbol.symbol} value={symbol.symbol}>
+            <MenuItem key={symbol.symbol} value={symbol.symbol}>
               {symbol.display_name}
-            </option>
+            </MenuItem>
           )
         ))}
-      </select>
+      </Select>
     </div>
   );
-};
+});
 
-export default observer(Symbols);
+export default Symbols;

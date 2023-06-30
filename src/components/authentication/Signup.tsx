@@ -4,13 +4,13 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
 interface SignupProps {
   handleClose: () => void;
 }
 
-const Signup: React.FC<SignupProps> = ({ handleClose }) => {
+const Signup = observer(({ handleClose } : SignupProps) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -27,6 +27,7 @@ const Signup: React.FC<SignupProps> = ({ handleClose }) => {
 
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      authStore.initializeUser(100000, email, email, '')
       authStore.setAlert({
         open: true,
         message: `Sign Up Successful. Welcome ${result.user.email}`,
@@ -87,6 +88,6 @@ const Signup: React.FC<SignupProps> = ({ handleClose }) => {
       </Button>
     </Box>
   );
-};
+});
 
-export default observer(Signup);
+export default Signup;

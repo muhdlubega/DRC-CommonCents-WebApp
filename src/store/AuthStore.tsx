@@ -1,13 +1,14 @@
 import { onAuthStateChanged } from "firebase/auth";
 import {
+  collection,
   doc,
-  getDoc,
+  getDocs,
   getFirestore,
   setDoc,
-  updateDoc,
+  updateDoc
 } from "firebase/firestore";
-import { makeAutoObservable } from "mobx";
-import { auth } from "../firebase";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { auth, db } from "../firebase";
 
 export interface Alert {
   open: boolean;
@@ -18,12 +19,13 @@ export interface Alert {
 export interface User {
   displayName: string | null | undefined;
   email: string | null | undefined;
-  photoURL: string | null | undefined;
+  photoURL?: string | null | undefined;
+  balance?: number | null | undefined;
 }
 
 class AuthStore {
-  currency: string = "INR";
-  symbol: string = "₹";
+  currency: string = "USD";
+  symbol: string = "$";
   alert: Alert = {
     open: false,
     message: "",
@@ -31,15 +33,43 @@ class AuthStore {
   };
   user: User | null = null;
   loading: boolean = false;
-  balance: number | null = null;
+  balance: number | null | undefined = this.user?.balance;
+  photoURL: string | null | undefined = this.user?.photoURL;
+  displayName: string | null | undefined = this.user?.displayName;
+  email: string | null | undefined = this.user?.email;
   leaderboard: User[] = [];
   firestore = getFirestore();
-  userDocRef = doc(this.firestore, "users", "user-1");
+  // citiesRef = collection(this.firestore, "users");
+  usersRef = collection(this.firestore, "users");
+  docs = getDocs(collection(this.firestore, "users"));
 
   constructor() {
-    makeAutoObservable(this);
-    this.initializeUser();
-
+    makeObservable(this,{
+      currency: observable,
+      symbol: observable,
+      alert: observable,
+      user: observable,
+      loading: observable,
+      balance: observable,
+      photoURL: observable,
+      displayName: observable,
+      email: observable,
+      leaderboard: observable,
+      firestore: observable,
+      usersRef: observable,
+      docs: observable,
+      setCurrency: action.bound,
+      setAlert: action.bound,
+      setUser: action.bound,
+      setLoading: action.bound,
+      initializeLeaderboard: action.bound,
+      initializeUser: action.bound,
+      setBalance: action.bound,
+      setResetBalance: action.bound,
+    });
+    
+    this.initializeLeaderboard();
+    
     onAuthStateChanged(auth, (user) => {
       if (user) this.setUser(user);
       else this.setUser(null);
@@ -48,8 +78,8 @@ class AuthStore {
 
   setCurrency(currency: string) {
     this.currency = currency;
-    if (currency === "INR") this.symbol = "₹";
-    else if (currency === "USD") this.symbol = "$";
+    if (currency === "USD") this.symbol = "$";
+    else if (currency === "MYR") this.symbol = "RM";
   }
 
   setAlert(alert: Alert) {
@@ -58,35 +88,91 @@ class AuthStore {
   }
 
   setUser(user: User | null) {
+    // runInAction(() => {
     this.user = user;
+    // })
   }
 
   setLoading(loading: boolean) {
     this.loading = loading;
   }
 
-  async initializeUser() {
-    const userSnapshot = await getDoc(this.userDocRef);
-    if (userSnapshot.exists()) {
-      const userData = userSnapshot.data();
-      if (userData) {
-        this.balance = userData.balance || null;
-      }
+  async initializeLeaderboard() {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      runInAction(() => {
+      const leaderboardData: User[] = [];
+      querySnapshot.forEach((doc) => {
+        const { balance, displayName, email } = doc.data();
+        leaderboardData.push({ displayName, email, balance });
+        if (auth.currentUser && auth.currentUser.uid === doc.id) {
+          this.balance = balance || null;
+        }
+      });
+      
+        this.leaderboard = leaderboardData.sort((a, b) => (b.balance as number) - (a.balance as number));
+    })
     }
+  // async initializeUser() {
+    
+  //   const querySnapshot = await getDocs(collection(db, "users"));
+  //   runInAction(() => {
+  //   querySnapshot.forEach((doc) => {
+  //     if (auth.currentUser!.uid == doc.id) {
+  //       this.balance = doc.data().balance || null;
+  //       this.displayName = doc.data().displayName || null;
+  //       this.email = doc.data().email || null;
+  //       console.log(doc.id, " => ", doc.data().balance);
+  //     }
+  //   });})
+    // if (auth.currentUser) {
+    //   this.setUser(auth.currentUser);
+    //   const userSnapshot = await getDoc(doc(this.usersRef, auth.currentUser!.uid));
+    //   if (userSnapshot.exists()) {
+    //     const userData = userSnapshot.data();
+    //     if (userData) {
+    //       this.balance = this.currUser.balance || null ;
+    //     }
+    //   }
+    // }
+  // }
+
+  // async updateUser(user: User) {
+  //   await setDoc(this.userDocRef, user);
+  // }
+
+  async initializeUser(balance: number, displayName: string, email: string, photoURL: string) {
+    this.balance = parseFloat(balance.toFixed(2));
+    this.displayName = displayName;
+    this.email = email;
+    this.photoURL = photoURL;
+    // await setDoc(this.userDocRef, { balance: newBalance });
+    await setDoc(doc(db, "users", auth.currentUser!.uid), {
+      balance: balance,
+      displayName: displayName,
+      email: email,
+      photoURL: photoURL
+    });
   }
 
-  async updateUser(user: User) {
-    await setDoc(this.userDocRef, user);
-  }
 
   async setBalance(newBalance: number) {
-    this.balance = parseFloat(newBalance.toFixed(2)); ;
-    await updateDoc(this.userDocRef, { balance: newBalance });
+    // runInAction(() => {
+    this.balance = parseFloat(newBalance.toFixed(2)); 
+  // })
+    // await setDoc(this.userDocRef, { balance: newBalance });
+    await updateDoc(doc(db, "users", auth.currentUser!.uid), {
+      balance: newBalance
+    });
   }
 
   async setResetBalance(resetBalance: number) {
-    this.balance = parseFloat(resetBalance.toFixed(2)); ;
-    await updateDoc(this.userDocRef, { balance: resetBalance });
+    // runInAction(() => {
+    this.balance = parseFloat(resetBalance.toFixed(2)); 
+  // })
+    // await setDoc(this.userDocRef, { balance: resetBalance });
+    await updateDoc(doc(db, "users", auth.currentUser!.uid), {
+      balance: resetBalance
+    });
   }
 }
 
