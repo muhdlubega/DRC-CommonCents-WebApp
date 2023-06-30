@@ -1,25 +1,35 @@
-// import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import bitcoin from '../../assets/bitcoin.gif';
+import { Box, Typography } from '@mui/material';
 
 const Header = () => {
-  const handleRegisterClick = () => {
-    console.log('Register button clicked!');
-  };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box sx={{ flex: 1 }}>
-        <img src={bitcoin} alt="Trading Image(Coin)" />
-      </Box>
-
-      <Box sx={{ flex: 1 }}>
-        <Typography>
-          Welcome to our trading platform! Here you can explore the world of trading and seize exciting investment opportunities.
+    <Box className="header-main">
+      <Box className="header-title">Why CommonCents?</Box>
+      <Box className="header-container">
+      <Box className="header-card">
+        <Typography sx={{fontWeight: 'bold', marginBottom: '3vw'}} className="header-name">
+          Live Trading Simulation
         </Typography>
-        <Button className="register-button1" onClick={handleRegisterClick}>
-          Trade Now
-        </Button>
+        <Typography sx={{fontWeight: '400'}} className="header-content">
+          Zero real money. Experience real trading.
+        </Typography>
+      </Box>
+      <Box className="header-card">
+        <Typography sx={{fontWeight: 'bold', marginBottom: '3vw'}} className="header-name">
+          Latest News
+        </Typography>
+        <Typography className="header-content">
+          Discover the latest trading news.
+        </Typography>
+      </Box>
+      <Box className="header-card">
+        <Typography sx={{fontWeight: 'bold', marginBottom: '3vw'}} className="header-name">
+          Open Forums
+        </Typography>
+        <Typography className="header-content">
+          Connect with real users globally.
+        </Typography>
+      </Box>
       </Box>
     </Box>
   );

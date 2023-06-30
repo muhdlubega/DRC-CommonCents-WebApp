@@ -1,71 +1,53 @@
 import { useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
 import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
+import logo from '../../assets/images/commoncents-logo.png';
 
 const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <AppBar position="static" className="header-main" sx={{backgroundColor: 'black'}}>
-      <Toolbar className="header-container">
+    <AppBar position="static" sx={{backgroundColor: "white", color: "black"}}>
+      <Toolbar className="navbar-container">
+        <img src={logo} className="navbar-logo" onClick={() => navigate("/")}></img>
         <Typography
           variant="h6"
           component="h1"
           onClick={() => navigate("/")}
-          className="header-title"
+          className="navbar-title"
         >
           CommonCents
         </Typography>
-        <Box className="header-nav">
-          <Button
+        <Box className="navbar-main">
+          <Typography
             onClick={() => navigate("/trade/1HZ10V")}
-            className="header-title"
+            className="navbar-title"
           >
             Trade
-          </Button>
-          <Button
+          </Typography>
+          <Typography
             onClick={() => navigate("/news")}
-            className="header-title"
+            className="navbar-title"
           >
             News
-          </Button>
-          {/* <Button
+          </Typography>
+          <Typography
             onClick={() => navigate("/learn")}
-            className="header-title"
+            className="navbar-title"
           >
-            Learn
-          </Button> */}
-          <Button
+            Forum
+          </Typography>
+          <Typography
             onClick={() => navigate("/about")}
-            className="header-title"
+            className="navbar-title"
           >
             About
-          </Button>
+          </Typography>
           {AuthStore.user ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Box
-                sx={{
-                  width: "100%",
-                  fontSize: 24,
-                  textAlign: "center",
-                  padding: 2,
-                  margin: 1,
-                  borderRadius: 5,
-                }}
-              >
-                {AuthStore.balance?.toFixed(2)} USD
-              </Box>
               <UserSidebar />
-            </Box>
           ) : (
             <AuthModal />
           )}

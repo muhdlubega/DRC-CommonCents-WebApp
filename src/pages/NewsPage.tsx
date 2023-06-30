@@ -1,14 +1,14 @@
 // import React from 'react'
 
 // import LatestNews from "../components/homepage/LatestNews"
-import Navbar from "../components/navbar/Navbar"
+// import Navbar from "../components/navbar/Navbar"
 import NewsTopic from "../components/newspage/NewsTopic"
 import '../styles/main.scss'
 
 const NewsPage = () => {
   return (
     <div>
-        <Navbar/>
+        {/* <Navbar/> */}
         <div className="newspage-header">
         <div className="newspage-card">
         <div className="newspage-text">

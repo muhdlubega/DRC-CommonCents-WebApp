@@ -107,7 +107,7 @@ const LiveData = observer(() => {
 
   return (
     <Box>
-      <Box>
+      {/* <Box>
         <Button hidden id="ticks" className="submitBtn">
           Subscribe Ticks
         </Button>
@@ -117,19 +117,19 @@ const LiveData = observer(() => {
         <Button hidden id="ticks-history" className="historyBtn">
           Get Tick History
         </Button>
-      </Box>
-      <Box>Stock Indices Live Data</Box>
-      <Box>
-          <Button onClick={() => chartsStore.setMarketType("volatility1s")} style={{ width: '20vw', margin: '2vw' , fontSize: '1.5vw', backgroundColor: '#6699ff', color: 'white'}} >
+      </Box> */}
+      <Box className="live-data-title">Stock Indices Live Data</Box>
+      <Box className="live-data-btngroup">
+          <Button onClick={() => chartsStore.setMarketType("volatility1s")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw', fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Volatility Index (1s)
           </Button>
-          <Button onClick={() => chartsStore.setMarketType("volatility")} style={{ width: '20vw', margin: '2vw' , fontSize: '1.5vw', backgroundColor: '#6699ff', color: 'white'}} >
+          <Button onClick={() => chartsStore.setMarketType("volatility")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Volatility Index
           </Button>
-          <Button onClick={() => chartsStore.setMarketType("jump")} style={{ width: '20vw', margin: '2vw' , fontSize: '1.5vw', backgroundColor: '#6699ff', color: 'white'}} >
+          <Button onClick={() => chartsStore.setMarketType("jump")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Jump Index
           </Button>
-          <Button onClick={() => chartsStore.setMarketType("bear_bull")} style={{ width: '20vw', margin: '2vw' , fontSize: '1.5vw', backgroundColor: '#6699ff', color: 'white'}} >
+          <Button onClick={() => chartsStore.setMarketType("bear_bull")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Bear/Bull Market
           </Button>
       </Box>
