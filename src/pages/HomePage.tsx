@@ -5,6 +5,7 @@ import LiveData from '../components/homepage/LiveData';
 // import LatestNews from '../components/homepage/LatestNews';
 import Footer from '../components/homepage/Footer';
 import TradeIntro from '../components/homepage/TradeIntro';
+import TradingType from '../components/homepage/TradingType';
 
 export const HomePage = () => {
   return (
@@ -14,6 +15,7 @@ export const HomePage = () => {
       <Header/>
       <LiveData/>
       {/* <LatestNews/> */}
+      <TradingType/>
       <TradeIntro/>
       <Footer/>
     </div>
