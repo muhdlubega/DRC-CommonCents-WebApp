@@ -7,11 +7,17 @@ import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { EmptyWallet } from "iconsax-react";
+import { LogoutCurve, ArrowUp2, ArrowDown2 } from "iconsax-react";
 
 const UserSidebar = observer(() => {
   const [state, setState] = useState({
     right: false,
   });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
+  };
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -75,35 +81,52 @@ const UserSidebar = observer(() => {
       <Drawer anchor="right" open={state.right} onClose={toggleDrawer(false)}>
         <div className="sidebar-container">
           <div className="sidebar-profile">
+            <span
+              style={{
+                display: 'flex',
+                justifyContent: 'center', alignItems: 'center',
+                width: "100%",
+                fontSize: "1.2vw",
+                textAlign: "center",
+                fontFamily: 'Montserrat',
+                wordWrap: "break-word", margin: 0
+              }}
+            >
             <Avatar
               className="sidebar-picture"
               src={userPhotoURL}
               alt={userDisplayName || userEmail}
+              sx={{marginRight: '0.4vw'}}
             />
-            <span
-              style={{
-                width: "100%",
-                fontSize: 25,
-                textAlign: "center",
-                fontWeight: "bolder",
-                wordWrap: "break-word",
-              }}
-            >
               {userDisplayName || userEmail}
             </span>
+            <span style={{
+                width: "100%",
+                fontSize: "1vw",
+                textAlign: "center",
+                fontFamily: 'Montserrat',
+                wordWrap: "break-word", margin: 0}}>
+          <EmptyWallet size={22} style={{marginRight: '0.5vw'}}/>
+          {authStore.balance?.toFixed(2)} USD
+        </span>
           </div>
+          <h6 className="sidebar-item">My Account</h6>
           <div className="sidebar-leaderboard">
-            <h2>Leaderboard</h2>
-            <ol>
-              {authStore.leaderboard.map((user, index) => (
-                <li key={index}>
-                  {user.displayName || user.email} - {user.balance!.toFixed(2)}{" "}
-                  USD
-                </li>
-              ))}
-            </ol>
-          </div>
-          <span
+          <h6 onClick={toggleDropdown}>Leaderboard{isDropdownOpen? <ArrowUp2 size={16} style={{marginLeft: '0.5vw'}}/> : <ArrowDown2 size={16} style={{marginLeft: '0.5vw'}}/>}</h6>
+      {isDropdownOpen && (
+        <ol>
+          {authStore.leaderboard.map((user, index) => (
+            <li key={index}>
+              {user.displayName || user.email} - {user.balance!.toFixed(2)} USD
+            </li>
+          ))}
+        </ol>
+      )}
+      </div>
+          <h6 className="sidebar-item">Trade History</h6>
+          <h6 className="sidebar-item">Help and Support</h6>
+          <h6 className="sidebar-item">FAQs</h6>
+          {/* <span
             style={{
               width: "100%",
               fontSize: 20,
@@ -113,12 +136,13 @@ const UserSidebar = observer(() => {
             }}
           >
             Balance: {authStore.balance?.toFixed(2)} USD
-          </span>
+          </span> */}
           <Button
             variant="contained"
             className="sidebar-reset-balance"
             onClick={handleResetBalance}
-            style={{ marginBottom: 20 }}
+            
+            style={{backgroundColor:"#6699ff", borderRadius: '0.5vw', marginBottom: '1vw'}}
           >
             Reset Balance
           </Button>
@@ -127,7 +151,9 @@ const UserSidebar = observer(() => {
             variant="contained"
             className="sidebar-logout"
             onClick={logOut}
+            style={{backgroundColor:"#0033ff", borderRadius: '0.5vw'}}
           >
+            <LogoutCurve color="white" style={{marginRight: '1vw'}}/>
             Log Out
           </Button>
         </div>
