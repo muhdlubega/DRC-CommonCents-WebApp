@@ -1,4 +1,4 @@
-import { makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
 
 const app_id = 1089;
@@ -24,7 +24,7 @@ class ApiStore {
   basis: string = "stake";
   chartType: string = "candlestick";
   isDurationEnded: boolean = false;
-  // isHourlyGranularity: boolean = false;
+  showOnboarding: boolean = false;
   isTicks: boolean = false;
   proposalData: any[] = [];
   selectedSymbol: string = "";
@@ -51,7 +51,7 @@ class ApiStore {
       basis: observable,
       chartType: observable,
       isDurationEnded: observable,
-      // isHourlyGranularity: observable,
+      showOnboarding: observable,
       isTicks: observable,
       proposalData: observable,
       selectedSymbol: observable,
@@ -62,36 +62,66 @@ class ApiStore {
       deductedAmount: observable,
       totalAmountWon: observable,
       totalAmountLost: observable,
+      connectWebSocket: action.bound,
+      disconnectWebSocket: action.bound,
+      setDuration: action.bound,
+      setPayout: action.bound,
+      setBasis: action.bound,
+      setChartType: action.bound,
+      setActiveSymbols: action.bound,
+      setPreviousSpot: action.bound,
+      setCurrentSpot: action.bound,
+      setIsDurationEnded: action.bound,
+      setShowOnboarding: action.bound,
+      setSellSuccessful: action.bound,
+      setAdditionalAmount: action.bound,
+      setSellFailed: action.bound,
+      setDeductedAmount: action.bound,
+      setTotalAmountLost: action.bound,
+      setTotalAmountWon: action.bound,
+      setGranularity: action.bound,
+      toggleTicks: action.bound,
+      handleActiveSymbolsResponse: action.bound,
+      getActiveSymbols: action.bound,
+      setSelectedSymbol: action.bound,
+      subscribeTicks: action.bound,
+      unsubscribeTicks: action.bound,
+      getTicksHistory: action.bound,
+      tickSubscriber:action.bound,
+      ticksHistoryResponse: action.bound,
+      tickResponse: action.bound,
+      setTicks: action.bound,
+      proposalResponse: action.bound,
+      getProposal: action.bound,
+      unsubscribeProposal: action.bound,
     });
     this.connectWebSocket();
   }
 
   connectWebSocket() {
-    runInAction(() => {
+    // runInAction(() => {
       this.connection = new WebSocket(
         `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
       );
       this.api = new DerivAPIBasic({ connection: this.connection });
-    });
+    // });
   }
 
   disconnectWebSocket() {
-    runInAction(() => {
+    // runInAction(() => {
       if (this.connection) {
         // this.connection.close();
         this.connection = null;
       }
-    });
+    // });
   }
 
   setDuration(duration: number) {
     this.duration = duration;
-    // this.unsubscribeProposal();
   }
 
   setPayout(payout: number) {
     this.payout = payout;
-    // this.unsubscribeProposal();
   }
 
   setBasis(basis: string) {
@@ -114,58 +144,49 @@ class ApiStore {
     this.currentSpot = currentSpot;
   }
 
-  // setProposalTicks(proposalTicks: number) {
-  //   this.proposalTicks = proposalTicks;
-  // }
-
   setIsDurationEnded(isDurationEnded: boolean) {
     this.isDurationEnded = isDurationEnded;
   }
 
+  setShowOnboarding(showOnboarding: boolean) {
+    this.showOnboarding = showOnboarding;
+  }
+
   setSellSuccessful(sellSuccessful: boolean) {
-    runInAction(() => {
+    // runInAction(() => {
     this.sellSuccessful = sellSuccessful;
-    })
+    // })
   }
 
   setAdditionalAmount(additionalAmount: number) {
-    runInAction(() => {
+    // runInAction(() => {
     this.additionalAmount = additionalAmount;
-    })
+    // })
   }
 
   setSellFailed(sellFailed: boolean) {
-    runInAction(() => {
+    // runInAction(() => {
     this.sellFailed = sellFailed;
-    })
+    // })
   }
 
   setDeductedAmount(deductedAmount: number) {
-    runInAction(() => {
+    // runInAction(() => {
     this.deductedAmount = deductedAmount;
-    })
+    // })
   }
 
   setTotalAmountWon(totalAmountWon: number) {
-    runInAction(() => {
+    // runInAction(() => {
     this.totalAmountWon = totalAmountWon;
-    })
+    // })
   }
 
   setTotalAmountLost(totalAmountLost: number) {
-    runInAction(() => {
+    // runInAction(() => {
     this.totalAmountLost = totalAmountLost;
-    })
+    // })
   }
-
-  // setData(data: any) {
-  //   this.duration = parseInt(data.duration, 10);
-  //   this.payout = parseInt(data.display_value, 10);
-  //   this.basis = data.basis;
-  //   this.previousSpot = parseFloat(data.spot);
-  //   this.currentSpot = parseFloat(data.spot);
-  //   // this.proposalTicks = parseInt(data.duration, 10);
-  // }
 
   // toggleGranularity() {
   //   this.isHourlyGranularity = !this.isHourlyGranularity;
@@ -187,26 +208,26 @@ class ApiStore {
     const data = JSON.parse(res.data);
 
     if (data.error !== undefined) {
-      runInAction(() => {
+      // runInAction(() => {
         console.log("Error: ", data.error?.message);
         this.connection?.removeEventListener(
           "message",
           this.handleActiveSymbolsResponse,
           false
         );
-      });
+      // });
       await this.api.disconnect();
     }
 
     if (data.msg_type === "active_symbols") {
-      runInAction(() => {
+      // runInAction(() => {
         this.setActiveSymbols(data.active_symbols);
         this.connection?.removeEventListener(
           "message",
           this.handleActiveSymbolsResponse,
           false
         );
-      });
+      // });
     }
   };
 
@@ -216,20 +237,20 @@ class ApiStore {
       product_type: "basic",
     };
 
-    runInAction(() => {
+    // runInAction(() => {
       this.connection?.addEventListener(
         "message",
         this.handleActiveSymbolsResponse
       );
-    });
+    // });
     await this.api.activeSymbols(active_symbols_request);
   };
 
   setSelectedSymbol(symbol: string) {
-    runInAction(() => {
+    // runInAction(() => {
       this.selectedSymbol = symbol;
       this.ticks_history_request.ticks_history = symbol;
-    });
+    // });
   }
 
   subscribeTicks = async () => {
@@ -249,14 +270,14 @@ class ApiStore {
   };
 
   ticks_history_request = 
-  // this.isTicks ? {
-  //   ticks_history: "",
-  //   adjust_start_time: 1,
-  //   count: 1000,
-  //   end: "latest",
-  //   start: 1,
-  //   style: "ticks",
-  // } : 
+  this.isTicks ? {
+    ticks_history: "",
+    adjust_start_time: 1,
+    count: 1000,
+    end: "latest",
+    start: 1,
+    style: "ticks",
+  } : 
   {
     ticks_history: "",
     adjust_start_time: 1,
@@ -267,24 +288,12 @@ class ApiStore {
     style: "candles",
   };
 
-  ticks_history_request_ticks = 
-  {
-    ticks_history: "",
-    adjust_start_time: 1,
-    count: 1000,
-    end: "latest",
-    start: 1,
-    style: "ticks",
-  };
-
   getTicksHistory = async () => {
-    runInAction(() => {
+    // runInAction(() => {
       this.ticks_history_request.ticks_history = this.selectedSymbol;
-      // this.ticks_history_request_ticks.ticks_history = this.selectedSymbol;
 
       this.connection?.addEventListener("message", this.ticksHistoryResponse);
-    });
-    // await this.api.ticksHistory(this.isTicks ? this.ticks_history_request_ticks : this.ticks_history_request);
+    // });
     await this.api.ticksHistory(this.ticks_history_request);
   };
 
@@ -295,21 +304,20 @@ class ApiStore {
 
   ticksHistoryResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
-    // console.log(data.msg_type);
     
     if (data.error !== undefined) {
-      runInAction(() => {
+      // runInAction(() => {
         console.log("Error : ", data.error.message);
         this.connection?.removeEventListener(
           "message",
           this.ticksHistoryResponse,
           false
         );
-      });
+      // });
       await this.api.disconnect();
     }
     else if (data.msg_type === "candles") {
-      runInAction(() => {
+      // runInAction(() => {
         // if (this.chartType === "candlestick"){
         const candles = data.candles;
 
@@ -365,7 +373,7 @@ class ApiStore {
           this.ticksHistoryResponse,
           false
         );
-      });
+      // });
       // }
       // else if (this.chartType === "line") {
       //   this.ticks = data.candles;
@@ -394,18 +402,18 @@ class ApiStore {
   tickResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
-      runInAction(() => {
+      // runInAction(() => {
         console.log("Error: ", data.error.message);
         this.connection?.removeEventListener(
           "message",
           this.tickResponse,
           false
         );
-      });
+      // });
       await this.api.disconnect();
     }
     else if (data.msg_type === "ohlc") {
-      runInAction(() => {
+      // runInAction(() => {
         // if(this.chartType === "candlestick") {
         const newTick = {
           epoch: data.ohlc.epoch,
@@ -472,7 +480,7 @@ class ApiStore {
       //     this.setTicks([...this.ticks, newTick]);
       //   }
 
-      });
+      // });
     } else if (data.msg_type === 'tick') {
       const newTick = {
         epoch: data.tick.epoch,
@@ -490,17 +498,14 @@ class ApiStore {
   proposalResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
-      runInAction(() => {
         console.log("Error: ", data.error.message);
         this.connection?.removeEventListener(
           "message",
           this.proposalResponse,
           false
         );
-      });
       await this.api.disconnect();
     } else if (data.msg_type === "proposal") {
-      runInAction(() => {
         this.setPreviousSpot(parseFloat(data.proposal.spot));
         // this.setProposalTicks(data.proposal.duration);
         // this.proposalData.push(data.proposal);
@@ -513,7 +518,6 @@ class ApiStore {
         // if (this.proposalData.length > 20) {
         //   this.proposalData.splice(0, 1);
         // }
-      });
     }
   };
 
@@ -535,20 +539,20 @@ class ApiStore {
     const keepAliveRes = async (res: any) => {
       const data = JSON.parse(res.data);
       if (data.error !== undefined) {
-        runInAction(() => {
+        // runInAction(() => {
           console.log("Error: %s ", data.error.message);
           this.connection?.removeEventListener(
             "message",
             keepAliveRes,
             false
           );
-        });
+        // });
         await this.api.disconnect();
       } else if (data.msg_type === "ping") {
-        runInAction(() => {
+        // runInAction(() => {
           console.log(data.msg_type);
           console.log("ping");
-        });
+        // });
       }
     };
   
@@ -562,7 +566,6 @@ class ApiStore {
       this.unsubscribeProposal();
       this.connection?.addEventListener("message", this.proposalResponse);
       await this.api.proposal(proposal_request);
-      // console.log(proposal_request);
     } catch (error) {
       console.log("Error fetching proposal: ", error);
     }

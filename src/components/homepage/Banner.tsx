@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import '../../styles/main.scss'
-import trading from '../../assets/trading-image.gif'
+import trading from '../../assets/images/guytablet.png'
 import { useNavigate } from "react-router-dom";
 
 const Banner = () => {
@@ -20,15 +20,16 @@ const Banner = () => {
         animate={animationControls}
       >
         <div className="banner-container">
-          <motion.h2 className="banner-title">CommonCents</motion.h2>
+          <motion.h2 className="banner-title">Trading,</motion.h2>
+          <motion.h2 className="banner-title">all in one place</motion.h2>
           <motion.p className="banner-tagline">
-            Join Us and Learn More About Trading! It's CommonCents!
+            Join us and learn more about trading! It's CommonCents!
           </motion.p>
           <motion.button
         className="banner-btn"
         onClick={() => navigate("/trade/1HZ10V")}
       >
-        Try Trading Now!
+        Create an Account
       </motion.button>
         </div>
       </motion.div>

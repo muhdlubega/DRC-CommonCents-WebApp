@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.134",
     "@mui/material": "^5.13.5",
     "axios": "^1.4.0",
@@ -20,6 +21,7 @@
     "highcharts": "^11.1.0",
     "highcharts-accessibility": "^0.1.7",
     "highcharts-react-official": "^3.2.0",
+    "iconsax-react": "^0.0.8",
     "mobx": "^6.9.0",
     "mobx-react": "^7.6.0",
     "mobx-react-lite": "^3.4.3",

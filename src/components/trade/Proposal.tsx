@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
 import { collection, getDocs } from "firebase/firestore";
+import { Box, Typography } from "@mui/material";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
@@ -13,33 +14,21 @@ const Proposal = observer(() => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newDuration = parseInt(event.target.value, 10);
+    const newDuration = parseInt(event.target.id, 10);
     apiStore.setDuration(newDuration);
-    // apiStore.subscribeProposal();
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('e', event.target.value);
-    
+    console.log("e", event.target.value);
+
     const newPayout = parseInt(event.target.value);
     apiStore.setPayout(newPayout);
-    // apiStore.subscribeProposal();
   };
 
   const handleBuy = async (isHigher: boolean) => {
-    setIsProcessing(true); 
+    setIsProcessing(true);
     let balance = 0;
     try {
-      // const balanceSnapshot = await getDoc(authStore.userDocRef);
-      // if (!balanceSnapshot.exists()) {
-      //   console.log("Balance document does not exist");
-      //   return;
-      // }
-      // const balanceData = balanceSnapshot.data();
-      // if (!balanceData || typeof balanceData.balance !== "number") {
-      //   console.log("Invalid balance data");
-      //   return;
-      // }
       const balanceSnapshot = await getDocs(collection(db, "users"));
       balanceSnapshot.forEach((doc) => {
         if (auth.currentUser!.uid == doc.id) {
@@ -60,19 +49,29 @@ const Proposal = observer(() => {
 
       const newBalance = currentBalance - payoutValue;
       authStore.setBalance(newBalance);
-      // await setDoc(authStore.userDocRef, { balance: newBalance });
 
       setTimeout(() => handleSell(isHigher), apiStore.duration * 1000);
+
+      authStore.setAlert({
+        open: true,
+        message: `Option successfully bought for USD ${payoutValue}`,
+        type: "success",
+      });
 
       console.log("Buy successful");
     } catch (error) {
       console.error("Error:", error);
+      authStore.setAlert({
+        open: true,
+        message: `Error. Try again later`,
+        type: "error",
+      });
       setIsProcessing(false);
     }
   };
 
   const handleSell = async (isHigher: boolean) => {
-    setIsProcessing(true); 
+    setIsProcessing(true);
     let balance = 0;
     try {
       const balanceSnapshot = await getDocs(collection(db, "users"));
@@ -81,16 +80,6 @@ const Proposal = observer(() => {
           balance = doc.data().balance || null;
         }
       });
-      // const balanceSnapshot = await getDoc(authStore.userDocRef);
-      // if (!balanceSnapshot.exists()) {
-      //   console.log("Balance document does not exist");
-      //   return;
-      // }
-      // const balanceData = balanceSnapshot.data();
-      // if (!balanceData || typeof balanceData.balance !== "number") {
-      //   console.log("Invalid balance data");
-      //   return;
-      // }
       const currentBalance = balance;
 
       const payoutValue = parseInt(apiStore.payout.toString(), 10);
@@ -113,11 +102,10 @@ const Proposal = observer(() => {
         const currentSpot =
           apiStore.proposalData[apiStore.proposalData.length - 1].spot;
 
-          console.log("prev", previousSpot);
-          console.log("next", currentSpot);
-          
-          
-          const additionalAmount =
+        console.log("prev", previousSpot);
+        console.log("next", currentSpot);
+
+        const additionalAmount =
           apiStore.proposalData[
             apiStore.proposalData.length - apiStore.duration
           ].payout;
@@ -133,16 +121,29 @@ const Proposal = observer(() => {
             if (currentSpotValue > previousSpotValue) {
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              // await setDoc(authStore.userDocRef, { balance: updatedBalance });
               console.log("Sell successful", additionalAmount);
+              authStore.setAlert({
+                open: true,
+                message: `Spot is higher! You won USD ${additionalAmount}!`,
+                type: "success",
+              });
               apiStore.setSellSuccessful(true);
               apiStore.setAdditionalAmount(additionalAmount);
-              apiStore.setTotalAmountWon(apiStore.totalAmountWon + additionalAmount); 
+              apiStore.setTotalAmountWon(
+                apiStore.totalAmountWon + additionalAmount
+              );
             } else {
               console.log("Spot is not higher", additionalAmount);
+              authStore.setAlert({
+                open: true,
+                message: `Spot is not higher. You lost USD ${additionalAmount} :(`,
+                type: "error",
+              });
               apiStore.setSellFailed(true);
               apiStore.setDeductedAmount(payoutValue);
-              apiStore.setTotalAmountLost(apiStore.totalAmountLost + payoutValue);
+              apiStore.setTotalAmountLost(
+                apiStore.totalAmountLost + payoutValue
+              );
             }
           } else {
             if (previousSpotValue > currentSpotValue) {
@@ -152,63 +153,133 @@ const Proposal = observer(() => {
                 ].payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              // await setDoc(authStore.userDocRef, { balance: updatedBalance });
               console.log("Sell successful");
+              authStore.setAlert({
+                open: true,
+                message: `Spot is higher! You won USD ${additionalAmount}!`,
+                type: "success",
+              });
               apiStore.setSellSuccessful(true);
               apiStore.setAdditionalAmount(additionalAmount);
-              apiStore.setTotalAmountWon(apiStore.totalAmountWon + additionalAmount); 
+              apiStore.setTotalAmountWon(
+                apiStore.totalAmountWon + additionalAmount
+              );
             } else {
               console.log("Spot is not lower", additionalAmount);
+              authStore.setAlert({
+                open: true,
+                message: `Spot is not lower. You lost USD ${additionalAmount} :(`,
+                type: "error",
+              });
               apiStore.setSellFailed(true);
               apiStore.setDeductedAmount(payoutValue);
-              apiStore.setTotalAmountLost(apiStore.totalAmountLost + payoutValue);
+              apiStore.setTotalAmountLost(
+                apiStore.totalAmountLost + payoutValue
+              );
             }
           }
         } else {
           console.log("Previous spot or current spot is not available");
+          authStore.setAlert({
+            open: true,
+            message: `Error. Try again later`,
+            type: "error",
+          });
         }
       } else {
         console.log("Not enough data to compare spot prices");
+        authStore.setAlert({
+          open: true,
+          message: `Error. Try again later`,
+          type: "error",
+        });
       }
       setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
+      authStore.setAlert({
+        open: true,
+        message: `Error. Try again later`,
+        type: "error",
+      });
       setIsProcessing(false);
     }
   };
 
-  // useEffect(() => {
-  //   apiStore.getProposal(id!);
-  // }, []);
+  const decrementPayout = () => {
+    if (apiStore.payout > 1) {
+      apiStore.setPayout(apiStore.payout - 1);
+    }
+  };
+  
+  const incrementPayout = () => {
+    if (apiStore.payout < 500) {
+      apiStore.setPayout(apiStore.payout + 1);
+    }
+  };
+  
 
   useEffect(() => {
-
     if (id) {
-        apiStore.getProposal(id);
-      // const proposal = document.querySelector<HTMLButtonElement>("#proposal");
-      // proposal?.addEventListener("click", () => apiStore.getProposal(id));
-
-      // const proposal_unsubscribe = document.querySelector<HTMLButtonElement>(
-      //   "#proposal-unsubscribe"
-      // );
-      // proposal_unsubscribe?.addEventListener(
-      //   "click",
-      //   apiStore.unsubscribeProposal
-      // );
-
-      // return () => {
-      //   proposal?.removeEventListener("click", () => apiStore.getProposal(id));
-      //   proposal_unsubscribe?.removeEventListener(
-      //     "click",
-      //     apiStore.unsubscribeProposal
-      //   );
-      // };
+      apiStore.getProposal(id);
     }
   }, [id, apiStore.payout, apiStore.duration]);
 
   return (
-    <div>
-      <div className="proposal-btn-group">
+    <Box>
+      <Box className="proposal-ticks">
+        <Typography sx={{marginRight: '1vw', fontFamily: 'Montserrat'}}>Ticks: </Typography>
+        {/* <input
+          type="range"
+          min="1"
+          max="10"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        /> */}
+        <Box className="duration-change-slider">
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="1"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="2"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="3"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="4"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="5"
+          value={apiStore.duration}
+          onChange={handleDurationChange} defaultChecked
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="6"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="7"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="8"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="9"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        <input required type="radio" name="duration-change" className="duration-change-btn" id="10"
+          value={apiStore.duration}
+          onChange={handleDurationChange}
+        />
+        </Box>
+      </Box>
+      <Box className="proposal-btn-group">
         <button
           style={{
             backgroundColor: apiStore.basis === "payout" ? "blue" : "white",
@@ -229,61 +300,55 @@ const Proposal = observer(() => {
         >
           Stake
         </button>
-      </div>
-      <div>
-        <span>Set Price: </span>
-        <input
-  type="number"
-  value={apiStore.payout}
-  onChange={handlePayoutChange}
-  min="1" max="500"
-/>
-        <span>Input number between 1 and 500</span>
-      </div>
-      <div>
-        <span>Ticks: </span>
-        <input
-          type="range"
-          min="1"
-          max="10"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <span>{apiStore.duration}</span>
-      </div>
+      </Box>
+      <Box className="proposal-input-container">
+  <button className="proposal-input-btn left" onClick={decrementPayout}>-</button>
+  <input
+    type="number"
+    value={apiStore.payout}
+    onChange={handlePayoutChange}
+    min="1"
+    max="500"
+    className="proposal-input-field"
+  />
+  <button className="proposal-input-btn right" onClick={incrementPayout}>+</button>
+</Box>
 
-      <button hidden id="proposal" className="proposal-btn">
-        Subscribe proposal
-      </button>
-      <button hidden id="proposal-unsubscribe" className="resetBtn">
-        Unsubscribe proposal
-      </button>
-      <div ref={proposalContainerRef} id="proposalContainer"></div>
-      <span className="proposal-btn-group">
-        <button className={`proposal-btn-higher ${isProcessing ? "processing" : ""}`}
+
+      <Box ref={proposalContainerRef} id="proposalContainer"></Box>
+      <Box className="proposal-btn-choices">
+        <button
+          className={`proposal-btn-buy ${isProcessing ? "processing" : ""} higher `}
           onClick={() => handleBuy(true)}
-          disabled={isProcessing}>
+          disabled={isProcessing}
+        >
           Higher
         </button>
-        <button className={`proposal-btn-lower ${isProcessing ? "processing" : ""}`}
+        <button
+          className={`proposal-btn-buy ${isProcessing ? "processing" : ""} lower`}
           onClick={() => handleBuy(false)}
-          disabled={isProcessing}>
+          disabled={isProcessing}
+        >
           Lower
         </button>
-      </span>
-      {/* {apiStore.sellSuccessful && ( */}
-        <div>
-          <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
-          <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
-        </div>
-      {/* )} */}
-      {/* {apiStore.sellFailed && ( */}
-        <div>
-          <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
-          <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
-        </div>
-      {/* )} */}
-    </div>
+      </Box>
+      {/* <Box>
+        {apiStore.sellSuccessful && (
+          <div>
+            <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+            <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
+          </div>
+        )}
+      </Box>
+      <Box>
+        {apiStore.sellFailed && (
+          <div>
+            <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+            <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
+          </div>
+        )}
+      </Box> */}
+    </Box>
   );
 });
 

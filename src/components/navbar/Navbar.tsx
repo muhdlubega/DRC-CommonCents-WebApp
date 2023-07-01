@@ -1,45 +1,64 @@
 import { useNavigate } from "react-router-dom";
-import "../../styles/main.scss";
+import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
-// import { useGlobalState } from "../../store/Context";
 import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
+import logo from '../../assets/images/commoncents-logo.png';
+import { MoneyRecive, Book, Global, MessageQuestion } from "iconsax-react";
 
 const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="header-main">
-      <div className="header-container">
-        <nav className="header-nav">
-          <h1 className="header-title" onClick={() => navigate("/")}>
-            CommonCents
-          </h1>
-          <div className="header-nav">
-            <div className="header-title" onClick={() => navigate("/trade/1HZ10V")}>Trade</div>
-            <div className="header-title" onClick={() => navigate("/news")}>News</div>
-            {/* <div className="header-title" onClick={() => navigate("/learn")}>Learn</div> */}
-            <div className="header-title" onClick={() => navigate("/about")}>About</div>
-            {AuthStore.user ? <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <div
-  style={{
-    width: "100%",
-    fontSize: 24,
-    textAlign: "center",
-    padding: 8,
-    margin: 5,
-    backgroundColor: "white",
-    borderRadius: 5
-  }}
->
-  {AuthStore.balance?.toFixed(2)} USD
-</div>
-              <UserSidebar /></div> : <AuthModal />}
-          </div>
-        </nav>
-      </div>
-    </header>
+    <AppBar position="static" sx={{backgroundColor: "white", color: "black", width: "100%"}}>
+      <Toolbar className="navbar-container">
+        <img src={logo} className="navbar-logo" onClick={() => navigate("/")}></img>
+        <Typography
+          variant="h6"
+          component="h1"
+          onClick={() => navigate("/")}
+          className="navbar-title"
+        >
+          CommonCents
+        </Typography>
+        <Box className="navbar-main">
+        <MoneyRecive color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/trade/1HZ10V")}/>
+          <Typography
+            onClick={() => navigate("/trade/1HZ10V")}
+            className="navbar-title"
+          >
+            Trade
+          </Typography>
+        <Book color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/news")}/>
+          <Typography
+            onClick={() => navigate("/news")}
+            className="navbar-title"
+          >
+            News
+          </Typography>
+        <Global color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/forum")}/>
+          <Typography
+            onClick={() => navigate("/forum")}
+            className="navbar-title"
+          >
+            Forum
+          </Typography>
+        <MessageQuestion color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/about")}/>
+          <Typography
+            onClick={() => navigate("/about")}
+            className="navbar-title"
+          >
+            About
+          </Typography>
+          {AuthStore.user ? (
+              <UserSidebar />
+          ) : (
+            <AuthModal />
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
