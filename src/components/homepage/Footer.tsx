@@ -1,21 +1,45 @@
-import React from 'react';
-import { Box, Button, Grid, Typography } from '@mui/material';
-import '../../styles/main.scss';
-import Image1 from '../../assets/images/google-ps.png';
-import SocialMedia1 from '../../assets/images/facebook.png';
-import SocialMedia2 from '../../assets/images/ig.png';
-import SocialMedia3 from '../../assets/images/twitter.png';
+import React from "react";
+import { Box, Button, Grid, Typography } from "@mui/material";
+import "../../styles/main.scss";
+import Image1 from "../../assets/images/google-ps.png";
+import SocialMedia1 from "../../assets/images/facebook.png";
+import SocialMedia2 from "../../assets/images/ig.png";
+import SocialMedia3 from "../../assets/images/twitter.png";
+import { ArrowUp2 } from "iconsax-react";
 
 const Footer: React.FC = () => {
   const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <Box className="footer">
-      {/* <div className="scroll-to-top" onClick={handleScrollToTop}>
-        <i className="fas fa-chevron-up"></i>
-      </div> */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "0 auto",
+        }}
+      >
+        <Button
+          variant="contained"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "1.2vw 1vw",
+            borderRadius: "50%",
+            backgroundColor: "grey",
+            color: "white",
+            transform: "translateY(-100%)",
+            zIndex: 2,
+          }}
+          onClick={handleScrollToTop}
+        >
+          <ArrowUp2 />
+        </Button>
+      </Box>
       <Box className="footer-container">
         <Grid container spacing={2}>
           <Grid item md={6} lg={3} className="ft-1">
@@ -49,8 +73,7 @@ const Footer: React.FC = () => {
               <i className="fas fa-phone-volume"></i>&nbsp; 0112345678
             </Typography>
             <Typography>
-              <i className="fas fa-envelope"></i>&nbsp;
-              commoncents@gmail.com
+              <i className="fas fa-envelope"></i>&nbsp; commoncents@gmail.com
             </Typography>
           </Grid>
           <Grid item md={6} lg={3} className="ft-4">
@@ -63,11 +86,11 @@ const Footer: React.FC = () => {
                   src={SocialMedia1}
                   alt="Image Button"
                   style={{
-                    width: '70px',
+                    width: "70px",
                     marginLeft: -5,
                     marginRight: 3,
-                    height: '72px',
-                    marginTop: '11px',
+                    height: "72px",
+                    marginTop: "11px",
                   }}
                 />
               </a>
@@ -79,27 +102,10 @@ const Footer: React.FC = () => {
               </a>
             </Box>
           </Grid>
-          <Grid item xs={12}>
-            <Button
-              variant="contained"
-              sx={{
-                padding: 1,
-                borderRadius: 100,
-                backgroundColor: 'blue',
-                color: 'white',
-                fontWeight: 'bold',
-              }}
-              onClick={handleScrollToTop}
-            >
-              Back to Top
-            </Button>
-          </Grid>
         </Grid>
       </Box>
       <Box className="footer-bottom">
-        <Typography>
-          &copy; 2023 CommonCents. All rights reserved.
-        </Typography>
+        <Typography>&copy; 2023 CommonCents. All rights reserved.</Typography>
       </Box>
     </Box>
   );

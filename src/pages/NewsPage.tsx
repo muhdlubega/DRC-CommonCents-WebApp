@@ -9,12 +9,12 @@ const NewsPage = () => {
   return (
     <div>
         {/* <Navbar/> */}
-        <div className="newspage-header">
+        {/* <div className="newspage-header">
         <div className="newspage-card">
         <div className="newspage-text">
           <p className="newspage-title">CommonCents NewsHub</p>
         </div>
-      </div></div>
+      </div></div> */}
         {/* <LatestNews/> */}
         <NewsTopic/>
     </div>
