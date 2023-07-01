@@ -1,8 +1,8 @@
-import photo1 from "../../assets/images/foodstocks.png"
-import photo2 from "../../assets/images/crypto.png"
-import photo3 from "../../assets/images/riseup.png"
-import photo4 from "../../assets/images/stocks.png"
-import photo5 from "../../assets/images/bearbull.png"
+// import photo1 from "../../assets/images/foodstocks.png"
+// import photo2 from "../../assets/images/crypto.png"
+// import photo3 from "../../assets/images/riseup.png"
+// import photo4 from "../../assets/images/stocks.png"
+// import photo5 from "../../assets/images/bearbull.png"
 
 export const TradeType = [
    {

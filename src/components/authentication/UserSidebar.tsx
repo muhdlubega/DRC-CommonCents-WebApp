@@ -6,6 +6,7 @@ import { auth } from "../../firebase";
 import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
+import { EmptyWallet } from "iconsax-react";
 
 const UserSidebar = observer(() => {
   const [state, setState] = useState({
@@ -62,6 +63,7 @@ const UserSidebar = observer(() => {
     <div>
       <Box className="navbar-auth" onClick={toggleDrawer(true)}>
         <Box className="navbar-balance">
+          <EmptyWallet color="#3366ff" variant="Bulk" size={26} style={{marginRight: '0.5vw'}}/>
           {authStore.balance?.toFixed(2)} USD
         </Box>
         <Avatar

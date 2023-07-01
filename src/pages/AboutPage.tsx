@@ -1,68 +1,68 @@
-import Navbar from "../components/navbar/Navbar"
-import member1 from "../assets/images/bega.jpeg"
- import member2 from "../assets/images/cass.jpeg";
-import member3 from "../assets/images/vino2.jpeg"
-import member4 from "../assets/images/bentley.jpeg"
-import Footer from "../components/homepage/Footer"
+import { Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import member1 from "../assets/images/bega.jpeg";
+import member2 from "../assets/images/cass.jpeg";
+import member3 from "../assets/images/vino2.jpeg";
+import member4 from "../assets/images/bentley.jpeg";
 
 const AboutPage = () => {
   return (
-    
-   <div className="section-aboutus">
-     <Navbar/>
-     <div className="background-container">
-  <div className="backgroundCircleTopLeft"></div>
-  <div className="backgroundCircleBottomRight"></div>
-  <div className="about-us">
-  <div className="row">
-     <h2>MEET OUR TEAM</h2>
-     <div className="column">
-          <div className="card">
-            <img src={member1} alt="Bega"/>
-               <div className="container">
-                  <h2>Muhammad Lubega</h2>
-                  <p className="title">Front-End Developer</p>
-                  <p> "Quotes"</p>
-               </div>
-            </div>
-         </div>
-         <div className="column">
-                  <div className="card">
-                 <img src={member2} alt="CassJ"/>
-                   <div className="container">
-                      <h2>Cassandra Jacklya</h2>
-                       <p className="title">Product Designer</p>
-                       <p> "Quotes"</p>
-                    </div>
-                   </div>
-                </div>
-                <div className="column">
-                  <div className="card">
-                   <img src={member3} alt="Vino" style={{ width: '100%', height: '220px'}}/>
-                   <div className="container">
-                      <h2>Vinothinni Kannan</h2>
-                       <p className="title">Quality Assurance</p>
-                       <p> "Quotes"</p>
-                    </div>
-                   </div>
-                </div>
-                <div className="column">
-                  <div className="card">
-                 <img src={member4}  alt="Bentley"/>
-                   <div className="container">
-                      <h2>Bentley Teh</h2>
-                       <p className="title">Mobile Developer</p>
-                       <p> "Quotes"</p>
-                    </div>
-                   </div>
-                </div>
-   </div>
-  </div>
- 
-</div>
-<Footer/>
-</div>
-);
+    <Box className="section-aboutus">
+      <Box className="background-container">
+        <Box className="backgroundCircleTopLeft"></Box>
+        <Box className="backgroundCircleBottomRight"></Box>
+        <Box className="about-us">
+          <Typography variant="h2">Meet our Team</Typography>
+          <Box className="row">
+            <Box className="column">
+              <Box className="card">
+                <img src={member1} alt="Bega" />
+                <Box className="container">
+                  <Typography variant="h2">Muhammad Lubega</Typography>
+                  <Typography className="title">Front-End Developer</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Box className="column">
+              <Box className="card">
+                <img src={member2} alt="CassJ" />
+                <Box className="container">
+                  <Typography variant="h2">Cassandra Jacklya</Typography>
+                  <Typography className="title">Product Designer</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Box className="column">
+              <Box className="card">
+                <img
+                  src={member3}
+                  alt="Vino"
+                  style={{ width: "100%", height: "220px" }}
+                />
+                <Box className="container">
+                  <Typography variant="h2">Vinothinni Kannan</Typography>
+                  <Typography className="title">Quality Assurance</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Box className="column">
+              <Box className="card">
+                <img src={member4} alt="Bentley" />
+                <Box className="container">
+                  <Typography variant="h2">Bentley Teh</Typography>
+                  <Typography className="title">Mobile Developer</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
 };
 
 export default AboutPage;
