@@ -1,21 +1,20 @@
-import Navbar from '../components/navbar/Navbar'
-import Product from '../components/trade/Product'
+// import Navbar from '../components/navbar/Navbar'
+import Chart from '../components/trade/Chart'
 import Proposal from '../components/trade/Proposal'
-import '../App.css'
 import Symbols from '../components/trade/Symbols'
+import '../styles/main.scss'
 
 const TradePage = () => {
   return (
     <div>
-        <Navbar/>
+        {/* <Navbar/> */}
         <div className="product-container">
         <div style={{ flex: 3 }}>
-        <Product/>
+        <Chart/>
         </div>
         <div style={{ flex: 1 }}>
         <Symbols/>
         <Proposal/>
-        {/* <Contract/> */}
         </div>
         </div>
     </div>

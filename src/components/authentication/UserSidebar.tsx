@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import Drawer from "@mui/material/Drawer";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Box, Button } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
-function UserSidebar() {
+const UserSidebar = observer(() => {
   const [state, setState] = useState({
     right: false,
   });
@@ -44,20 +44,32 @@ function UserSidebar() {
   const userEmail = authStore.user?.email || "";
   const userPhotoURL = authStore.user?.photoURL || "";
 
+  // async initializeUser() {
+  //   const querySnapshot = await getDocs(collection(db, "users"));
+  //   const leaderboardData = [];
+  //   querySnapshot.forEach((doc) => {
+  //     const { displayName, email, balance } = doc.data();
+  //     leaderboardData.push({ displayName, email, balance });
+  //     if (auth.currentUser && auth.currentUser.uid === doc.id) {
+  //       this.balance = balance || null;
+  //     }
+  //   });
+
+  //     this.leaderboard = leaderboardData.sort((a, b) => b.balance - a.balance);
+  // }
+
   return (
     <div>
-      <Avatar
-        onClick={toggleDrawer(true)}
-        style={{
-          height: 38,
-          width: 38,
-          margin: 10,
-          cursor: "pointer",
-          backgroundColor: "#0033ff",
-        }}
-        src={userPhotoURL}
-        alt={userDisplayName || userEmail}
-      />
+      <Box className="navbar-auth" onClick={toggleDrawer(true)}>
+        <Box className="navbar-balance">
+          {authStore.balance?.toFixed(2)} USD
+        </Box>
+        <Avatar
+          className="sidebar-picture"
+          src={userPhotoURL}
+          alt={userDisplayName || userEmail}
+        />
+      </Box>
       <Drawer anchor="right" open={state.right} onClose={toggleDrawer(false)}>
         <div className="sidebar-container">
           <div className="sidebar-profile">
@@ -77,6 +89,17 @@ function UserSidebar() {
             >
               {userDisplayName || userEmail}
             </span>
+          </div>
+          <div className="sidebar-leaderboard">
+            <h2>Leaderboard</h2>
+            <ol>
+              {authStore.leaderboard.map((user, index) => (
+                <li key={index}>
+                  {user.displayName || user.email} - {user.balance!.toFixed(2)}{" "}
+                  USD
+                </li>
+              ))}
+            </ol>
           </div>
           <span
             style={{
@@ -109,6 +132,6 @@ function UserSidebar() {
       </Drawer>
     </div>
   );
-}
+});
 
-export default observer(UserSidebar);
+export default UserSidebar;

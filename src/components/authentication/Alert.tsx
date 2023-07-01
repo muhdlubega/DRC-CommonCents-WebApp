@@ -3,9 +3,9 @@ import { Snackbar } from "@mui/material";
 import MuiAlert, { AlertColor } from "@mui/lab/Alert";
 // import { useGlobalState } from "../../store/Context";
 import authStore from "../../store/AuthStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
-const Alert = () => {
+const Alert = observer(() => {
 
   const handleCloseAlert = (_event: any, reason?: string) => {
     if (reason === "clickaway") {
@@ -20,6 +20,11 @@ const Alert = () => {
       open={authStore.alert.open}
       autoHideDuration={3000}
       onClose={handleCloseAlert}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "left",
+      }}
+      style={{ marginTop: "64px", marginRight: "16px" }} 
     >
       <MuiAlert
         onClose={handleCloseAlert}
@@ -31,6 +36,6 @@ const Alert = () => {
       </MuiAlert>
     </Snackbar>
   );
-};
+});
 
-export default observer(Alert);
+export default Alert;

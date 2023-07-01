@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react";
+import { Box, Button, Typography } from '@mui/material';
 import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import newsStore, { NewsItem, topics_array } from "../../store/NewsStore";
 import '../../styles/main.scss';
 
-interface NewsItem {
-  title: string;
-  summary: string;
-  banner_image: string;
-  url: string;
-  source: string;
-  source_domain: string;
-  authors: [ string ];
-  topics: [{
-    topic: string;
-  }]
-}
 
-const topics_array = ['blockchain', 'earnings', 'ipo', 'mergers_and_acquisitions', 'financial_markets', 'economy_fiscal', 'economy_monetary', 'economy_macro', 'energy_transportation', 'finance', 'life_sciences', 'manufacturing', 'real_estate', 'retail_wholesale', 'technology'];
-
-const NewsTopic = () => {
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [selectedTopic, setSelectedTopic] = useState<string>(topics_array[0]);
+const NewsTopic = observer(() => {
+  // const [news, setNews] = useState<NewsItem[]>([]);
+  // const [selectedTopic, setSelectedTopic] = useState<string>(topics_array[0]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const articlesPerPage = 20;
 
@@ -29,7 +18,7 @@ const NewsTopic = () => {
       const response = await getNewsTopics({ topic, pageSize: articlesPerPage, page: currentPage });
       const { data } = response;
       const feed = data?.feed || [];
-      setNews(feed);
+      newsStore.setNews(feed);
       console.log(feed);
     } catch (error) {
       console.error("Error fetching news:", error);
@@ -44,11 +33,11 @@ const NewsTopic = () => {
   
 
   useEffect(() => {
-    fetchNews(selectedTopic);
-  }, [selectedTopic]);
+    fetchNews(newsStore.selectedTopic);
+  }, [newsStore.selectedTopic]);
 
   const handleTopicChange = (topic: string) => {
-    setSelectedTopic(topic);
+    newsStore.setSelectedTopic(topic);
   };
 
   const goToNextPage = () => {
@@ -60,60 +49,78 @@ const NewsTopic = () => {
   };
 
   return (
-    <div>
-      <span className="news-span">
-        <div>Check Out More News</div>
-      </span>
-      <div className="topic-buttons">
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+        <Typography variant="h6">Check Out More News</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
         {topics_array.map((topic, index) => (
-          <button
+          <Button
             key={index}
+            variant={topic === newsStore.selectedTopic ? 'contained' : 'outlined'}
             onClick={() => handleTopicChange(topic)}
-            className={topic === selectedTopic ? "active" : ""}
+            sx={{ mx: 1 }}
           >
             {topic}
-          </button>
+          </Button>
         ))}
-      </div>
-      <div className="news-container">
-      {paginate(news, currentPage, articlesPerPage).map((article: NewsItem | null) => {
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {paginate(newsStore.news, currentPage, articlesPerPage).map((article: NewsItem | null) => {
           if (!article) return null;
           return (
-            <Link
-              className="news-card"
-              to={article?.url}
-              key={article?.title}
-            >
+            <Link className="news-card" to={article?.url} key={article?.title}>
               <img className="news-image" src={article?.banner_image} alt={article?.title} />
-              <div>
-                <div>{article?.title}</div>
-                <div>
-                  Author(s): {article.authors.map((author, index) => (
-                    <span key={index}>{author}{index < article.authors.length - 1 && ", "}</span>
-                  ))}
-                </div>
-                <div>{article?.summary}</div>
-                <div>
-                  Topic(s): {article.topics.map((topic, index) => (
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="h6">{article?.title}</Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  Author(s):{' '}
+                  {article.authors.map((author, index) => (
                     <span key={index}>
-                      {topic?.topic}
-                      {index < article.topics.length - 1 && ", "}
+                      {author}
+                      {index < article.authors.length - 1 && ', '}
                     </span>
                   ))}
-                </div>
-                <div>{article?.source}</div>
-                <div>{article?.source_domain}</div>
-              </div>
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  {article?.summary}
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  Topic(s):{' '}
+                  {article.topics.map((topic, index) => (
+                    <span key={index}>
+                      {topic?.topic}
+                      {index < article.topics.length - 1 && ', '}
+                    </span>
+                  ))}
+                </Typography>
+                <Typography variant="body1">{article?.source}</Typography>
+                <Typography variant="body1">{article?.source_domain}</Typography>
+              </Box>
             </Link>
           );
         })}
-      </div>
-      <div className="pagination-buttons">
-      <button onClick={goToPreviousPage} disabled={currentPage === 1}>Previous</button>
-      <button onClick={goToNextPage} disabled={news.length < articlesPerPage}>Next</button>
-    </div>
-    </div>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button
+          onClick={goToPreviousPage}
+          disabled={currentPage === 1}
+          sx={{ mx: 1 }}
+          variant="contained"
+        >
+          Previous
+        </Button>
+        <Button
+          onClick={goToNextPage}
+          disabled={newsStore.news.length < articlesPerPage}
+          sx={{ mx: 1 }}
+          variant="contained"
+        >
+          Next
+        </Button>
+      </Box>
+    </Box>
   );
-};
+});
 
 export default NewsTopic;
