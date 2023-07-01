@@ -129,9 +129,9 @@ class ChartsStore {
     connection?.addEventListener("message", this.handleActiveSymbolsResponse);
     await api.activeSymbols(active_symbols_request);
   
-    this.setActiveSymbols(this.symbols);
+    // this.setActiveSymbols(this.symbols);
+    this.setActiveSymbols(id_array);
   };
-  
 
   setSelectedSymbol(symbol: string) {
     this.selectedSymbol = symbol;

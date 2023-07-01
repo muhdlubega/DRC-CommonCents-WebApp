@@ -24,6 +24,7 @@ class ApiStore {
   basis: string = "stake";
   chartType: string = "candlestick";
   isDurationEnded: boolean = false;
+  showOnboarding: boolean = false;
   isTicks: boolean = false;
   proposalData: any[] = [];
   selectedSymbol: string = "";
@@ -50,6 +51,7 @@ class ApiStore {
       basis: observable,
       chartType: observable,
       isDurationEnded: observable,
+      showOnboarding: observable,
       isTicks: observable,
       proposalData: observable,
       selectedSymbol: observable,
@@ -70,6 +72,7 @@ class ApiStore {
       setPreviousSpot: action.bound,
       setCurrentSpot: action.bound,
       setIsDurationEnded: action.bound,
+      setShowOnboarding: action.bound,
       setSellSuccessful: action.bound,
       setAdditionalAmount: action.bound,
       setSellFailed: action.bound,
@@ -143,6 +146,10 @@ class ApiStore {
 
   setIsDurationEnded(isDurationEnded: boolean) {
     this.isDurationEnded = isDurationEnded;
+  }
+
+  setShowOnboarding(showOnboarding: boolean) {
+    this.showOnboarding = showOnboarding;
   }
 
   setSellSuccessful(sellSuccessful: boolean) {

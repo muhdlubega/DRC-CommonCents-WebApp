@@ -1,7 +1,6 @@
 // import Navbar from '../components/navbar/Navbar'
 import Chart from '../components/trade/Chart'
 import Proposal from '../components/trade/Proposal'
-import Symbols from '../components/trade/Symbols'
 import '../styles/main.scss'
 
 const TradePage = () => {
@@ -9,11 +8,10 @@ const TradePage = () => {
     <div>
         {/* <Navbar/> */}
         <div className="product-container">
-        <div style={{ flex: 3 }}>
+        <div style={{ flex: 2 }}>
         <Chart/>
         </div>
         <div style={{ flex: 1 }}>
-        <Symbols/>
         <Proposal/>
         </div>
         </div>
