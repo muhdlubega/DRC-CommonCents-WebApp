@@ -5,7 +5,7 @@ import UserSidebar from "../authentication/UserSidebar";
 import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import logo from '../../assets/images/commoncents-logo.png';
-import { MoneyRecive, Book, Global, MessageQuestion } from "iconsax-react";
+// import { MoneyRecive, Book, Global, MessageQuestion } from "iconsax-react";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -23,28 +23,28 @@ const Header = () => {
           CommonCents
         </Typography>
         <Box className="navbar-main">
-        <MoneyRecive color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/trade/1HZ10V")}/>
+        {/* <MoneyRecive color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/trade/1HZ10V")}/> */}
           <Typography
             onClick={() => navigate("/trade/1HZ10V")}
             className="navbar-title"
           >
             Trade
           </Typography>
-        <Book color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/news")}/>
+        {/* <Book color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/news")}/> */}
           <Typography
             onClick={() => navigate("/news")}
             className="navbar-title"
           >
             News
           </Typography>
-        <Global color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/forum")}/>
+        {/* <Global color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/forum")}/> */}
           <Typography
             onClick={() => navigate("/forum")}
             className="navbar-title"
           >
             Forum
           </Typography>
-        <MessageQuestion color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/about")}/>
+        {/* <MessageQuestion color="#3366ff" size={26} style={{marginRight: '0.5vw', cursor: 'pointer'}} onClick={() => navigate("/about")}/> */}
           <Typography
             onClick={() => navigate("/about")}
             className="navbar-title"
