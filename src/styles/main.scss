@@ -16,6 +16,7 @@ a {
   background-color: rgb(45, 44, 45);
   color: white;
   min-height: 100vh;
+  z-index: 0;
 }
 
 
@@ -23,6 +24,11 @@ a {
   width: 100px;
   height: 40px;
   margin-left: 15px;
+}
+
+.ts-particles{
+  z-index: -1;
+  position: absolute;
 }
 
 .page_number {
@@ -63,7 +69,7 @@ a {
 }
 
 .symbols-dropdown {
-  border: 0.2vw solid blue;
+  border: 0.1vw solid #0033ff;
   // border-radius: 5vw;
   margin: 1.5vw 0 1vw 3vw;
   // padding: 10px;
@@ -485,7 +491,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 
   &-profile {
-    flex: 1;
+    // flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -498,6 +504,7 @@ input[type="number"]::-webkit-outer-spin-button {
     width: 100%;
     background-color: #0033ff;
     margin-top: 20px;
+    // flex: 1;
   }
 
   &-picture {
@@ -510,6 +517,9 @@ input[type="number"]::-webkit-outer-spin-button {
 cursor: pointer;
     font-family: 'Montserrat';
     margin: 2vw 0;
+    &:hover{
+      color:#0033ff;
+    }
   }
 
   &-leaderboard{
@@ -521,6 +531,16 @@ cursor: pointer;
       font-size: 0.8vw;
     }
   }
+}
+
+.leaderboard-main{
+  margin: 3vw;
+}
+
+.leaderboard-tthree{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-modal {
