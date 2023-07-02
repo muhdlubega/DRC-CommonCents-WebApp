@@ -14,6 +14,8 @@ export const HomePage = () => {
       <Banner/>
       <Header/>
       <LiveData/>
+      {/* <LatestNews/> */}
+      <TradingType/>
       <LatestNews/>
       <TradeIntro/>
       {/* <Footer/> */}

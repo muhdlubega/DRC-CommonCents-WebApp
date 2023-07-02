@@ -6,6 +6,7 @@ export interface NewsItem {
     banner_image: string;
     url: string;
     source: string;
+    time_published: string; 
     source_domain: string;
     authors: [ string ];
     topics: [{
@@ -13,7 +14,7 @@ export interface NewsItem {
     }]
 }
 
-export const topics_array = ['blockchain', 'earnings', 'ipo', 'mergers_and_acquisitions', 'financial_markets', 'economy_fiscal', 'economy_monetary', 'economy_macro', 'energy_transportation', 'finance', 'life_sciences', 'manufacturing', 'real_estate', 'retail_wholesale', 'technology'];
+export const topics_array = ['blockchain', 'earnings', 'mergers_and_acquisitions', 'financial_markets', 'economy_fiscal', 'economy_monetary', 'economy_macro', 'energy_transportation', 'finance', 'life_sciences', 'manufacturing', 'real_estate', 'retail_wholesale', 'technology'];
 
 class NewsStore {
     news: NewsItem[] = [];

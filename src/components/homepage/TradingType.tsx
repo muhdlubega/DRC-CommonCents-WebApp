@@ -1,23 +1,23 @@
-import React from "react";
+// import React from "react";
 import AliceCarousel from "react-alice-carousel";
-
 import "../../styles/main.scss";
 import { TradeType } from "./TradeTypeArray";
+import { Box } from "@mui/material";
 
-const TradingType= () => {
+const TradingType = () => {
   const responsive = {
-    0:{
+    0: {
       items: 1,
     },
     1024: {
-        items: 3, 
+      items: 3,
     },
   };
 
   const items = TradeType.map((tradeType, index) => (
     <div className="trade-card" key={index}>
       {/* <img src={tradeType.image} alt={tradeType.title} /> */}
-       <div className="card-content">
+      <div className="card-content">
         <h3>{tradeType.title}</h3>
         <p>{tradeType.Description}</p>
       </div>
@@ -25,8 +25,9 @@ const TradingType= () => {
   ));
 
   return (
-    <div>
-      <div className="trade-carousel">
+    <Box>
+    <Box className="live-data-title">Types of Trading</Box>
+      <Box className="trade-carousel">
         <AliceCarousel
           mouseTracking
           infinite
@@ -37,8 +38,8 @@ const TradingType= () => {
           responsive={responsive}
           items={items}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

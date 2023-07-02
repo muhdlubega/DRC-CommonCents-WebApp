@@ -1,51 +1,65 @@
-// import React from 'react';
-import { Box, Typography } from '@mui/material';
-// import Navbar from '../components/navbar/Navbar';
-import member1 from '../assets/images/bega.jpeg';
-import member2 from '../assets/images/cass.jpeg';
-import member3 from '../assets/images/vino2.jpeg';
-import member4 from '../assets/images/bentley.jpeg';
-// import Footer from '../components/homepage/Footer';
-
-type TeamMemberProps = {
-   name: string;
-   title: string;
-   image: string;
- };
+import { Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import member1 from "../assets/images/bega.jpeg";
+import member2 from "../assets/images/cass.jpeg";
+import member3 from "../assets/images/vino2.jpeg";
+import member4 from "../assets/images/bentley.jpeg";
 
 const AboutPage = () => {
   return (
     <Box className="section-aboutus">
-      {/* <Navbar /> */}
-      <Box sx={{ padding: '2rem' }}>
-        <Typography variant="h2" align="center" sx={{ mb: 4 }}>
-          MEET OUR TEAM
-        </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <TeamMember name="Muhammad Lubega" title="Front-End Developer" image={member1} />
-          <TeamMember name="Cassandra Jacklyn" title="Product Designer" image={member2} />
-          <TeamMember name="Vinothinni Kannan" title="Quality Assurance" image={member3} />
-          <TeamMember name="Bentley Teh" title="Mobile Developer" image={member4} />
+      <Box className="background-container">
+        <Box className="backgroundCircleTopLeft"></Box>
+        <Box className="backgroundCircleBottomRight"></Box>
+        <Box className="about-us">
+          <Typography variant="h2">Meet our Team</Typography>
+          <Box className="row">
+            <Box className="column">
+              <Box className="card">
+                <img src={member1} alt="Bega" />
+                <Box className="container">
+                  <Typography variant="h2">Muhammad Lubega</Typography>
+                  <Typography className="title">Front-End Developer</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Box className="column">
+              <Box className="card">
+                <img src={member2} alt="CassJ" />
+                <Box className="container">
+                  <Typography variant="h2">Cassandra Jacklya</Typography>
+                  <Typography className="title">Product Designer</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Box className="column">
+              <Box className="card">
+                <img
+                  src={member3}
+                  alt="Vino"
+                  style={{ width: "100%", height: "220px" }}
+                />
+                <Box className="container">
+                  <Typography variant="h2">Vinothinni Kannan</Typography>
+                  <Typography className="title">Quality Assurance</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Box className="column">
+              <Box className="card">
+                <img src={member4} alt="Bentley" />
+                <Box className="container">
+                  <Typography variant="h2">Bentley Teh</Typography>
+                  <Typography className="title">Mobile Developer</Typography>
+                  <Typography> "Quotes"</Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         </Box>
-      </Box>
-      {/* <Footer /> */}
-    </Box>
-  );
-};
-
-const TeamMember = ({ name, title, image }: TeamMemberProps) => {
-  return (
-    <Box sx={{ width: 300, mx: 2, mb: 4 }}>
-      <Box
-        component="img"
-        src={image}
-        alt={name}
-        sx={{ width: '100%', height: '220px', objectFit: 'cover', mb: 2 }}
-      />
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography variant="h5">{name}</Typography>
-        <Typography variant="subtitle1">{title}</Typography>
-        <Typography variant="body1">"Quotes"</Typography>
       </Box>
     </Box>
   );
