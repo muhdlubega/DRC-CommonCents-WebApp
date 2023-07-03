@@ -120,20 +120,20 @@ const Chart = observer(() => {
             )
         )}
       </Select>
-      <InfoCircle color="#3366ff" size={36} onClick={() => apiStore.setShowOnboarding(true)}  style={{marginLeft: "1vw", cursor: "pointer"}}/>
+      <InfoCircle color="#0033ff" size={36} onClick={() => apiStore.setShowOnboarding(true)}  style={{marginLeft: "1vw", cursor: "pointer"}}/>
       <Select
       className="symbols-dropdown"
       value={apiStore.chartType}
       onChange={(e) => handleChartTypeChange(e.target.value)}
     >
       <MenuItem value="line" onClick={() => handleChartTypeChange("line")}>
-        <Chart1 color="#3366ff" variant="Bulk" size={24} /> Line
+        <Chart1 color="#0033ff" variant="Bulk" size={24} /> Line
       </MenuItem>
       <MenuItem
         value="candlestick"
         onClick={() => handleChartTypeChange("candlestick")}
       >
-        <Candle color="#3366ff" variant="Bulk" size={24} /> Candle
+        <Candle color="#0033ff" variant="Bulk" size={24} /> Candle
       </MenuItem>
     </Select>
       <Select

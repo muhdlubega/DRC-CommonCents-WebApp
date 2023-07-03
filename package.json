@@ -35,8 +35,10 @@
     "react-icons": "^4.9.0",
     "react-router-dom": "^6.12.1",
     "react-slick": "^0.29.0",
+    "react-tsparticles": "^2.10.1",
     "sass": "^1.63.4",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "tsparticles": "^2.10.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
