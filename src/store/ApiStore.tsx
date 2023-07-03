@@ -14,19 +14,13 @@ interface Tick {
 }
 
 class ApiStore {
-  duration: number = 5;
-  payout: number = 100;
   granularity: number = 60;
   activeSymbols: any[] = [];
-  previousSpot: number = 0;
-  currentSpot: number = 0;
   data: any = null;
-  basis: string = "stake";
   chartType: string = "candlestick";
   isDurationEnded: boolean = false;
   showOnboarding: boolean = false;
   isTicks: boolean = false;
-  proposalData: any[] = [];
   selectedSymbol: string = "";
   ticks: Tick[] = [];
   sellSuccessful: boolean = false;
@@ -41,19 +35,13 @@ class ApiStore {
 
   constructor() {
     makeObservable(this, {
-      duration: observable,
-      payout: observable,
       granularity: observable,
       activeSymbols: observable,
-      previousSpot: observable,
-      currentSpot: observable,
       data: observable,
-      basis: observable,
       chartType: observable,
       isDurationEnded: observable,
       showOnboarding: observable,
       isTicks: observable,
-      proposalData: observable,
       selectedSymbol: observable,
       ticks: observable,
       sellSuccessful: observable,
@@ -64,13 +52,8 @@ class ApiStore {
       totalAmountLost: observable,
       connectWebSocket: action.bound,
       disconnectWebSocket: action.bound,
-      setDuration: action.bound,
-      setPayout: action.bound,
-      setBasis: action.bound,
       setChartType: action.bound,
       setActiveSymbols: action.bound,
-      setPreviousSpot: action.bound,
-      setCurrentSpot: action.bound,
       setIsDurationEnded: action.bound,
       setShowOnboarding: action.bound,
       setSellSuccessful: action.bound,
@@ -91,9 +74,6 @@ class ApiStore {
       ticksHistoryResponse: action.bound,
       tickResponse: action.bound,
       setTicks: action.bound,
-      proposalResponse: action.bound,
-      getProposal: action.bound,
-      unsubscribeProposal: action.bound,
     });
     this.connectWebSocket();
   }
@@ -116,18 +96,6 @@ class ApiStore {
     // });
   }
 
-  setDuration(duration: number) {
-    this.duration = duration;
-  }
-
-  setPayout(payout: number) {
-    this.payout = payout;
-  }
-
-  setBasis(basis: string) {
-    this.basis = basis;
-  }
-
   setChartType(chartType: string) {
     this.chartType = chartType;
   }
@@ -135,14 +103,6 @@ class ApiStore {
   setActiveSymbols = (symbols: []) => {
     this.activeSymbols = symbols;
   };
-
-  setPreviousSpot(previousSpot: number) {
-    this.previousSpot = previousSpot;
-  }
-
-  setCurrentSpot(currentSpot: number) {
-    this.currentSpot = currentSpot;
-  }
 
   setIsDurationEnded(isDurationEnded: boolean) {
     this.isDurationEnded = isDurationEnded;
@@ -494,103 +454,6 @@ class ApiStore {
   setTicks(ticks: Tick[]) {
     this.ticks = ticks;
   }
-
-  proposalResponse = async (res: MessageEvent) => {
-    const data = JSON.parse(res.data);
-    if (data.error !== undefined) {
-        console.log("Error: ", data.error.message);
-        this.connection?.removeEventListener(
-          "message",
-          this.proposalResponse,
-          false
-        );
-      await this.api.disconnect();
-    } else if (data.msg_type === "proposal") {
-        this.setPreviousSpot(parseFloat(data.proposal.spot));
-        // this.setProposalTicks(data.proposal.duration);
-        // this.proposalData.push(data.proposal);
-        // console.log(data.proposal.spot);
-
-        const updatedData = [...this.proposalData, data.proposal];
-        this.proposalData = updatedData;
-        // console.log(this.proposalData);
-        
-        // if (this.proposalData.length > 20) {
-        //   this.proposalData.splice(0, 1);
-        // }
-    }
-  };
-
-  getProposal = async (id: string) => {
-    const proposal_request = {
-      proposal: 1,
-      subscribe: 1,
-      amount: this.payout,
-      basis: this.basis,
-      contract_type: "CALL",
-      currency: "USD",
-      duration: this.duration,
-      duration_unit: "t",
-      symbol: id,
-    };
-
-    const keepAlive = () => proposal_request;
-
-    const keepAliveRes = async (res: any) => {
-      const data = JSON.parse(res.data);
-      if (data.error !== undefined) {
-        // runInAction(() => {
-          console.log("Error: %s ", data.error.message);
-          this.connection?.removeEventListener(
-            "message",
-            keepAliveRes,
-            false
-          );
-        // });
-        await this.api.disconnect();
-      } else if (data.msg_type === "ping") {
-        // runInAction(() => {
-          console.log(data.msg_type);
-          console.log("ping");
-        // });
-      }
-    };
-  
-    const checkSignal = async () => {
-      keepAlive();
-      this.connection?.addEventListener("message", keepAliveRes);
-    };
-
-    try {
-      checkSignal();
-      this.unsubscribeProposal();
-      this.connection?.addEventListener("message", this.proposalResponse);
-      await this.api.proposal(proposal_request);
-    } catch (error) {
-      console.log("Error fetching proposal: ", error);
-    }
-  };
-
-  // subscribeProposal = async () => {
-  //   const selectedSymbol = this.selectedSymbol;
-
-  //   if (!selectedSymbol) {
-  //     return;
-  //   }
-
-  //   await this.getProposal(selectedSymbol);
-  // };
-
-  unsubscribeProposal = async () => {
-    this.connection?.removeEventListener(
-      "message",
-      this.proposalResponse,
-      false
-    );
-    this.proposalData = [];
-    // await this.api.disconnect();
-  };
-
 
   
 }

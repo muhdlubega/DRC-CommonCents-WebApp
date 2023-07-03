@@ -84,7 +84,7 @@ class AuthStore {
 
   setAlert(alert: Alert) {
     this.alert = alert;
-    console.log(alert);
+    // console.log(alert);
   }
 
   setUser(user: User | null) {
