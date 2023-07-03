@@ -1,6 +1,7 @@
 import { Avatar, Box } from "@mui/material";
-import ParticlesBackground from "../components/ParticlesBackground";
+// import ParticlesBackground from "../components/ParticlesBackground";
 import authStore from "../store/AuthStore";
+import watermark from "../assets/images/watermark.png"
 
 const LeaderboardPage = () => {
   // Sort the leaderboard in descending order based on user balance
@@ -13,9 +14,10 @@ const LeaderboardPage = () => {
 
   return (
     <Box className="leaderboard-main">
-      <div className="ts-particles">
+    <img className="watermark" src={watermark}></img>
+      {/* <div className="ts-particles">
         <ParticlesBackground />
-      </div>
+      </div> */}
       <Box className="leaderboard-tthree">
         <ol>
           {topThreeUsers.map((user, index) => (

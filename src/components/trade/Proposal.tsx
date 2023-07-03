@@ -27,6 +27,10 @@ const Proposal = observer(() => {
   };
 
   const handleBuy = async (isHigher: boolean) => {
+    // if(id){
+    //   proposalStore.unsubscribeProposal();
+    //   proposalStore.getProposal(id);
+    // }
     setIsProcessing(true);
     let balance = 0;
     try {
@@ -39,6 +43,8 @@ const Proposal = observer(() => {
       const currentBalance = balance;
 
       const payoutValue = parseInt(proposalStore.payout.toString(), 10);
+      const askPrice = proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price;
+      console.log(askPrice);
 
       console.log(payoutValue);
       console.log(currentBalance);
@@ -48,14 +54,19 @@ const Proposal = observer(() => {
         return;
       }
 
-      const newBalance = currentBalance - payoutValue;
+      let newBalance = 0;
+      if (proposalStore.basis === "payout"){
+      newBalance = currentBalance - askPrice;
+      } else {
+      newBalance = currentBalance - payoutValue;
+      }
       authStore.setBalance(newBalance);
 
       setTimeout(() => handleSell(isHigher), proposalStore.duration * 1000);
 
       authStore.setAlert({
         open: true,
-        message: `Option successfully bought for USD ${payoutValue}`,
+        message: `Option successfully bought for USD ${proposalStore.basis === "payout" ? askPrice : payoutValue}`,
         type: "success",
       });
 
@@ -87,31 +98,26 @@ const Proposal = observer(() => {
 
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
-      console.log("proposal data", proposalStore.proposalData);
+      // console.log("proposal data", proposalStore.proposalData);
 
-      if (proposalStore.proposalData.length > 0) {
-        console.log(
-          "testing",
-          proposalStore.proposalData[
-            proposalStore.proposalData.length - proposalStore.duration
-          ]
-        );
+      // if (proposalStore.proposalData.length > 0) {
+        // console.log(
+        //   "testing",
+        //   proposalStore.proposalData[
+        //     proposalStore.proposalData.length - proposalStore.duration
+        //   ]
+        // );
         
         const previousSpot =
-          proposalStore.proposalData[
-            proposalStore.proposalData.length - proposalStore.duration
-          ].spot;
+        apiStore.ticks[apiStore.ticks.length - proposalStore.duration].close;
         const currentSpot =
-          proposalStore.proposalData[proposalStore.proposalData.length - 1]
-            .spot;
+        apiStore.ticks[apiStore.ticks.length - 1].close;
 
         console.log("prev", previousSpot);
         console.log("next", currentSpot);
 
         const additionalAmount =
-          proposalStore.proposalData[
-            proposalStore.proposalData.length - proposalStore.duration
-          ].payout;
+          proposalStore.proposalData[proposalStore.proposalData.length - 1].payout;
 
         if (previousSpot && currentSpot) {
           const previousSpotValue = previousSpot;
@@ -124,7 +130,7 @@ const Proposal = observer(() => {
             if (currentSpotValue > previousSpotValue) {
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              console.log("Sell successful", additionalAmount);
+              console.log("Spot is higher!!!", additionalAmount);
               authStore.setAlert({
                 open: true,
                 message: `Spot is higher! You won USD ${additionalAmount}!`,
@@ -139,7 +145,7 @@ const Proposal = observer(() => {
               console.log("Spot is not higher", additionalAmount);
               authStore.setAlert({
                 open: true,
-                message: `Spot is not higher. You lost USD ${additionalAmount} :(`,
+                message: `Spot is not higher. You lost :(`,
                 type: "error",
               });
               apiStore.setSellFailed(true);
@@ -150,13 +156,11 @@ const Proposal = observer(() => {
             }
           } else {
             if (previousSpotValue > currentSpotValue) {
-              const additionalAmount =
-                proposalStore.proposalData[
-                  proposalStore.proposalData.length - proposalStore.duration
-                ].payout;
+              // const additionalAmount =
+              //   proposalStore.payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              console.log("Sell successful");
+              console.log("Spot is lower!!!", additionalAmount);
               authStore.setAlert({
                 open: true,
                 message: `Spot is lower! You won USD ${additionalAmount}!`,
@@ -171,7 +175,7 @@ const Proposal = observer(() => {
               console.log("Spot is not lower", additionalAmount);
               authStore.setAlert({
                 open: true,
-                message: `Spot is not lower. You lost USD ${additionalAmount} :(`,
+                message: `Spot is not lower. You lost :(`,
                 type: "error",
               });
               apiStore.setSellFailed(true);
@@ -189,14 +193,14 @@ const Proposal = observer(() => {
             type: "error",
           });
         }
-      } else {
-        console.log("Not enough data to compare spot prices");
-        authStore.setAlert({
-          open: true,
-          message: `Error. Try again later`,
-          type: "error",
-        });
-      }
+      // } else {
+      //   console.log("Not enough data to compare spot prices");
+      //   authStore.setAlert({
+      //     open: true,
+      //     message: `Error. Try again later`,
+      //     type: "error",
+      //   });
+      // }
       setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
@@ -221,27 +225,11 @@ const Proposal = observer(() => {
     }
   };
 
-  // useEffect(() => {
-  //   if (id) {
-  //     proposalStore.getProposal(id);
-  //   }
-
-  //   return () => {
-  //     proposalStore.unsubscribeProposal(id as string);
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     proposalStore.getProposal(id);
-  //   }
-  // }, [id]);
-
   useEffect(() => {
     if (id){
       proposalStore.getProposal(id);
     }
-  }, [id, proposalStore.duration, proposalStore.payout, proposalStore.basis]);
+  }, [id, proposalStore.basis, proposalStore.payout, proposalStore.duration]);
 
   return (
     <Box>
@@ -374,7 +362,7 @@ const Proposal = observer(() => {
         </button>
       </Box>
       <Box className="proposal-input-container">
-        <button className="proposal-input-btn left" onClick={decrementPayout}>
+        <button className="proposal-input-btn left" onClick={decrementPayout} disabled={proposalStore.payout <= 0}>
           -
         </button>
         <input
@@ -385,7 +373,7 @@ const Proposal = observer(() => {
           max="500"
           className="proposal-input-field"
         />
-        <button className="proposal-input-btn right" onClick={incrementPayout}>
+        <button className="proposal-input-btn right" onClick={incrementPayout} disabled={proposalStore.payout >= 501}>
           +
         </button>
       </Box>
@@ -394,19 +382,19 @@ const Proposal = observer(() => {
       <Box className="proposal-btn-choices">
         <button
           className={`proposal-btn-buy ${
-            isProcessing ? "processing" : ""
+            isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
           } higher `}
           onClick={() => handleBuy(true)}
-          disabled={isProcessing}
+          disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
         >
           Higher
         </button>
         <button
           className={`proposal-btn-buy ${
-            isProcessing ? "processing" : ""
+            isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
           } lower`}
           onClick={() => handleBuy(false)}
-          disabled={isProcessing}
+          disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
         >
           Lower
         </button>

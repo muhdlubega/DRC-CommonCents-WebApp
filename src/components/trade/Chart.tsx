@@ -56,6 +56,9 @@ const Chart = observer(() => {
     ],
   };
 
+  // console.log(apiStore.ticks[apiStore.ticks.length - 1].close);
+  
+
   const handleChartTypeChange = (newChartType: string) => {
     apiStore.toggleTicks(false);
     apiStore.setChartType(newChartType);
