@@ -4,15 +4,17 @@ import member1 from "../assets/images/bega.jpeg";
 import member2 from "../assets/images/cass.jpeg";
 import member3 from "../assets/images/vino2.jpeg";
 import member4 from "../assets/images/bentley.jpeg";
-import ParticlesBackground from "../components/ParticlesBackground";
+// import ParticlesBackground from "../components/ParticlesBackground";
+import watermark from "../assets/images/watermark.png"
 
 const AboutPage = () => {
   return (
     <Box className="section-aboutus">
       <Box className="background-container">
-      <div className="ts-particles">
+      <img className="watermark" src={watermark}></img>
+      {/* <div className="ts-particles">
           <ParticlesBackground />
-        </div>
+        </div> */}
         {/* <Box className="backgroundCircleTopLeft"></Box> */}
         {/* <Box className="backgroundCircleBottomRight"></Box> */}
         <Box className="about-us">

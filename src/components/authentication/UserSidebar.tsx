@@ -126,7 +126,7 @@ const UserSidebar = observer(() => {
   </ol>
 </span> */}
           </div>
-          <h6 className="sidebar-item">My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item" onClick={() => navigate("/leaderboard")}>Leaderboard<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           {/* <div className="sidebar-leaderboard">
           <h6 onClick={toggleDropdown}>Leaderboard{<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/>}</h6>

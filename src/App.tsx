@@ -9,7 +9,9 @@ const LazyTradePage = lazy(() => import("./pages/TradePage"));
 const LazyNewsPage = lazy(() => import("./pages/NewsPage"));
 const LazyForumPage = lazy(() => import("./pages/ForumPage"));
 const LazyAboutPage = lazy(() => import("./pages/AboutPage"));
+const LazyAccountPage = lazy(() => import("./pages/AccountPage"));
 const LazyLeaderboardPage = lazy(() => import("./pages/LeaderboardPage"));
+const LazyErrorPage = lazy(() => import("./pages/Error"));
 
 
 function App() {
@@ -22,7 +24,9 @@ function App() {
         <Route path="/news" element={<Suspense fallback={<div>Loading..</div>}><LazyNewsPage /></Suspense>}></Route>
         <Route path="/forum" element={<Suspense fallback={<div>Loading..</div>}><LazyForumPage /></Suspense>}></Route>
         <Route path="/about" element={<Suspense fallback={<div>Loading..</div>}><LazyAboutPage /></Suspense>}></Route>
+        <Route path="/account" element={<Suspense fallback={<div>Loading..</div>}><LazyAccountPage /></Suspense>}></Route>
         <Route path="/leaderboard" element={<Suspense fallback={<div>Loading..</div>}><LazyLeaderboardPage /></Suspense>}></Route>
+        <Route path="/*" element={<Suspense fallback={<div>Loading..</div>}><LazyErrorPage /></Suspense>}></Route>
       </Routes>
       <Footer/>
       <Alert/>

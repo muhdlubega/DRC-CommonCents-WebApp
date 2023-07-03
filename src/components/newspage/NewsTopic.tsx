@@ -126,7 +126,7 @@ const NewsTopic = observer(() => {
           placeholder="Search articles..."
           className="news-searchbox"
         />
-        <SearchFavorite1 color="#3366ff" size={36} />
+        <SearchFavorite1 color="#3366ff" size={40} style={{marginLeft: '1vw'}}/>
       </Box>
       <Box
         sx={{

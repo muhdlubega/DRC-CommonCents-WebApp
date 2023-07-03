@@ -46,7 +46,6 @@ class ChartsStore {
   activeSymbols: string[] = [];
   data: any = null;
   proposalTicks: number = 0;
-  isDurationEnded: boolean = false;
   proposalData: any[] = [];
   symbols: any[] = [];
   selectedSymbol: string = "";
@@ -68,13 +67,11 @@ class ChartsStore {
       data: observable,
       symbols: observable,
       proposalTicks: observable,
-      isDurationEnded: observable,
       proposalData: observable,
       selectedSymbol: observable,
       marketType: observable,
       ticks: observable,
       setProposalTicks: action.bound,
-      setIsDurationEnded: action.bound,
       setActiveSymbols: action.bound,
       getActiveSymbols: action.bound,
       setSelectedSymbol: action.bound,
@@ -93,17 +90,11 @@ class ChartsStore {
     this.proposalTicks = proposalTicks;
   }
 
-  setIsDurationEnded(isDurationEnded: boolean) {
-    this.isDurationEnded = isDurationEnded;
-  }
-
   setActiveSymbols = (symbols: string[]) => {
     this.activeSymbols = symbols;
   };
 
   getActiveSymbols = async () => {
-    // let symbols = [];
-  
     switch (this.marketType) {
       case "volatility1s":
         this.symbols = id_array;
@@ -129,8 +120,8 @@ class ChartsStore {
     connection?.addEventListener("message", this.handleActiveSymbolsResponse);
     await api.activeSymbols(active_symbols_request);
   
-    // this.setActiveSymbols(this.symbols);
-    this.setActiveSymbols(id_array);
+    this.setActiveSymbols(this.symbols);
+    // this.setActiveSymbols(id_array);
   };
 
   setSelectedSymbol(symbol: string) {
