@@ -8,6 +8,7 @@ import logo from '../../assets/images/commoncents-logo.png';
 // import { MoneyRecive, Book, Global, MessageQuestion } from "iconsax-react";
 import { ArrowRight2, HambergerMenu } from "iconsax-react";
 import { useState } from "react";
+// import themeStore from "../../store/ThemeStore";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ const Header = () => {
           >
             About
           </Typography>
+          {/* <Moon onClick={themeStore.toggleMode} style={{cursor: 'pointer'}} color="#3366ff" size={26} /> */}
           <HambergerMenu className="hamberger-menu" color="#3366ff" size={26} onClick={toggleDrawer(true)}/> 
           {AuthStore.user ? (
               <UserSidebar />

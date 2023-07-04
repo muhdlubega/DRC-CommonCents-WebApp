@@ -9,9 +9,9 @@ const TradingType = () => {
     0: {
       items: 1,
     },
-    1024: {
-      items: 3,
-    },
+    // 1024: {
+    //   items: 3,
+    // },
   };
 
   const items = TradeType.map((tradeType, index) => (

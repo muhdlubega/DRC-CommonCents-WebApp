@@ -7,6 +7,19 @@
   scroll-behavior: smooth;
 }
 
+.light {
+  background-color: white;
+  color: black;
+  transition: all 0.3s ease-in;
+}
+
+.dark {
+  background-color: #1e1e1e;
+  color: lightgray;
+  transition: all 0.3s ease-in;
+}
+
+
 a {
   text-decoration: none;
   color: blue;
@@ -83,7 +96,7 @@ a {
 }
 
 .charts-area {
-  margin: 0 3vw 5vw 3vw;
+  margin: 0 1vw 5vw 1vw;
 }
 
 .proposal-btn-choices {
@@ -91,7 +104,7 @@ a {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 5vw 2vw 0 2vw;
+  margin: 5vw 1vw 0 1vw;
 }
 
 .proposal-btn-buy {
@@ -102,7 +115,7 @@ a {
   font-family: "Montserrat";
   cursor: pointer;
   color: white;
-  width: 90%;
+  width: 100%;
 
   &.higher {
     border: 1px solid green;
@@ -131,7 +144,7 @@ a {
 
 .proposal-btn-group {
   display: flex;
-  margin: 5vw 3vw 0 3vw;
+  margin: 5vw 1vw 0 1vw;
 }
 
 .proposal-options {
@@ -159,7 +172,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 1vw 3vw 5vw 3vw;
+  margin: 1vw 1vw 5vw 1vw;
 }
 
 .proposal-input-btn {
@@ -663,6 +676,11 @@ cursor: pointer;
   margin: 2vw;
   height: 22vw;
   width: 40vw;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  // overflow: hidden;
+  text-overflow: ellipsis;
   &:hover{
     opacity: 80%;
   }
@@ -1206,7 +1224,7 @@ cursor: pointer;
 
 .proposal-ticks {
   display: flex;
-  margin: 3vw;
+  margin: 3vw 1vw;
   justify-content: center;
   align-items: center;
 }

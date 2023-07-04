@@ -21,7 +21,7 @@ class ApiStore {
   isDurationEnded: boolean = false;
   showOnboarding: boolean = false;
   isTicks: boolean = false;
-  selectedSymbol: string = "";
+  selectedSymbol: string = "1HZ10V";
   ticks: Tick[] = [];
   sellSuccessful: boolean = false;
   additionalAmount: number = 0;
@@ -29,7 +29,16 @@ class ApiStore {
   deductedAmount: number = 0;
   totalAmountWon: number = 0;
   totalAmountLost: number = 0;
-
+  ticks_history_request: Record<string, number | string> = 
+  {
+    ticks_history: this.selectedSymbol,
+    adjust_start_time: 1,
+    count: 1000,
+    granularity: this.granularity,
+    end: "latest",
+    start: 1680040550,
+    style: "candles",
+  };
   connection: WebSocket | null = null;
   api: any = null;
 
@@ -50,6 +59,7 @@ class ApiStore {
       deductedAmount: observable,
       totalAmountWon: observable,
       totalAmountLost: observable,
+      ticks_history_request: observable,
       connectWebSocket: action.bound,
       disconnectWebSocket: action.bound,
       setChartType: action.bound,
@@ -64,15 +74,15 @@ class ApiStore {
       setTotalAmountWon: action.bound,
       setGranularity: action.bound,
       toggleTicks: action.bound,
-      handleActiveSymbolsResponse: action.bound,
-      getActiveSymbols: action.bound,
+      handleActiveSymbolsResponse: action,
+      getActiveSymbols: action,
       setSelectedSymbol: action.bound,
-      subscribeTicks: action.bound,
-      unsubscribeTicks: action.bound,
-      getTicksHistory: action.bound,
-      tickSubscriber:action.bound,
-      ticksHistoryResponse: action.bound,
-      tickResponse: action.bound,
+      subscribeTicks: action,
+      unsubscribeTicks: action,
+      getTicksHistory: action,
+      tickSubscriber:action,
+      ticksHistoryResponse: action,
+      tickResponse: action,
       setTicks: action.bound,
     });
     this.connectWebSocket();
@@ -162,6 +172,8 @@ class ApiStore {
 
   toggleTicks(isTicks: boolean){
     this.isTicks = isTicks;
+    console.log("test", this.isTicks);
+    
   }
 
   handleActiveSymbolsResponse = async (res: MessageEvent) => {
@@ -214,12 +226,31 @@ class ApiStore {
   }
 
   subscribeTicks = async () => {
+
+  this.ticks_history_request = 
+  this.isTicks ? {
+    ticks_history: this.selectedSymbol,
+    adjust_start_time: 1,
+    count: 1000,
+    end: "latest",
+    start: 1,
+    style: "ticks",
+  } : 
+  {
+    ticks_history: this.selectedSymbol,
+    adjust_start_time: 1,
+    count: 1000,
+    granularity: this.granularity,
+    end: "latest",
+    start: 1680040550,
+    style: "candles",
+  };
+
     this.unsubscribeTicks();
     this.connectWebSocket();
 
-    await this.tickSubscriber();
-    await this.getTicksHistory();
-    
+    this.tickSubscriber();
+    this.getTicksHistory();
     this.connection?.addEventListener("message", this.tickResponse);
   };
 
@@ -229,26 +260,8 @@ class ApiStore {
     this.disconnectWebSocket();
   };
 
-  ticks_history_request = 
-  this.isTicks ? {
-    ticks_history: "",
-    adjust_start_time: 1,
-    count: 1000,
-    end: "latest",
-    start: 1,
-    style: "ticks",
-  } : 
-  {
-    ticks_history: "",
-    adjust_start_time: 1,
-    count: 1000,
-    granularity: this.granularity,
-    end: "latest",
-    start: this.granularity = 86400 ? 1680040550 : 1,
-    style: "candles",
-  };
-
   getTicksHistory = async () => {
+    // debugger
     // runInAction(() => {
       this.ticks_history_request.ticks_history = this.selectedSymbol;
 
@@ -264,6 +277,8 @@ class ApiStore {
 
   ticksHistoryResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
+    // console.log(data.msg_type);
+    
     
     if (data.error !== undefined) {
       // runInAction(() => {
@@ -347,9 +362,10 @@ class ApiStore {
       //   );
       //   }
     } else if (data.msg_type === 'history') {
+      // console.log(data.history)
       const historyTicks = data.history.prices.map((price: number, index: number) => ({
         epoch: data.history.times[index],
-        quote: Number(price),
+        quote: price,
       }));
 
       this.setTicks([...this.ticks, ...historyTicks]);
@@ -385,15 +401,15 @@ class ApiStore {
 
         // const currentTime = this.isHourlyGranularity ? new Date(newTick.epoch * 1000).getHours() : new Date(newTick.epoch * 1000).getMinutes();
         let currentTime = 0;
-        if(this.granularity = 60){
+        if(this.granularity === 60){
           if (this.isTicks){
             currentTime = newTick.epoch * 1000;  
           } else{
           currentTime = new Date(newTick.epoch * 1000).getMinutes();
           }
-        } else if (this.granularity = 3600){
+        } else if (this.granularity === 3600){
           currentTime = new Date(newTick.epoch * 1000).getHours();
-        } else if (this.granularity = 86400){
+        } else if (this.granularity === 86400){
           currentTime = new Date(newTick.epoch * 1000).getDay();
         }     
         // const currentTime = newTick.epoch * 1000;   
@@ -405,15 +421,15 @@ class ApiStore {
           const lastTick = this.ticks[this.ticks.length - 1];
           // const lastTime = this.isHourlyGranularity ? new Date(lastTick.epoch * 1000).getHours() : new Date(lastTick.epoch * 1000).getMinutes();
           let lastTime = 0;
-        if(this.granularity = 60){
+        if(this.granularity === 60){
           if (this.isTicks){
             lastTime = lastTick.epoch * 1000;  
           } else{
           lastTime = new Date(lastTick.epoch * 1000).getMinutes();
           }
-        } else if (this.granularity = 3600){
+        } else if (this.granularity === 3600){
           lastTime = new Date(lastTick.epoch * 1000).getHours();
-        } else if (this.granularity = 86400){
+        } else if (this.granularity === 86400){
           lastTime = new Date(lastTick.epoch * 1000).getDay();
         }
         // const lastTime = lastTick.epoch * 1000;
@@ -442,11 +458,14 @@ class ApiStore {
 
       // });
     } else if (data.msg_type === 'tick') {
+
       const newTick = {
         epoch: data.tick.epoch,
-        quote: Number(data.tick.quote),
+        quote: data.tick.quote,
       };
       this.setTicks([...this.ticks, newTick]);
+      // console.log(newTick);
+      
     }
     
   };
