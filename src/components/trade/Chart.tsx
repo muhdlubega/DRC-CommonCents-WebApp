@@ -36,7 +36,7 @@ const Chart = observer(() => {
       enabled: false,
     },
     chart: {
-      height: `${(2 / 3) * 100}%`,
+      height: `${(9 / 16) * 100}%`,
     },
     series: [
       {
@@ -154,7 +154,7 @@ const Chart = observer(() => {
       </MenuItem>
     </Select>
       <Select
-        className="symbols-dropdown" value={apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
+        className="symbols-dropdown" value={apiStore.isTicks ? 1 : apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
       <MenuItem hidden={apiStore.chartType === "candlestick"} value={1} onClick={() => handleGranularityChange(1)}>Ticks
       </MenuItem>
       <MenuItem value={60} onClick={() => handleGranularityChange(60)}>Minutes

@@ -104,7 +104,6 @@ class ProposalStore {
   };
 
   getProposal = async (id: string) => {
-    
     const proposal_request = {
       proposal: 1,
       subscribe: 1,

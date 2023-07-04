@@ -9,6 +9,7 @@ import logo from '../../assets/images/commoncents-logo.png';
 import { ArrowRight2, HambergerMenu } from "iconsax-react";
 import { useState } from "react";
 // import themeStore from "../../store/ThemeStore";
+// import themeStore from "../../store/ThemeStore";
 
 const Header = () => {
   const navigate = useNavigate();
