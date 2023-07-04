@@ -7,19 +7,19 @@ import Highcharts from 'highcharts/highstock';
 import AccessibilityModule from 'highcharts/modules/accessibility';
 // import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
-import chartsStore, { id_array } from '../../store/ChartsStore';
+import chartsStore from '../../store/ChartsStore';
 
 const LiveData = observer(() => {
   // const carouselRef = useRef<AliceCarousel>(null);
 
   useEffect(() => {
     AccessibilityModule(Highcharts);
-    chartsStore.getActiveSymbols();
+    chartsStore.setSymbolsArray();
 
-    id_array.forEach((id) => {
-      chartsStore.setSelectedSymbol(id);
-      chartsStore.subscribeTicksGroup();
-    });
+    // chartsStore.symbols.forEach((id) => {
+    //   chartsStore.setSelectedSymbol(id);
+    //   chartsStore.subscribeTicksGroup();
+    // });
 
     return () => {
       chartsStore.activeSymbols.forEach((id) => {
@@ -29,7 +29,11 @@ const LiveData = observer(() => {
     };
   }, []);
 
-  const chartData = chartsStore.activeSymbols.map((id) => {
+
+  // console.log(chartsStore.symbols);
+  // console.log(chartsStore.selectedSymbol);
+
+  const chartData = chartsStore.symbols.map((id) => {
     const filteredTicks = chartsStore.ticks.filter((tick) => tick.symbol === id);
     const latestQuote = filteredTicks[filteredTicks.length - 1]?.quote;
     const previousQuote = filteredTicks[filteredTicks.length - 2]?.quote;
@@ -89,16 +93,16 @@ const LiveData = observer(() => {
     <Box>
       <Box className="live-data-title">Stock Indices Live Data</Box>
       <Box className="live-data-btngroup">
-          <Button disabled onClick={() => chartsStore.setMarketType("volatility1s")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw', fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
+          <Button onClick={() => chartsStore.setMarketType("volatility1s")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw', fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Volatility Index (1s)
           </Button>
-          <Button disabled onClick={() => chartsStore.setMarketType("volatility")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
+          <Button onClick={() => chartsStore.setMarketType("volatility")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Volatility Index
           </Button>
-          <Button disabled onClick={() => chartsStore.setMarketType("jump")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
+          <Button onClick={() => chartsStore.setMarketType("jump")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Jump Index
           </Button>
-          <Button disabled onClick={() => chartsStore.setMarketType("bear_bull")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
+          <Button onClick={() => chartsStore.setMarketType("bear_bull")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw' , fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
             Bear/Bull Market
           </Button>
       </Box>

@@ -17,6 +17,14 @@ const Chart = observer(() => {
 
   AccessibilityModule(Highcharts);
 
+  const latestQuote = apiStore.ticks[apiStore.ticks.length - 1]?.close as number;
+  const previousQuote = apiStore.ticks[apiStore.ticks.length - 2]?.close as number;;
+  const isHigher = latestQuote > previousQuote;
+
+  const latestQuoteTicks = apiStore.ticks[apiStore.ticks.length - 1]?.quote as number;
+  const previousQuoteTicks = apiStore.ticks[apiStore.ticks.length - 2]?.quote as number;;
+  const isHigherTicks = latestQuoteTicks > previousQuoteTicks;
+
   const chartData = {
     time: {
       useUTC: false,
@@ -44,9 +52,9 @@ const Chart = observer(() => {
               }))
             : apiStore.ticks
                 .slice(-1000)
-                .map((tick) => [tick.epoch * 1000, tick.close]),
+                .map((tick) => [tick.epoch * 1000, apiStore.isTicks ? tick.quote : tick.close]),
         type: apiStore.chartType,
-        color: apiStore.chartType === "candlestick" ? "red" : "blue",
+        color: apiStore.chartType === "candlestick" ? "red" : apiStore.isTicks ? isHigherTicks ? 'green' : 'red' : isHigher ? 'green' : 'red',
         upColor: "green",
         lineWidth: 1,
         accessibility: {
@@ -64,17 +72,21 @@ const Chart = observer(() => {
     apiStore.setChartType(newChartType);
   };
 
-  const handleGranularityChange = (newGranularity: number) => {
+  const handleGranularityChange = async (newGranularity: number) => {
+    if(newGranularity === 1){
+      apiStore.toggleTicks(true);
+      await apiStore.subscribeTicks()
+    } else {
     apiStore.toggleTicks(false);
     apiStore.setGranularity(newGranularity);
     apiStore.subscribeTicks();
+    }
   };
 
-  const handleTicksChange = async () => {
-    apiStore.toggleTicks(true);
-    await apiStore.subscribeTicks();
-    apiStore.setChartType("line");
-  };
+  // const handleTicksChange = async () => {
+  //   apiStore.toggleTicks(true);
+  //   await apiStore.subscribeTicks();
+  // };
 
   const handleSelect = (symbol: string) => {
     navigate(`/trade/${symbol}`);
@@ -83,6 +95,8 @@ const Chart = observer(() => {
   useEffect(() => {
     apiStore.getActiveSymbols();
   }, []);
+
+  // console.log(apiStore.granularity);
 
   useEffect(() => {
     if (id) {
@@ -141,7 +155,7 @@ const Chart = observer(() => {
     </Select>
       <Select
         className="symbols-dropdown" value={apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
-      <MenuItem disabled value={1} onClick={handleTicksChange}>Ticks
+      <MenuItem hidden={apiStore.chartType === "candlestick"} value={1} onClick={() => handleGranularityChange(1)}>Ticks
       </MenuItem>
       <MenuItem value={60} onClick={() => handleGranularityChange(60)}>Minutes
       </MenuItem>
