@@ -8,6 +8,7 @@ import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
 import proposalStore from "../../store/ProposalStore";
+import AuthStore from "../../store/AuthStore";
 
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -20,7 +21,7 @@ const Proposal = observer(() => {
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("e", event.target.value);
+    // console.log("e", event.target.value);
 
     const newPayout = parseInt(event.target.value);
     proposalStore.setPayout(newPayout);
@@ -85,7 +86,7 @@ const Proposal = observer(() => {
   const handleSell = async (isHigher: boolean) => {
     setIsProcessing(true);
     let balance = 0;
-    try {
+    
       const balanceSnapshot = await getDocs(collection(db, "users"));
       balanceSnapshot.forEach((doc) => {
         if (auth.currentUser!.uid == doc.id) {
@@ -95,7 +96,7 @@ const Proposal = observer(() => {
       const currentBalance = balance;
 
       const payoutValue = parseInt(proposalStore.payout.toString(), 10);
-
+      try {
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
       // console.log("proposal data", proposalStore.proposalData);
@@ -108,10 +109,12 @@ const Proposal = observer(() => {
         //   ]
         // );
         
-        const previousSpot =
-        apiStore.ticks[apiStore.ticks.length - proposalStore.duration].close;
-        const currentSpot =
-        apiStore.ticks[apiStore.ticks.length - 1].close;
+        const previousSpot = apiStore.isTicks ?
+        apiStore.ticks[apiStore.ticks.length - proposalStore.duration - 1].quote : apiStore.ticks[apiStore.ticks.length - proposalStore.duration - 1].close;
+        const currentSpot = apiStore.isTicks ?
+        apiStore.ticks[apiStore.ticks.length - 1].quote : apiStore.ticks[apiStore.ticks.length - 1].close;
+
+        // console.log("api", apiStore.ticks.length);
 
         console.log("prev", previousSpot);
         console.log("next", currentSpot);
@@ -122,9 +125,6 @@ const Proposal = observer(() => {
         if (previousSpot && currentSpot) {
           const previousSpotValue = previousSpot;
           const currentSpotValue = currentSpot;
-
-          console.log("previous spot:", previousSpotValue);
-          console.log("current spot:", currentSpotValue);
 
           if (isHigher) {
             if (currentSpotValue > previousSpotValue) {
@@ -192,6 +192,8 @@ const Proposal = observer(() => {
             message: `Error. Try again later`,
             type: "error",
           });
+          const updatedBalance = currentBalance + payoutValue;
+              authStore.setBalance(updatedBalance);
         }
       // } else {
       //   console.log("Not enough data to compare spot prices");
@@ -209,6 +211,8 @@ const Proposal = observer(() => {
         message: `Error. Try again later`,
         type: "error",
       });
+      const updatedBalance = currentBalance + payoutValue;
+      authStore.setBalance(updatedBalance);
       setIsProcessing(false);
     }
   };
@@ -233,188 +237,195 @@ const Proposal = observer(() => {
 
   return (
     <Box>
-      <Box className="proposal-ticks">
-        <Typography sx={{ marginRight: "1vw", fontFamily: "Montserrat" }}>
-          Ticks:{" "}
-        </Typography>
-        {/* <input
-          type="range"
-          min="1"
-          max="10"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        /> */}
-        <Box className="duration-change-slider">
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="1"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="2"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="3"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="4"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="5"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-            defaultChecked
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="6"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="7"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="8"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="9"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-          <input
-            required
-            type="radio"
-            name="duration-change"
-            className="duration-change-btn"
-            id="10"
-            value={proposalStore.duration}
-            onChange={handleDurationChange}
-          />
-        </Box>
-      </Box>
-      <Box className="proposal-btn-group">
-        <button
-          style={{
-            backgroundColor:
-              proposalStore.basis === "payout" ? "blue" : "white",
-            color: proposalStore.basis === "payout" ? "white" : "blue",
-          }}
-          className="proposal-options"
-          onClick={() => proposalStore.setBasis("payout")}
-        >
-          Payout
-        </button>
-        <button
-          style={{
-            backgroundColor: proposalStore.basis === "stake" ? "blue" : "white",
-            color: proposalStore.basis === "stake" ? "white" : "blue",
-          }}
-          className="proposal-options"
-          onClick={() => proposalStore.setBasis("stake")}
-        >
-          Stake
-        </button>
-      </Box>
-      <Box className="proposal-input-container">
-        <button className="proposal-input-btn left" onClick={decrementPayout} disabled={proposalStore.payout <= 0}>
-          -
-        </button>
-        <input
-          type="number"
-          value={proposalStore.payout}
-          onChange={handlePayoutChange}
-          min="1"
-          max="500"
-          className="proposal-input-field"
-        />
-        <button className="proposal-input-btn right" onClick={incrementPayout} disabled={proposalStore.payout >= 501}>
-          +
-        </button>
-      </Box>
-
-      <Box ref={proposalContainerRef} id="proposalContainer"></Box>
-      <Box className="proposal-btn-choices">
-        <button
-          className={`proposal-btn-buy ${
-            isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
-          } higher `}
-          onClick={() => handleBuy(true)}
-          disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
-        >
-          Higher
-        </button>
-        <button
-          className={`proposal-btn-buy ${
-            isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
-          } lower`}
-          onClick={() => handleBuy(false)}
-          disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
-        >
-          Lower
-        </button>
-      </Box>
-      {/* <Box>
-        {apiStore.sellSuccessful && (
-          <div>
-            <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
-            <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
-          </div>
-        )}
-      </Box>
-      <Box>
-        {apiStore.sellFailed && (
-          <div>
-            <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
-            <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
-          </div>
-        )}
-      </Box> */}
+      {AuthStore.user ? (
+        <Box>
+              <Box className="proposal-ticks">
+              <Typography sx={{ marginRight: "1vw", fontFamily: "Montserrat" }}>
+                Ticks:{" "}
+              </Typography>
+              {/* <input
+                type="range"
+                min="1"
+                max="10"
+                value={apiStore.duration}
+                onChange={handleDurationChange}
+              /> */}
+              <Box className="duration-change-slider">
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="1"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="2"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="3"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="4"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="5"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                  defaultChecked
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="6"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="7"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="8"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="9"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="10"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+              </Box>
+            </Box>
+            <Box className="proposal-btn-group">
+              <button
+                style={{
+                  backgroundColor:
+                    proposalStore.basis === "payout" ? "blue" : "white",
+                  color: proposalStore.basis === "payout" ? "white" : "blue",
+                }}
+                className="proposal-options"
+                onClick={() => proposalStore.setBasis("payout")}
+              >
+                Payout
+              </button>
+              <button
+                style={{
+                  backgroundColor: proposalStore.basis === "stake" ? "blue" : "white",
+                  color: proposalStore.basis === "stake" ? "white" : "blue",
+                }}
+                className="proposal-options"
+                onClick={() => proposalStore.setBasis("stake")}
+              >
+                Stake
+              </button>
+            </Box>
+            <Box className="proposal-input-container">
+              <button className="proposal-input-btn left" onClick={decrementPayout} disabled={proposalStore.payout <= 0}>
+                -
+              </button>
+              <input required
+                type="number"
+                value={proposalStore.payout}
+                onChange={handlePayoutChange}
+                min="1"
+                max="500"
+                className="proposal-input-field"
+              />
+              <button className="proposal-input-btn right" onClick={incrementPayout} disabled={proposalStore.payout >= 501}>
+                +
+              </button>
+            </Box>
+            <Typography sx={{ marginRight: "1vw", fontSize: '1vw', fontFamily: "Montserrat", display: "flex", alignItems: "center", justifyContent:"center" }}>Input value between 1 to 500 USD</Typography>
+      
+            <Box ref={proposalContainerRef} id="proposalContainer"></Box>
+            <Box className="proposal-btn-choices">
+              <button
+                className={`proposal-btn-buy ${
+                  isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
+                } higher `}
+                onClick={() => handleBuy(true)}
+                disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
+              >
+                Higher
+              </button>
+              <button
+                className={`proposal-btn-buy ${
+                  isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
+                } lower`}
+                onClick={() => handleBuy(false)}
+                disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
+              >
+                Lower
+              </button>
+            </Box>
+            <Box>
+              {apiStore.sellSuccessful && (
+                <div>
+                  <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+                  <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
+                </div>
+              )}
+            </Box>
+            <Box>
+              {apiStore.sellFailed && (
+                <div>
+                  <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+                  <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
+                </div>
+              )}
+            </Box>
+            </Box>
+          ) : (
+            <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Login to start trading</Box>
+          )}
     </Box>
   );
 });

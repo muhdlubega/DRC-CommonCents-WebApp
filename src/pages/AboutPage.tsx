@@ -6,6 +6,7 @@ import member3 from "../assets/images/vino2.jpeg";
 import member4 from "../assets/images/bentley.jpeg";
 // import ParticlesBackground from "../components/ParticlesBackground";
 import watermark from "../assets/images/watermark.png"
+import '../styles/main.scss'
 
 const AboutPage = () => {
   return (
