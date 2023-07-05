@@ -12,7 +12,7 @@ class ProposalStore {
   currentSpot: number = 0;
   proposalData: any[] = [];
   duration: number = 5;
-  payout: number = 100;
+  payout: number = 100.00;
   basis: string = "stake";
 
   connection: WebSocket | null = null;
@@ -61,7 +61,7 @@ class ProposalStore {
   }
 
   setPayout(payout: number) {
-    this.payout = payout;
+    this.payout = parseFloat(payout.toFixed(2)); 
   }
 
   setBasis(basis: string) {
