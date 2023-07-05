@@ -37,6 +37,7 @@ const Chart = observer(() => {
     },
     chart: {
       height: `${(9 / 16) * 100}%`,
+      backgroundColor: 'transparent'
     },
     series: [
       {
@@ -123,7 +124,7 @@ const Chart = observer(() => {
       )}
       <Select
         className="symbols-dropdown"
-        value={apiStore.selectedSymbol}
+        value={apiStore.selectedSymbol || ""}
         onChange={(e) => handleSelect(e.target.value)}
       >
         {apiStore.activeSymbols.map(

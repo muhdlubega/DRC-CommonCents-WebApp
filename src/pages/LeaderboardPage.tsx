@@ -2,10 +2,11 @@ import { Avatar, Box } from "@mui/material";
 // import ParticlesBackground from "../components/ParticlesBackground";
 import authStore from "../store/AuthStore";
 import watermark from "../assets/images/watermark.png"
+import { observer } from "mobx-react-lite";
 
-const LeaderboardPage = () => {
+const LeaderboardPage = observer(() => {
   // Sort the leaderboard in descending order based on user balance
-  const sortedLeaderboard = authStore.leaderboard.sort(
+  const sortedLeaderboard = authStore.leaderboard.slice().sort(
     (a, b) => (b.balance as number) - (a.balance as number)
   );
 
@@ -45,6 +46,6 @@ const LeaderboardPage = () => {
       </Box>
     </Box>
   );
-};
+});
 
 export default LeaderboardPage;
