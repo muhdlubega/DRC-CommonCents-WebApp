@@ -22,7 +22,7 @@ const Alert = observer(() => {
       onClose={handleCloseAlert}
       anchorOrigin={{
         vertical: "top",
-        horizontal: "left",
+        horizontal: "right",
       }}
       style={{ marginTop: "64px", marginRight: "16px" }} 
     >

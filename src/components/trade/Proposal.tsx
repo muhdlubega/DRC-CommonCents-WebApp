@@ -9,6 +9,7 @@ import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
 import proposalStore from "../../store/ProposalStore";
 import AuthStore from "../../store/AuthStore";
+import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -23,7 +24,7 @@ const Proposal = observer(() => {
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // console.log("e", event.target.value);
 
-    const newPayout = parseInt(event.target.value);
+    const newPayout = parseFloat(event.target.value);
     proposalStore.setPayout(newPayout);
   };
 
@@ -43,7 +44,7 @@ const Proposal = observer(() => {
       });
       const currentBalance = balance;
 
-      const payoutValue = parseInt(proposalStore.payout.toString(), 10);
+      const payoutValue = parseFloat(proposalStore.payout.toString());
       const askPrice = proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price;
       console.log(askPrice);
 
@@ -95,7 +96,7 @@ const Proposal = observer(() => {
       });
       const currentBalance = balance;
 
-      const payoutValue = parseInt(proposalStore.payout.toString(), 10);
+      const payoutValue = parseFloat(proposalStore.payout.toString());
       try {
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
@@ -235,6 +236,11 @@ const Proposal = observer(() => {
     }
   }, [id, proposalStore.basis, proposalStore.payout, proposalStore.duration]);
 
+  // console.log(proposalStore.payout)
+
+  var payout = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout);
+  var ask_price = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price);
+
   return (
     <Box>
       {AuthStore.user ? (
@@ -260,6 +266,7 @@ const Proposal = observer(() => {
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
                 />
+                <label className="duration-change-label" htmlFor="1">1</label>
                 <input
                   required
                   type="radio"
@@ -268,7 +275,7 @@ const Proposal = observer(() => {
                   id="2"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="2">2</label>
                 <input
                   required
                   type="radio"
@@ -277,7 +284,7 @@ const Proposal = observer(() => {
                   id="3"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="3">3</label>
                 <input
                   required
                   type="radio"
@@ -286,7 +293,7 @@ const Proposal = observer(() => {
                   id="4"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="4">4</label>
                 <input
                   required
                   type="radio"
@@ -296,7 +303,7 @@ const Proposal = observer(() => {
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
                   defaultChecked
-                />
+                /><label className="duration-change-label" htmlFor="5">5</label>
                 <input
                   required
                   type="radio"
@@ -305,7 +312,7 @@ const Proposal = observer(() => {
                   id="6"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="6">6</label>
                 <input
                   required
                   type="radio"
@@ -314,7 +321,7 @@ const Proposal = observer(() => {
                   id="7"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="7">7</label>
                 <input
                   required
                   type="radio"
@@ -323,7 +330,7 @@ const Proposal = observer(() => {
                   id="8"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="8">8</label>
                 <input
                   required
                   type="radio"
@@ -332,7 +339,7 @@ const Proposal = observer(() => {
                   id="9"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="9">9</label>
                 <input
                   required
                   type="radio"
@@ -341,7 +348,7 @@ const Proposal = observer(() => {
                   id="10"
                   value={proposalStore.duration}
                   onChange={handleDurationChange}
-                />
+                /><label className="duration-change-label" htmlFor="10">10</label>
               </Box>
             </Box>
             <Box className="proposal-btn-group">
@@ -368,49 +375,55 @@ const Proposal = observer(() => {
               </button>
             </Box>
             <Box className="proposal-input-container">
-              <button className="proposal-input-btn left" onClick={decrementPayout} disabled={proposalStore.payout <= 0}>
+              <button className="proposal-input-btn left" onClick={decrementPayout} disabled={proposalStore.payout <= 0.99}>
                 -
               </button>
-              <input required
+              <input
                 type="number"
                 value={proposalStore.payout}
                 onChange={handlePayoutChange}
-                min="1"
-                max="500"
+                min="1.00"
+                max="500.00"
+                step="0.01"
                 className="proposal-input-field"
               />
-              <button className="proposal-input-btn right" onClick={incrementPayout} disabled={proposalStore.payout >= 501}>
+              <button className="proposal-input-btn right" onClick={incrementPayout} disabled={proposalStore.payout >= 500.01}>
                 +
               </button>
             </Box>
-            <Typography sx={{ marginRight: "1vw", fontSize: '1vw', fontFamily: "Montserrat", display: "flex", alignItems: "center", justifyContent:"center" }}>Input value between 1 to 500 USD</Typography>
+            <Typography sx={{ marginRight: "1vw", fontSize: '1vw', fontFamily: "Montserrat", display: "flex", alignItems: "center", justifyContent:"center" }}>{Number.isNaN(proposalStore.payout) ? "Please input a valid number" : "Input value between 1 to 500 USD"}</Typography>
       
             <Box ref={proposalContainerRef} id="proposalContainer"></Box>
             <Box className="proposal-btn-choices">
               <button
                 className={`proposal-btn-buy ${
-                  isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
+                  isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout) ? "processing" : ""
                 } higher `}
                 onClick={() => handleBuy(true)}
-                disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
+                disabled={isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout)}
               >
-                Higher
+                <ArrowUp2/> Higher 
+                {/* {Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout)} USD */}
               </button>
+              <Typography sx={{ marginLeft: "15vw", fontSize: '1vw', fontFamily: "Montserrat"}}>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
               <button
                 className={`proposal-btn-buy ${
-                  isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0 ? "processing" : ""
+                  isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout) ? "processing" : ""
                 } lower`}
                 onClick={() => handleBuy(false)}
-                disabled={isProcessing || proposalStore.payout >= 501 || proposalStore.payout <= 0}
+                disabled={isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout)}
               >
-                Lower
+                <ArrowDown2/> Lower 
+                {/* {Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout)} USD */}
               </button>
+              <Typography sx={{ marginLeft: "15vw", fontSize: '1vw', fontFamily: "Montserrat"}}>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
+              
             </Box>
             <Box>
               {apiStore.sellSuccessful && (
                 <div>
                   <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
-                  <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
+                  <div>Total Won For This Session: {apiStore.totalAmountWon.toFixed(2)} USD</div>
                 </div>
               )}
             </Box>
@@ -418,7 +431,7 @@ const Proposal = observer(() => {
               {apiStore.sellFailed && (
                 <div>
                   <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
-                  <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
+                  <div>Total Lost For This Session: {apiStore.totalAmountLost.toFixed(2)} USD</div>
                 </div>
               )}
             </Box>
