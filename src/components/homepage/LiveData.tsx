@@ -41,6 +41,9 @@ const LiveData = observer(() => {
     const isHigher = latestQuote > previousQuote;
 
     return {
+      chart: {
+        backgroundColor: 'transparent',
+      },
       series: [
         {
           name: id,
