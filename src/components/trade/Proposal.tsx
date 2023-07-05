@@ -9,12 +9,22 @@ import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
 import proposalStore from "../../store/ProposalStore";
 import AuthStore from "../../store/AuthStore";
-import { ArrowDown2, ArrowUp2 } from "iconsax-react";
+import { ArrowDown2, ArrowUp2, InfoCircle } from "iconsax-react";
 
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
+  };
+
+  const toggleSecondDropdown = () => {
+    setIsSecondDropdownOpen((prevState) => !prevState);
+  };
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.id, 10);
@@ -97,6 +107,7 @@ const Proposal = observer(() => {
       const currentBalance = balance;
 
       const payoutValue = parseFloat(proposalStore.payout.toString());
+      const askPrice = proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price;
       try {
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
@@ -146,13 +157,13 @@ const Proposal = observer(() => {
               console.log("Spot is not higher", additionalAmount);
               authStore.setAlert({
                 open: true,
-                message: `Spot is not higher. You lost :(`,
+                message: `Spot is not higher. You lost USD ${askPrice} :(`,
                 type: "error",
               });
               apiStore.setSellFailed(true);
-              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setDeductedAmount(askPrice);
               apiStore.setTotalAmountLost(
-                apiStore.totalAmountLost + payoutValue
+                apiStore.totalAmountLost + askPrice
               );
             }
           } else {
@@ -176,13 +187,13 @@ const Proposal = observer(() => {
               console.log("Spot is not lower", additionalAmount);
               authStore.setAlert({
                 open: true,
-                message: `Spot is not lower. You lost :(`,
+                message: `Spot is not lower. You lost USD ${askPrice} :(`,
                 type: "error",
               });
               apiStore.setSellFailed(true);
-              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setDeductedAmount(askPrice);
               apiStore.setTotalAmountLost(
-                apiStore.totalAmountLost + payoutValue
+                apiStore.totalAmountLost + askPrice
               );
             }
           }
@@ -238,8 +249,14 @@ const Proposal = observer(() => {
 
   // console.log(proposalStore.payout)
 
-  var payout = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout);
-  var ask_price = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price);
+  var payout = 0;
+  var ask_price = 0;
+  var longcode = "";
+  if (apiStore.ticks.length > 0){
+  payout = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout);
+  ask_price = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price);
+  longcode = proposalStore.proposalData[proposalStore.proposalData.length - 1].longcode;
+  }
 
   return (
     <Box>
@@ -403,10 +420,11 @@ const Proposal = observer(() => {
                 disabled={isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout)}
               >
                 <ArrowUp2/> Higher 
-                {/* {Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout)} USD */}
               </button>
-              <Typography sx={{ marginLeft: "15vw", fontSize: '1vw', fontFamily: "Montserrat"}}>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
-              <button
+              <Typography sx={{ marginLeft: "12vw", fontSize: '1vw', fontFamily: "Montserrat"}}><InfoCircle color="#0033ff" size={24} onMouseLeave={toggleDropdown} onMouseEnter={toggleDropdown} style={{marginRight: "0.5vw", cursor: "pointer"}}/>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
+              {isDropdownOpen && (
+                <Box>{longcode}</Box>
+              )}<button
                 className={`proposal-btn-buy ${
                   isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout) ? "processing" : ""
                 } lower`}
@@ -414,10 +432,11 @@ const Proposal = observer(() => {
                 disabled={isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout)}
               >
                 <ArrowDown2/> Lower 
-                {/* {Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout)} USD */}
               </button>
-              <Typography sx={{ marginLeft: "15vw", fontSize: '1vw', fontFamily: "Montserrat"}}>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
-              
+              <Typography sx={{ marginLeft: "12vw", fontSize: '1vw', fontFamily: "Montserrat"}}><InfoCircle color="#0033ff" size={24} onMouseLeave={toggleSecondDropdown} onMouseEnter={toggleSecondDropdown} style={{marginRight: "0.5vw", cursor: "pointer"}}/>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
+              {isSecondDropdownOpen && (
+                <Box>{longcode.replace("higher","lower")}</Box>
+              )}
             </Box>
             <Box>
               {apiStore.sellSuccessful && (
