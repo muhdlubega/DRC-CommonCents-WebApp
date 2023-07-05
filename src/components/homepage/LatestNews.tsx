@@ -13,7 +13,7 @@ const LatestNews = () => {
       const { data } = response;
       const feed = data?.feed || [];
       newsStore.setNews(feed);
-      console.log(feed);
+      // console.log(feed);
     } catch (error) {
       console.error("Error fetching news:", error);
     }
@@ -57,7 +57,7 @@ const LatestNews = () => {
         autoPlay
         autoPlayInterval={2000}
         animationDuration={2000}
-        // disableDotsControls
+        disableDotsControls
         disableButtonsControls
         responsive={responsive}
         items={items}

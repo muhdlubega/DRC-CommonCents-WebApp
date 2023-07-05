@@ -7,17 +7,19 @@ import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { EmptyWallet } from "iconsax-react";
-import { LogoutCurve, ArrowUp2, ArrowDown2 } from "iconsax-react";
+import { LogoutCurve, ArrowRight2 } from "iconsax-react";
+import { useNavigate } from "react-router-dom";
 
 const UserSidebar = observer(() => {
+  const navigate = useNavigate();
   const [state, setState] = useState({
     right: false,
   });
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
+  // const toggleDropdown = () => {
+  //   setIsDropdownOpen((prevState) => !prevState);
+  // };
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -50,6 +52,15 @@ const UserSidebar = observer(() => {
   const userDisplayName = authStore.user?.displayName || "";
   const userEmail = authStore.user?.email || "";
   const userPhotoURL = authStore.user?.photoURL || "";
+//   const userRank = authStore.leaderboard
+//   .map((user, index) => {
+//     // if (user.displayName === userDisplayName) {
+//     return (
+//       <li key={index}>{`(No. ${index + 1}) in the Leaderboard`}</li>
+//     );
+//   // }
+//   // return null
+// });
 
   // async initializeUser() {
   //   const querySnapshot = await getDocs(collection(db, "users"));
@@ -109,23 +120,30 @@ const UserSidebar = observer(() => {
           <EmptyWallet size={22} style={{marginRight: '0.5vw'}}/>
           {authStore.balance?.toFixed(2)} USD
         </span>
+        {/* <span>
+  <ol>
+    {userRank}
+  </ol>
+</span> */}
           </div>
-          <h6 className="sidebar-item">My Account</h6>
-          <div className="sidebar-leaderboard">
-          <h6 onClick={toggleDropdown}>Leaderboard{isDropdownOpen? <ArrowUp2 size={16} style={{marginLeft: '0.5vw'}}/> : <ArrowDown2 size={16} style={{marginLeft: '0.5vw'}}/>}</h6>
+          <h6 className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item" onClick={() => navigate("/leaderboard")}>Leaderboard<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          {/* <div className="sidebar-leaderboard">
+          <h6 onClick={toggleDropdown}>Leaderboard{<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/>}</h6>
       {isDropdownOpen && (
         <ol>
-          {authStore.leaderboard.map((user, index) => (
-            <li key={index}>
-              {user.displayName || user.email} - {user.balance!.toFixed(2)} USD
-            </li>
-          ))}
-        </ol>
+        {authStore.leaderboard.map((user, index) => (
+          <li key={index}>
+            {user.displayName || user.email} - {user.balance!.toFixed(2)} USD
+            {user.displayName === userDisplayName && ` (Position: ${index + 1})`}
+          </li>
+        ))}
+      </ol>
       )}
-      </div>
-          <h6 className="sidebar-item">Trade History</h6>
-          <h6 className="sidebar-item">Help and Support</h6>
-          <h6 className="sidebar-item">FAQs</h6>
+      </div> */}
+          <h6 className="sidebar-item">Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item">Help and Support<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item">FAQs<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           {/* <span
             style={{
               width: "100%",
@@ -137,12 +155,13 @@ const UserSidebar = observer(() => {
           >
             Balance: {authStore.balance?.toFixed(2)} USD
           </span> */}
+          <Box sx={{flex: 1}}>
           <Button
             variant="contained"
             className="sidebar-reset-balance"
             onClick={handleResetBalance}
             
-            style={{backgroundColor:"#6699ff", borderRadius: '0.5vw', marginBottom: '1vw'}}
+            style={{backgroundColor:"#6699ff", borderRadius: '0.5vw', marginBottom: '1vw', width: '100%'}}
           >
             Reset Balance
           </Button>
@@ -156,6 +175,7 @@ const UserSidebar = observer(() => {
             <LogoutCurve color="white" style={{marginRight: '1vw'}}/>
             Log Out
           </Button>
+          </Box>
         </div>
       </Drawer>
     </div>

@@ -7,25 +7,42 @@ import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
+import proposalStore from "../../store/ProposalStore";
+import AuthStore from "../../store/AuthStore";
+import { ArrowDown2, ArrowUp2, InfoCircle } from "iconsax-react";
 
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
   const proposalContainerRef = useRef<HTMLDivElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
+  };
+
+  const toggleSecondDropdown = () => {
+    setIsSecondDropdownOpen((prevState) => !prevState);
+  };
 
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.id, 10);
-    apiStore.setDuration(newDuration);
+    proposalStore.setDuration(newDuration);
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("e", event.target.value);
+    // console.log("e", event.target.value);
 
-    const newPayout = parseInt(event.target.value);
-    apiStore.setPayout(newPayout);
+    const newPayout = parseFloat(event.target.value);
+    proposalStore.setPayout(newPayout);
   };
 
   const handleBuy = async (isHigher: boolean) => {
+    // if(id){
+    //   proposalStore.unsubscribeProposal();
+    //   proposalStore.getProposal(id);
+    // }
     setIsProcessing(true);
     let balance = 0;
     try {
@@ -37,7 +54,9 @@ const Proposal = observer(() => {
       });
       const currentBalance = balance;
 
-      const payoutValue = parseInt(apiStore.payout.toString(), 10);
+      const payoutValue = parseFloat(proposalStore.payout.toString());
+      const askPrice = proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price;
+      console.log(askPrice);
 
       console.log(payoutValue);
       console.log(currentBalance);
@@ -47,14 +66,19 @@ const Proposal = observer(() => {
         return;
       }
 
-      const newBalance = currentBalance - payoutValue;
+      let newBalance = 0;
+      if (proposalStore.basis === "payout"){
+      newBalance = currentBalance - askPrice;
+      } else {
+      newBalance = currentBalance - payoutValue;
+      }
       authStore.setBalance(newBalance);
 
-      setTimeout(() => handleSell(isHigher), apiStore.duration * 1000);
+      setTimeout(() => handleSell(isHigher), proposalStore.duration * 1000);
 
       authStore.setAlert({
         open: true,
-        message: `Option successfully bought for USD ${payoutValue}`,
+        message: `Option successfully bought for USD ${proposalStore.basis === "payout" ? askPrice : payoutValue}`,
         type: "success",
       });
 
@@ -73,7 +97,7 @@ const Proposal = observer(() => {
   const handleSell = async (isHigher: boolean) => {
     setIsProcessing(true);
     let balance = 0;
-    try {
+    
       const balanceSnapshot = await getDocs(collection(db, "users"));
       balanceSnapshot.forEach((doc) => {
         if (auth.currentUser!.uid == doc.id) {
@@ -82,46 +106,43 @@ const Proposal = observer(() => {
       });
       const currentBalance = balance;
 
-      const payoutValue = parseInt(apiStore.payout.toString(), 10);
-
+      const payoutValue = parseFloat(proposalStore.payout.toString());
+      const askPrice = proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price;
+      try {
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
-      console.log("proposal data", apiStore.proposalData);
+      // console.log("proposal data", proposalStore.proposalData);
 
-      if (apiStore.proposalData.length > 0) {
-        console.log(
-          "testing",
-          apiStore.proposalData[
-            apiStore.proposalData.length - apiStore.duration
-          ]
-        );
-        const previousSpot =
-          apiStore.proposalData[
-            apiStore.proposalData.length - apiStore.duration
-          ].spot;
-        const currentSpot =
-          apiStore.proposalData[apiStore.proposalData.length - 1].spot;
+      // if (proposalStore.proposalData.length > 0) {
+        // console.log(
+        //   "testing",
+        //   proposalStore.proposalData[
+        //     proposalStore.proposalData.length - proposalStore.duration
+        //   ]
+        // );
+        
+        const previousSpot = apiStore.isTicks ?
+        apiStore.ticks[apiStore.ticks.length - proposalStore.duration - 1].quote : apiStore.ticks[apiStore.ticks.length - proposalStore.duration - 1].close;
+        const currentSpot = apiStore.isTicks ?
+        apiStore.ticks[apiStore.ticks.length - 1].quote : apiStore.ticks[apiStore.ticks.length - 1].close;
+
+        // console.log("api", apiStore.ticks.length);
 
         console.log("prev", previousSpot);
         console.log("next", currentSpot);
 
         const additionalAmount =
-          apiStore.proposalData[
-            apiStore.proposalData.length - apiStore.duration
-          ].payout;
+          proposalStore.proposalData[proposalStore.proposalData.length - 1].payout;
 
         if (previousSpot && currentSpot) {
           const previousSpotValue = previousSpot;
           const currentSpotValue = currentSpot;
 
-          console.log("previous spot:", previousSpotValue);
-          console.log("current spot:", currentSpotValue);
-
           if (isHigher) {
             if (currentSpotValue > previousSpotValue) {
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              console.log("Sell successful", additionalAmount);
+              console.log("Spot is higher!!!", additionalAmount);
               authStore.setAlert({
                 open: true,
                 message: `Spot is higher! You won USD ${additionalAmount}!`,
@@ -136,27 +157,25 @@ const Proposal = observer(() => {
               console.log("Spot is not higher", additionalAmount);
               authStore.setAlert({
                 open: true,
-                message: `Spot is not higher. You lost USD ${additionalAmount} :(`,
+                message: `Spot is not higher. You lost USD ${askPrice} :(`,
                 type: "error",
               });
               apiStore.setSellFailed(true);
-              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setDeductedAmount(askPrice);
               apiStore.setTotalAmountLost(
-                apiStore.totalAmountLost + payoutValue
+                apiStore.totalAmountLost + askPrice
               );
             }
           } else {
             if (previousSpotValue > currentSpotValue) {
-              const additionalAmount =
-                apiStore.proposalData[
-                  apiStore.proposalData.length - apiStore.duration
-                ].payout;
+              // const additionalAmount =
+              //   proposalStore.payout;
               const updatedBalance = currentBalance + additionalAmount;
               authStore.setBalance(updatedBalance);
-              console.log("Sell successful");
+              console.log("Spot is lower!!!", additionalAmount);
               authStore.setAlert({
                 open: true,
-                message: `Spot is higher! You won USD ${additionalAmount}!`,
+                message: `Spot is lower! You won USD ${additionalAmount}!`,
                 type: "success",
               });
               apiStore.setSellSuccessful(true);
@@ -168,13 +187,13 @@ const Proposal = observer(() => {
               console.log("Spot is not lower", additionalAmount);
               authStore.setAlert({
                 open: true,
-                message: `Spot is not lower. You lost USD ${additionalAmount} :(`,
+                message: `Spot is not lower. You lost USD ${askPrice} :(`,
                 type: "error",
               });
               apiStore.setSellFailed(true);
-              apiStore.setDeductedAmount(payoutValue);
+              apiStore.setDeductedAmount(askPrice);
               apiStore.setTotalAmountLost(
-                apiStore.totalAmountLost + payoutValue
+                apiStore.totalAmountLost + askPrice
               );
             }
           }
@@ -185,15 +204,17 @@ const Proposal = observer(() => {
             message: `Error. Try again later`,
             type: "error",
           });
+          const updatedBalance = currentBalance + payoutValue;
+              authStore.setBalance(updatedBalance);
         }
-      } else {
-        console.log("Not enough data to compare spot prices");
-        authStore.setAlert({
-          open: true,
-          message: `Error. Try again later`,
-          type: "error",
-        });
-      }
+      // } else {
+      //   console.log("Not enough data to compare spot prices");
+      //   authStore.setAlert({
+      //     open: true,
+      //     message: `Error. Try again later`,
+      //     type: "error",
+      //   });
+      // }
       setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
@@ -202,152 +223,241 @@ const Proposal = observer(() => {
         message: `Error. Try again later`,
         type: "error",
       });
+      const updatedBalance = currentBalance + payoutValue;
+      authStore.setBalance(updatedBalance);
       setIsProcessing(false);
     }
   };
 
   const decrementPayout = () => {
-    if (apiStore.payout > 1) {
-      apiStore.setPayout(apiStore.payout - 1);
+    if (proposalStore.payout > 1) {
+      proposalStore.setPayout(proposalStore.payout - 1);
     }
   };
-  
+
   const incrementPayout = () => {
-    if (apiStore.payout < 500) {
-      apiStore.setPayout(apiStore.payout + 1);
+    if (proposalStore.payout < 500) {
+      proposalStore.setPayout(proposalStore.payout + 1);
     }
   };
-  
 
   useEffect(() => {
-    if (id) {
-      apiStore.getProposal(id);
+    if (id){
+      proposalStore.getProposal(id);
     }
-  }, [id, apiStore.payout, apiStore.duration]);
+  }, [id, proposalStore.basis, proposalStore.payout, proposalStore.duration]);
+
+  // console.log(proposalStore.payout)
+
+  var payout = 0;
+  var ask_price = 0;
+  var longcode = "";
+  if (apiStore.ticks.length > 0){
+  payout = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].payout);
+  ask_price = Number(proposalStore.proposalData[proposalStore.proposalData.length - 1].ask_price);
+  longcode = proposalStore.proposalData[proposalStore.proposalData.length - 1].longcode;
+  }
 
   return (
     <Box>
-      <Box className="proposal-ticks">
-        <Typography sx={{marginRight: '1vw', fontFamily: 'Montserrat'}}>Ticks: </Typography>
-        {/* <input
-          type="range"
-          min="1"
-          max="10"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        /> */}
-        <Box className="duration-change-slider">
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="1"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="2"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="3"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="4"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="5"
-          value={apiStore.duration}
-          onChange={handleDurationChange} defaultChecked
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="6"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="7"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="8"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="9"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        <input required type="radio" name="duration-change" className="duration-change-btn" id="10"
-          value={apiStore.duration}
-          onChange={handleDurationChange}
-        />
-        </Box>
-      </Box>
-      <Box className="proposal-btn-group">
-        <button
-          style={{
-            backgroundColor: apiStore.basis === "payout" ? "blue" : "white",
-            color: apiStore.basis === "payout" ? "white" : "blue",
-          }}
-          className="proposal-options"
-          onClick={() => apiStore.setBasis("payout")}
-        >
-          Payout
-        </button>
-        <button
-          style={{
-            backgroundColor: apiStore.basis === "stake" ? "blue" : "white",
-            color: apiStore.basis === "stake" ? "white" : "blue",
-          }}
-          className="proposal-options"
-          onClick={() => apiStore.setBasis("stake")}
-        >
-          Stake
-        </button>
-      </Box>
-      <Box className="proposal-input-container">
-  <button className="proposal-input-btn left" onClick={decrementPayout}>-</button>
-  <input
-    type="number"
-    value={apiStore.payout}
-    onChange={handlePayoutChange}
-    min="1"
-    max="500"
-    className="proposal-input-field"
-  />
-  <button className="proposal-input-btn right" onClick={incrementPayout}>+</button>
-</Box>
-
-
-      <Box ref={proposalContainerRef} id="proposalContainer"></Box>
-      <Box className="proposal-btn-choices">
-        <button
-          className={`proposal-btn-buy ${isProcessing ? "processing" : ""} higher `}
-          onClick={() => handleBuy(true)}
-          disabled={isProcessing}
-        >
-          Higher
-        </button>
-        <button
-          className={`proposal-btn-buy ${isProcessing ? "processing" : ""} lower`}
-          onClick={() => handleBuy(false)}
-          disabled={isProcessing}
-        >
-          Lower
-        </button>
-      </Box>
-      {/* <Box>
-        {apiStore.sellSuccessful && (
-          <div>
-            <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
-            <div>Total Won: {apiStore.totalAmountWon.toFixed(2)} USD</div>
-          </div>
-        )}
-      </Box>
-      <Box>
-        {apiStore.sellFailed && (
-          <div>
-            <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
-            <div>Total Lost: {apiStore.totalAmountLost.toFixed(2)} USD</div>
-          </div>
-        )}
-      </Box> */}
+      {AuthStore.user ? (
+        <Box>
+              <Box className="proposal-ticks">
+              <Typography sx={{ marginRight: "1vw", fontFamily: "Montserrat" }}>
+                Ticks:{" "}
+              </Typography>
+              {/* <input
+                type="range"
+                min="1"
+                max="10"
+                value={apiStore.duration}
+                onChange={handleDurationChange}
+              /> */}
+              <Box className="duration-change-slider">
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="1"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                />
+                <label className="duration-change-label" htmlFor="1">1</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="2"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="2">2</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="3"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="3">3</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="4"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="4">4</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="5"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                  defaultChecked
+                /><label className="duration-change-label" htmlFor="5">5</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="6"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="6">6</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="7"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="7">7</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="8"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="8">8</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="9"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="9">9</label>
+                <input
+                  required
+                  type="radio"
+                  name="duration-change"
+                  className="duration-change-btn"
+                  id="10"
+                  value={proposalStore.duration}
+                  onChange={handleDurationChange}
+                /><label className="duration-change-label" htmlFor="10">10</label>
+              </Box>
+            </Box>
+            <Box className="proposal-btn-group">
+              <button
+                style={{
+                  backgroundColor:
+                    proposalStore.basis === "payout" ? "blue" : "white",
+                  color: proposalStore.basis === "payout" ? "white" : "blue",
+                }}
+                className="proposal-options"
+                onClick={() => proposalStore.setBasis("payout")}
+              >
+                Payout
+              </button>
+              <button
+                style={{
+                  backgroundColor: proposalStore.basis === "stake" ? "blue" : "white",
+                  color: proposalStore.basis === "stake" ? "white" : "blue",
+                }}
+                className="proposal-options"
+                onClick={() => proposalStore.setBasis("stake")}
+              >
+                Stake
+              </button>
+            </Box>
+            <Box className="proposal-input-container">
+              <button className="proposal-input-btn left" onClick={decrementPayout} disabled={proposalStore.payout <= 0.99}>
+                -
+              </button>
+              <input
+                type="number"
+                value={proposalStore.payout}
+                onChange={handlePayoutChange}
+                min="1.00"
+                max="500.00"
+                step="0.01"
+                className="proposal-input-field"
+              />
+              <button className="proposal-input-btn right" onClick={incrementPayout} disabled={proposalStore.payout >= 500.01}>
+                +
+              </button>
+            </Box>
+            <Typography sx={{ marginRight: "1vw", fontSize: '1vw', fontFamily: "Montserrat", display: "flex", alignItems: "center", justifyContent:"center" }}>{Number.isNaN(proposalStore.payout) ? "Please input a valid number" : "Input value between 1 to 500 USD"}</Typography>
+      
+            <Box ref={proposalContainerRef} id="proposalContainer"></Box>
+            <Box className="proposal-btn-choices">
+              <button
+                className={`proposal-btn-buy ${
+                  isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout) ? "processing" : ""
+                } higher `}
+                onClick={() => handleBuy(true)}
+                disabled={isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout)}
+              >
+                <ArrowUp2/> Higher 
+              </button>
+              <Typography sx={{ marginLeft: "12vw", fontSize: '1vw', fontFamily: "Montserrat"}}><InfoCircle color="#0033ff" size={24} onMouseLeave={toggleDropdown} onMouseEnter={toggleDropdown} style={{marginRight: "0.5vw", cursor: "pointer"}}/>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
+              {isDropdownOpen && (
+                <Box>{longcode}</Box>
+              )}<button
+                className={`proposal-btn-buy ${
+                  isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout) ? "processing" : ""
+                } lower`}
+                onClick={() => handleBuy(false)}
+                disabled={isProcessing || proposalStore.payout >= 500.01 || proposalStore.payout <= 0.99 || Number.isNaN(proposalStore.payout)}
+              >
+                <ArrowDown2/> Lower 
+              </button>
+              <Typography sx={{ marginLeft: "12vw", fontSize: '1vw', fontFamily: "Montserrat"}}><InfoCircle color="#0033ff" size={24} onMouseLeave={toggleSecondDropdown} onMouseEnter={toggleSecondDropdown} style={{marginRight: "0.5vw", cursor: "pointer"}}/>{proposalStore.basis === "stake" ? `Payout: ${payout}` : `Ask Price: ${ask_price}`}</Typography>
+              {isSecondDropdownOpen && (
+                <Box>{longcode.replace("higher","lower")}</Box>
+              )}
+            </Box>
+            <Box>
+              {apiStore.sellSuccessful && (
+                <div>
+                  <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+                  <div>Total Won For This Session: {apiStore.totalAmountWon.toFixed(2)} USD</div>
+                </div>
+              )}
+            </Box>
+            <Box>
+              {apiStore.sellFailed && (
+                <div>
+                  <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+                  <div>Total Lost For This Session: {apiStore.totalAmountLost.toFixed(2)} USD</div>
+                </div>
+              )}
+            </Box>
+            </Box>
+          ) : (
+            <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Login to start trading</Box>
+          )}
     </Box>
   );
 });

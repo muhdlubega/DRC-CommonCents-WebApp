@@ -1,6 +1,6 @@
 // import React from "react";
 import { Snackbar } from "@mui/material";
-import MuiAlert, { AlertColor } from "@mui/lab/Alert";
+import MuiAlert, { AlertColor } from "@mui/material/Alert";
 // import { useGlobalState } from "../../store/Context";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
@@ -22,7 +22,7 @@ const Alert = observer(() => {
       onClose={handleCloseAlert}
       anchorOrigin={{
         vertical: "top",
-        horizontal: "left",
+        horizontal: "right",
       }}
       style={{ marginTop: "64px", marginRight: "16px" }} 
     >

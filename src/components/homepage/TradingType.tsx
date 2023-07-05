@@ -9,9 +9,9 @@ const TradingType = () => {
     0: {
       items: 1,
     },
-    1024: {
-      items: 3,
-    },
+    // 1024: {
+    //   items: 3,
+    // },
   };
 
   const items = TradeType.map((tradeType, index) => (
@@ -26,7 +26,7 @@ const TradingType = () => {
 
   return (
     <Box>
-    <Box className="live-data-title">Types of Trading</Box>
+    <Box className="live-data-title">Types of Trading Markets</Box>
       <Box className="trade-carousel">
         <AliceCarousel
           mouseTracking
