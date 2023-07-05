@@ -3,6 +3,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Alert from './components/authentication/Alert';
 import Footer from './components/homepage/Footer';
 import Navbar from './components/navbar/Navbar';
+// import themeStore from './store/ThemeStore';
+import './styles/main.scss'
+import { observer } from 'mobx-react-lite';
 
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 const LazyTradePage = lazy(() => import("./pages/TradePage"));
@@ -13,9 +16,13 @@ const LazyAccountPage = lazy(() => import("./pages/AccountPage"));
 const LazyLeaderboardPage = lazy(() => import("./pages/LeaderboardPage"));
 const LazyErrorPage = lazy(() => import("./pages/Error"));
 
+interface AppProps {
+  themeStore: any;
+}
 
-function App() {
+function App({ themeStore }: AppProps) {
   return (
+    <div className={themeStore?.mode}>
     <BrowserRouter>
     <Navbar/>
       <Routes>
@@ -31,7 +38,8 @@ function App() {
       <Footer/>
       <Alert/>
     </BrowserRouter>
+    </div>
   );
 }
 
-export default App;
+export default observer(App);

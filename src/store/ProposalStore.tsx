@@ -2,18 +2,21 @@ import { action, makeObservable, observable } from "mobx";
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
 
 const app_id = 1089;
-const connection = new WebSocket(
-  `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
-);
-const api = new DerivAPIBasic({ connection });
+// const connection = new WebSocket(
+//   `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
+// );
+// const api = new DerivAPIBasic({ connection });
 
 class ProposalStore {
   previousSpot: number = 0;
   currentSpot: number = 0;
   proposalData: any[] = [];
   duration: number = 5;
-  payout: number = 100;
+  payout: number = 100.00;
   basis: string = "stake";
+
+  connection: WebSocket | null = null;
+  api: any = null;
 
   constructor() {
     makeObservable(this, {
@@ -23,15 +26,34 @@ class ProposalStore {
       previousSpot: observable,
       currentSpot: observable,
       proposalData: observable,
-      proposalResponse: action.bound,
-      getProposal: action.bound,
-      unsubscribeProposal: action.bound,
+      proposalResponse: action,
+      getProposal: action,
+      unsubscribeProposal: action,
       setDuration: action.bound,
       setPayout: action.bound,
       setBasis: action.bound,
       setPreviousSpot: action.bound,
       setCurrentSpot: action.bound,
     });
+    this.connectWebSocket();
+  }
+
+  connectWebSocket() {
+    // runInAction(() => {
+      this.connection = new WebSocket(
+        `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
+      );
+      this.api = new DerivAPIBasic({ connection: this.connection });
+    // });
+  }
+
+  disconnectWebSocket() {
+    // runInAction(() => {
+      if (this.connection) {
+        // this.connection.close();
+        this.connection = null;
+      }
+    // });
   }
 
   setDuration(duration: number) {
@@ -39,7 +61,7 @@ class ProposalStore {
   }
 
   setPayout(payout: number) {
-    this.payout = payout;
+    this.payout = parseFloat(payout.toFixed(2)); 
   }
 
   setBasis(basis: string) {
@@ -55,13 +77,13 @@ class ProposalStore {
   }
 
   proposalResponse = async (res: MessageEvent) => {
-    const data = JSON.parse(res.data);
+    const data = await JSON.parse(res.data);
     // console.log('wth', data.msg_type);
-    console.log("wer u", this.proposalData);
+    // console.log("wer u", this.proposalData);
     if (data.error !== undefined) {
       console.log("Error: ", data.error.message);
-      connection.removeEventListener("message", this.proposalResponse, false);
-      await api.disconnect();
+      this.connection?.removeEventListener("message", this.proposalResponse, false);
+      await this.api.disconnect();
     } else if (data.msg_type === "proposal") {
         // const proposal = data.proposal;
         // this.setPreviousSpot(parseFloat(proposal.spot));
@@ -69,7 +91,8 @@ class ProposalStore {
         // console.log("proposal data", data.proposal);
       // this.setProposalTicks(data.proposal.duration);
       this.proposalData.push(await data.proposal);
-      console.log("helo", data.proposal.spot);
+      // this.setPayout(data.proposal.payout);
+      // console.log("helo", data.proposal.spot);
 
     //   const updatedData = [...this.proposalData, await data.proposal];
     //   this.proposalData = updatedData;
@@ -81,7 +104,6 @@ class ProposalStore {
   };
 
   getProposal = async (id: string) => {
-    
     const proposal_request = {
       proposal: 1,
       subscribe: 1,
@@ -95,8 +117,9 @@ class ProposalStore {
     };
 
     this.unsubscribeProposal();
-    connection.addEventListener("message", this.proposalResponse);
-    await api.proposal(proposal_request);
+    this.connectWebSocket();
+    this.connection?.addEventListener("message", this.proposalResponse);
+    await this.api.proposal(proposal_request);
   }
     // const keepAlive = () => proposal_request;
 
@@ -142,9 +165,10 @@ class ProposalStore {
   // };
 
   unsubscribeProposal = async () => {
-    connection.removeEventListener("message", this.proposalResponse, false);
-    this.proposalData = [];
-    // await api.disconnect();
+    this.connection?.removeEventListener("message", this.proposalResponse, false);
+    // this.proposalData = [];
+    this.api.disconnect();
+    this.disconnectWebSocket();
   };
 }
 

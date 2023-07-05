@@ -21,7 +21,7 @@ class ApiStore {
   isDurationEnded: boolean = false;
   showOnboarding: boolean = false;
   isTicks: boolean = false;
-  selectedSymbol: string = "";
+  selectedSymbol: string = "1HZ10V";
   ticks: Tick[] = [];
   sellSuccessful: boolean = false;
   additionalAmount: number = 0;
@@ -29,7 +29,16 @@ class ApiStore {
   deductedAmount: number = 0;
   totalAmountWon: number = 0;
   totalAmountLost: number = 0;
-
+  ticks_history_request: Record<string, number | string> = 
+  {
+    ticks_history: this.selectedSymbol,
+    adjust_start_time: 1,
+    count: 1000,
+    granularity: this.granularity,
+    end: "latest",
+    start: 1680040550,
+    style: "candles",
+  };
   connection: WebSocket | null = null;
   api: any = null;
 
@@ -50,6 +59,7 @@ class ApiStore {
       deductedAmount: observable,
       totalAmountWon: observable,
       totalAmountLost: observable,
+      ticks_history_request: observable,
       connectWebSocket: action.bound,
       disconnectWebSocket: action.bound,
       setChartType: action.bound,
@@ -64,36 +74,31 @@ class ApiStore {
       setTotalAmountWon: action.bound,
       setGranularity: action.bound,
       toggleTicks: action.bound,
-      handleActiveSymbolsResponse: action.bound,
-      getActiveSymbols: action.bound,
+      handleActiveSymbolsResponse: action,
+      getActiveSymbols: action,
       setSelectedSymbol: action.bound,
-      subscribeTicks: action.bound,
-      unsubscribeTicks: action.bound,
-      getTicksHistory: action.bound,
-      tickSubscriber:action.bound,
-      ticksHistoryResponse: action.bound,
-      tickResponse: action.bound,
+      subscribeTicks: action,
+      unsubscribeTicks: action,
+      getTicksHistory: action,
+      tickSubscriber:action,
+      ticksHistoryResponse: action,
+      tickResponse: action,
       setTicks: action.bound,
     });
     this.connectWebSocket();
   }
 
   connectWebSocket() {
-    // runInAction(() => {
       this.connection = new WebSocket(
         `wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`
       );
       this.api = new DerivAPIBasic({ connection: this.connection });
-    // });
   }
 
   disconnectWebSocket() {
-    // runInAction(() => {
       if (this.connection) {
-        // this.connection.close();
         this.connection = null;
       }
-    // });
   }
 
   setChartType(chartType: string) {
@@ -113,47 +118,28 @@ class ApiStore {
   }
 
   setSellSuccessful(sellSuccessful: boolean) {
-    // runInAction(() => {
     this.sellSuccessful = sellSuccessful;
-    // })
   }
 
   setAdditionalAmount(additionalAmount: number) {
-    // runInAction(() => {
     this.additionalAmount = additionalAmount;
-    // })
   }
 
   setSellFailed(sellFailed: boolean) {
-    // runInAction(() => {
     this.sellFailed = sellFailed;
-    // })
   }
 
   setDeductedAmount(deductedAmount: number) {
-    // runInAction(() => {
     this.deductedAmount = deductedAmount;
-    // })
   }
 
   setTotalAmountWon(totalAmountWon: number) {
-    // runInAction(() => {
     this.totalAmountWon = totalAmountWon;
-    // })
   }
 
   setTotalAmountLost(totalAmountLost: number) {
-    // runInAction(() => {
     this.totalAmountLost = totalAmountLost;
-    // })
   }
-
-  // toggleGranularity() {
-  //   this.isHourlyGranularity = !this.isHourlyGranularity;
-  //   this.ticks_history_request.granularity = this.isHourlyGranularity
-  //     ? 3600
-  //     : 60;
-  // }
 
   setGranularity(granularity: number){
     this.granularity = granularity
@@ -168,26 +154,22 @@ class ApiStore {
     const data = JSON.parse(res.data);
 
     if (data.error !== undefined) {
-      // runInAction(() => {
         console.log("Error: ", data.error?.message);
         this.connection?.removeEventListener(
           "message",
           this.handleActiveSymbolsResponse,
           false
         );
-      // });
       await this.api.disconnect();
     }
 
     if (data.msg_type === "active_symbols") {
-      // runInAction(() => {
         this.setActiveSymbols(data.active_symbols);
         this.connection?.removeEventListener(
           "message",
           this.handleActiveSymbolsResponse,
           false
         );
-      // });
     }
   };
 
@@ -197,29 +179,43 @@ class ApiStore {
       product_type: "basic",
     };
 
-    // runInAction(() => {
       this.connection?.addEventListener(
         "message",
         this.handleActiveSymbolsResponse
       );
-    // });
     await this.api.activeSymbols(active_symbols_request);
   };
 
   setSelectedSymbol(symbol: string) {
-    // runInAction(() => {
       this.selectedSymbol = symbol;
       this.ticks_history_request.ticks_history = symbol;
-    // });
   }
 
   subscribeTicks = async () => {
+  this.ticks_history_request = 
+  this.isTicks ? {
+    ticks_history: this.selectedSymbol,
+    adjust_start_time: 1,
+    count: 1000,
+    end: "latest",
+    start: 1680040550,
+    style: "ticks",
+  } : 
+  {
+    ticks_history: this.selectedSymbol,
+    adjust_start_time: 1,
+    count: 1000,
+    granularity: this.granularity,
+    end: "latest",
+    start: 1680040550,
+    style: "candles",
+  };
+
     this.unsubscribeTicks();
     this.connectWebSocket();
 
-    await this.tickSubscriber();
-    await this.getTicksHistory();
-    
+    this.tickSubscriber();
+    this.getTicksHistory();
     this.connection?.addEventListener("message", this.tickResponse);
   };
 
@@ -229,31 +225,10 @@ class ApiStore {
     this.disconnectWebSocket();
   };
 
-  ticks_history_request = 
-  this.isTicks ? {
-    ticks_history: "",
-    adjust_start_time: 1,
-    count: 1000,
-    end: "latest",
-    start: 1,
-    style: "ticks",
-  } : 
-  {
-    ticks_history: "",
-    adjust_start_time: 1,
-    count: 1000,
-    granularity: this.granularity,
-    end: "latest",
-    start: this.granularity = 86400 ? 1680040550 : 1,
-    style: "candles",
-  };
-
   getTicksHistory = async () => {
-    // runInAction(() => {
       this.ticks_history_request.ticks_history = this.selectedSymbol;
 
       this.connection?.addEventListener("message", this.ticksHistoryResponse);
-    // });
     await this.api.ticksHistory(this.ticks_history_request);
   };
 
@@ -266,19 +241,15 @@ class ApiStore {
     const data = JSON.parse(res.data);
     
     if (data.error !== undefined) {
-      // runInAction(() => {
         console.log("Error : ", data.error.message);
         this.connection?.removeEventListener(
           "message",
           this.ticksHistoryResponse,
           false
         );
-      // });
       await this.api.disconnect();
     }
     else if (data.msg_type === "candles") {
-      // runInAction(() => {
-        // if (this.chartType === "candlestick"){
         const candles = data.candles;
 
         const candlesticks: Tick[] = [];
@@ -287,15 +258,6 @@ class ApiStore {
 
         for (const candle of candles) {
           const epoch = candle.epoch;
-          // let time = 0;
-          // // const time = this.isHourlyGranularity ? new Date(epoch * 1000).getHours() : new Date(epoch * 1000).getMinutes();
-          // if(this.granularity = 60){
-          //   time = new Date(epoch * 1000).getMinutes();
-          // } else if (this.granularity = 3600){
-          //   time = new Date(epoch * 1000).getHours();
-          // } else if (this.granularity = 86400){
-          //   time = new Date(epoch * 1000).getDay();
-          // }
 
           if (currentTime === null || (epoch * 1000) !== currentTime) {
             // Start a new candle
@@ -333,27 +295,14 @@ class ApiStore {
           this.ticksHistoryResponse,
           false
         );
-      // });
-      // }
-      // else if (this.chartType === "line") {
-      //   this.ticks = data.candles;
-
-      //   this.setTicks([...this.ticks]);
-
-      //   this.connection?.removeEventListener(
-      //     "message",
-      //     this.ticksHistoryResponse,
-      //     false
-      //   );
-      //   }
     } else if (data.msg_type === 'history') {
+      // console.log(data.history)
       const historyTicks = data.history.prices.map((price: number, index: number) => ({
         epoch: data.history.times[index],
-        quote: Number(price),
+        quote: price,
       }));
 
       this.setTicks([...this.ticks, ...historyTicks]);
-      // this.loadedTicks += historyTicks.length;
 
       this.connection?.removeEventListener('message', this.ticksHistoryResponse, false);
     }
@@ -362,19 +311,15 @@ class ApiStore {
   tickResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     if (data.error !== undefined) {
-      // runInAction(() => {
         console.log("Error: ", data.error.message);
         this.connection?.removeEventListener(
           "message",
           this.tickResponse,
           false
         );
-      // });
       await this.api.disconnect();
     }
     else if (data.msg_type === "ohlc") {
-      // runInAction(() => {
-        // if(this.chartType === "candlestick") {
         const newTick = {
           epoch: data.ohlc.epoch,
           close: Number(data.ohlc.close),
@@ -383,78 +328,60 @@ class ApiStore {
           low: Number(data.ohlc.low),
         };
 
-        // const currentTime = this.isHourlyGranularity ? new Date(newTick.epoch * 1000).getHours() : new Date(newTick.epoch * 1000).getMinutes();
         let currentTime = 0;
-        if(this.granularity = 60){
+        if(this.granularity === 60){
           if (this.isTicks){
             currentTime = newTick.epoch * 1000;  
           } else{
           currentTime = new Date(newTick.epoch * 1000).getMinutes();
           }
-        } else if (this.granularity = 3600){
+        } else if (this.granularity === 3600){
           currentTime = new Date(newTick.epoch * 1000).getHours();
-        } else if (this.granularity = 86400){
+        } else if (this.granularity === 86400){
           currentTime = new Date(newTick.epoch * 1000).getDay();
-        }     
-        // const currentTime = newTick.epoch * 1000;   
+        }  
 
         if (this.ticks.length === 0) {
           // If there are no previous ticks, add the current tick
           this.setTicks([newTick]);
         } else {
           const lastTick = this.ticks[this.ticks.length - 1];
-          // const lastTime = this.isHourlyGranularity ? new Date(lastTick.epoch * 1000).getHours() : new Date(lastTick.epoch * 1000).getMinutes();
           let lastTime = 0;
-        if(this.granularity = 60){
+        if(this.granularity === 60){
           if (this.isTicks){
             lastTime = lastTick.epoch * 1000;  
           } else{
           lastTime = new Date(lastTick.epoch * 1000).getMinutes();
           }
-        } else if (this.granularity = 3600){
+        } else if (this.granularity === 3600){
           lastTime = new Date(lastTick.epoch * 1000).getHours();
-        } else if (this.granularity = 86400){
+        } else if (this.granularity === 86400){
           lastTime = new Date(lastTick.epoch * 1000).getDay();
         }
-        // const lastTime = lastTick.epoch * 1000;
 
           if (currentTime !== lastTime) {
             // If the current tick belongs to a different minute, add it to the list
-            // console.log(this.ticks, "before");
             this.setTicks([...this.ticks, newTick]);
-            // console.log(this.ticks, "after");
-          } else {
+            } else {
             // Update the previous tick with the new values
             lastTick.high = Math.max(lastTick.high as number, newTick.high);
             lastTick.low = Math.min(lastTick.low as number, newTick.low);
             lastTick.close = Number(newTick.close);
           }
         } 
-
-      // }
-      // else if (this.chartType === "line") {
-      //     const newTick = {
-      //       epoch: data.ohlc.epoch,
-      //       close: data.ohlc.close,
-      //     };
-      //     this.setTicks([...this.ticks, newTick]);
-      //   }
-
-      // });
     } else if (data.msg_type === 'tick') {
+
       const newTick = {
         epoch: data.tick.epoch,
-        quote: Number(data.tick.quote),
+        quote: data.tick.quote,
       };
       this.setTicks([...this.ticks, newTick]);
-    }
-    
+    }   
   };
 
   setTicks(ticks: Tick[]) {
     this.ticks = ticks;
   }
-
   
 }
 
