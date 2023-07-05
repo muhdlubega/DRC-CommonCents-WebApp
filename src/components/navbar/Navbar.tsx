@@ -10,7 +10,7 @@ import { ArrowRight2, HambergerMenu, Moon } from "iconsax-react";
 import { useState } from "react";
 import themeStore from "../../store/ThemeStore";
 
-const Header = () => {
+const Header = observer(() => {
   const navigate = useNavigate();
   const [state, setState] = useState({
     right: false,
@@ -91,6 +91,6 @@ const Header = () => {
       </Toolbar>
     </AppBar>
   );
-};
+});
 
-export default observer(Header);
+export default Header;

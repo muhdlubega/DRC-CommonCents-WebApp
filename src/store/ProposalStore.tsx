@@ -90,7 +90,9 @@ class ProposalStore {
         // this.proposalData.push(proposal);
         // console.log("proposal data", data.proposal);
       // this.setProposalTicks(data.proposal.duration);
-      this.proposalData.push(await data.proposal);
+      action(() => {
+        this.proposalData.push(data.proposal);
+      })();
       // this.setPayout(data.proposal.payout);
       // console.log("helo", data.proposal.spot);
 
