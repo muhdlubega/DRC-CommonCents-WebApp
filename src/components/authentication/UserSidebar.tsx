@@ -84,7 +84,7 @@ const UserSidebar = () => {
       <Box className="navbar-auth" onClick={toggleDrawer(true)}>
         <Box className="navbar-balance">
           <EmptyWallet color="#3366ff" variant="Bulk" size={26} style={{marginRight: '0.5vw'}}/>
-          {authStore.user?.balance?.toFixed(2)} USD
+          {balance} USD
         </Box>
         <Avatar
           className="sidebar-picture"

@@ -180,8 +180,8 @@ class AuthStore {
         if(!this.user){
           this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
         } 
-        // else if (authStore.user !== null) {
-        //   authStore.initializeUser(Number(authStore.user.balance!), authStore.user.displayName!, authStore.user.email!, authStore.user.photoURL!)
+        // else if (this.user) {
+        //   authStore.initializeUser(Number(this.user.balance!), this.user.displayName!, this.user.email!, this.user.photoURL!)
         // }
         
         this.handleClose();
