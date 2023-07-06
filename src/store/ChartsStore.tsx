@@ -74,6 +74,7 @@ class ChartsStore {
       setProposalTicks: action.bound,
       // setActiveSymbols: action,
       setSymbolsArray: action,
+      setMarketType: action,
       setSelectedSymbol: action.bound,
       // handleActiveSymbolsResponse: action,
       subscribeTicksGroup: action,

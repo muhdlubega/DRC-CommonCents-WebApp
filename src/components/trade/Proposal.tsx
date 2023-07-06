@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
 import proposalStore from "../../store/ProposalStore";
 import AuthStore from "../../store/AuthStore";
-import { ArrowDown2, ArrowUp2, InfoCircle } from "iconsax-react";
+import {InfoCircle } from "iconsax-react";
 
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +17,8 @@ const Proposal = observer(() => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
+  const [isQuoteOpen, setIsQuoteOpen] = useState(false);
+  const [isSecondQuoteOpen, setIsSecondQuoteOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -26,23 +28,27 @@ const Proposal = observer(() => {
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
 
+  const toggleQuote = () => {
+    proposalStore.setContractType("CALL");
+    setIsQuoteOpen((prevState) => !prevState);
+  };
+
+  const toggleSecondQuote = () => {
+    proposalStore.setContractType("PUT");
+    setIsSecondQuoteOpen((prevState) => !prevState);
+  };
+
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDuration = parseInt(event.target.id, 10);
     proposalStore.setDuration(newDuration);
   };
 
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log("e", event.target.value);
-
     const newPayout = parseFloat(event.target.value);
     proposalStore.setPayout(newPayout);
   };
 
   const handleBuy = async (isHigher: boolean) => {
-    // if(id){
-    //   proposalStore.unsubscribeProposal();
-    //   proposalStore.getProposal(id);
-    // }
     setIsProcessing(true);
     let balance = 0;
     try {
@@ -52,6 +58,9 @@ const Proposal = observer(() => {
           balance = doc.data().balance || null;
         }
       });
+
+      proposalStore.contractType = isHigher ? "CALL" : "PUT";
+
       const currentBalance = balance;
 
       const payoutValue = parseFloat(proposalStore.payout.toString());
@@ -108,6 +117,9 @@ const Proposal = observer(() => {
         balance = doc.data().balance || null;
       }
     });
+    
+    proposalStore.setContractType(isHigher ? "CALL" : "PUT");
+
     const currentBalance = balance;
 
     const payoutValue = parseFloat(proposalStore.payout.toString());
@@ -117,15 +129,6 @@ const Proposal = observer(() => {
     try {
       console.log("payout/stake", payoutValue);
       console.log("balance", currentBalance);
-      // console.log("proposal data", proposalStore.proposalData);
-
-      // if (proposalStore.proposalData.length > 0) {
-      // console.log(
-      //   "testing",
-      //   proposalStore.proposalData[
-      //     proposalStore.proposalData.length - proposalStore.duration
-      //   ]
-      // );
 
       const previousSpot = apiStore.isTicks
         ? apiStore.ticks[apiStore.ticks.length - proposalStore.duration - 1]
@@ -135,8 +138,6 @@ const Proposal = observer(() => {
       const currentSpot = apiStore.isTicks
         ? apiStore.ticks[apiStore.ticks.length - 1].quote
         : apiStore.ticks[apiStore.ticks.length - 1].close;
-
-      // console.log("api", apiStore.ticks.length);
 
       console.log("prev", previousSpot);
       console.log("next", currentSpot);
@@ -177,8 +178,6 @@ const Proposal = observer(() => {
           }
         } else {
           if (previousSpotValue > currentSpotValue) {
-            // const additionalAmount =
-            //   proposalStore.payout;
             const updatedBalance = currentBalance + additionalAmount;
             authStore.setBalance(updatedBalance);
             console.log("Spot is lower!!!", additionalAmount);
@@ -214,14 +213,6 @@ const Proposal = observer(() => {
         const updatedBalance = currentBalance + payoutValue;
         authStore.setBalance(updatedBalance);
       }
-      // } else {
-      //   console.log("Not enough data to compare spot prices");
-      //   authStore.setAlert({
-      //     open: true,
-      //     message: `Error. Try again later`,
-      //     type: "error",
-      //   });
-      // }
       setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
@@ -252,14 +243,14 @@ const Proposal = observer(() => {
     if (id) {
       proposalStore.getProposal(id);
     }
-  }, [id, proposalStore.basis, proposalStore.payout, proposalStore.duration]);
+  }, [id, proposalStore.basis, proposalStore.payout, proposalStore.duration, proposalStore.contractType]);
 
   // console.log(proposalStore.payout)
 
   var payout = 0;
   var ask_price = 0;
   var longcode = "";
-  if (apiStore.ticks.length > 0) {
+  if (apiStore.ticks.length > 0 && proposalStore.proposalData.length > 0) {
     payout = Number(
       proposalStore.proposalData[proposalStore.proposalData.length - 1].payout
     );
@@ -272,8 +263,6 @@ const Proposal = observer(() => {
         .longcode;
   }
 
-  // console.log("balance", authStore.user?.balance);
-
   return (
     <Box>
       {AuthStore.user ? (
@@ -282,13 +271,6 @@ const Proposal = observer(() => {
             <Typography sx={{ marginRight: "1vw", fontFamily: "Montserrat" }}>
               Ticks:{" "}
             </Typography>
-            {/* <input
-                type="range"
-                min="1"
-                max="10"
-                value={apiStore.duration}
-                onChange={handleDurationChange}
-              /> */}
             <Box className="duration-change-slider">
               <input
                 required
@@ -480,6 +462,7 @@ const Proposal = observer(() => {
 
           <Box ref={proposalContainerRef} id="proposalContainer"></Box>
           <Box className="proposal-btn-choices">
+          <span className="proposal-btn-span">
             <button
               className={`proposal-btn-buy ${
                 isProcessing ||
@@ -497,29 +480,31 @@ const Proposal = observer(() => {
                 Number.isNaN(proposalStore.payout)
               }
             >
-              <ArrowUp2 /> Higher
+              {/* <ArrowUp2 />  */}
+              Higher <InfoCircle
+                color="#ffffff"
+                size={24}
+                onMouseLeave={toggleDropdown}
+                onMouseEnter={toggleDropdown}
+                style={{ marginRight: "0.5vw", cursor: "pointer" }}
+              />
             </button>
-            <Typography
+            <Typography onMouseEnter={toggleQuote} onMouseLeave={toggleQuote}>Quote Price</Typography>
+            </span>
+            {isQuoteOpen && (<Typography
               sx={{
                 marginLeft: "12vw",
                 fontSize: "1vw",
                 fontFamily: "Montserrat",
               }}
             >
-              <InfoCircle
-                color="#0033ff"
-                size={24}
-                onMouseLeave={toggleDropdown}
-                onMouseEnter={toggleDropdown}
-                style={{ marginRight: "0.5vw", cursor: "pointer" }}
-              />
               {proposalStore.basis === "stake"
                 ? `Payout: ${payout}`
                 : `Ask Price: ${ask_price}`}
-            </Typography>
+            </Typography>)}
             {isDropdownOpen && <Box>{longcode}</Box>}
-            <button
-              className={`proposal-btn-buy ${
+            <span className="proposal-btn-span">
+              <button className={`proposal-btn-buy ${
                 isProcessing ||
                 proposalStore.payout >= 500.01 ||
                 proposalStore.payout <= 0.99 ||
@@ -535,26 +520,28 @@ const Proposal = observer(() => {
                 Number.isNaN(proposalStore.payout)
               }
             >
-              <ArrowDown2 /> Lower
+              {/* <ArrowDown2 />  */}
+              Lower <InfoCircle
+                color="#ffffff"
+                size={24}
+                onMouseLeave={toggleSecondDropdown}
+                onMouseEnter={toggleSecondDropdown}
+                style={{ marginRight: "0.5vw", cursor: "pointer" }}
+              />
             </button>
-            <Typography
+            <Typography onMouseEnter={toggleSecondQuote} onMouseLeave={toggleSecondQuote}>Quote Price</Typography>
+            </span>
+            {isSecondQuoteOpen && (<Typography
               sx={{
                 marginLeft: "12vw",
                 fontSize: "1vw",
                 fontFamily: "Montserrat",
               }}
             >
-              <InfoCircle
-                color="#0033ff"
-                size={24}
-                onMouseLeave={toggleSecondDropdown}
-                onMouseEnter={toggleSecondDropdown}
-                style={{ marginRight: "0.5vw", cursor: "pointer" }}
-              />
               {proposalStore.basis === "stake"
                 ? `Payout: ${payout}`
                 : `Ask Price: ${ask_price}`}
-            </Typography>
+            </Typography>)}
             {isSecondDropdownOpen && (
               <Box>{longcode.replace("higher", "lower")}</Box>
             )}

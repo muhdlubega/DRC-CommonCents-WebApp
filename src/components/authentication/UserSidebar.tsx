@@ -67,13 +67,13 @@ const UserSidebar = () => {
   var userDisplayName = "";
   var userEmail = "";
   var userPhotoURL = "";
-  var balance = 100000;
+  // var balance = 100000;
 
   if (authStore.user !== null) {
   userDisplayName = authStore.user?.displayName || "";
   userEmail = authStore.user?.email || "";
   userPhotoURL = authStore.user?.photoURL || "";
-  balance = Number(authStore.user?.balance?.toFixed(2)) || 0;
+  // balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
   }
 
   // console.log("rerender");
@@ -84,7 +84,7 @@ const UserSidebar = () => {
       <Box className="navbar-auth" onClick={toggleDrawer(true)}>
         <Box className="navbar-balance">
           <EmptyWallet color="#3366ff" variant="Bulk" size={26} style={{marginRight: '0.5vw'}}/>
-          {balance} USD
+          {authStore.user!.balance?.toFixed(2)} USD
         </Box>
         <Avatar
           className="sidebar-picture"
@@ -136,7 +136,7 @@ const UserSidebar = () => {
           ))}
         </ol>
       </Box>
-          <h6 className="sidebar-item">Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item" onClick={() => navigate("/trade-history")}>Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item">Help and Support<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item">FAQs<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <Box sx={{flex: 1}}>
