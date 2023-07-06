@@ -21,9 +21,9 @@ const Price = () => {
   return (
     <div>
       <Box className="pricecandle-container">
+        <Box className="pricecandle-card">Close: <Box sx={{color: closeIsHigher ? 'green' : 'red'}}>{close.toFixed(4)}</Box></Box>
         <Box className="pricecandle-card">High: <Box sx={{color: highIsHigher ? 'green' : 'red'}}>{high.toFixed(4)}</Box></Box>
         <Box className="pricecandle-card">Open: <Box sx={{color: openIsHigher ? 'green' : 'red'}}>{open.toFixed(4)}</Box></Box>
-        <Box className="pricecandle-card">Close: <Box sx={{color: closeIsHigher ? 'green' : 'red'}}>{close.toFixed(4)}</Box></Box>
         <Box className="pricecandle-card">Low: <Box sx={{color: lowIsHigher ? 'green' : 'red'}}>{low.toFixed(4)}</Box></Box>
       </Box>
     </div>

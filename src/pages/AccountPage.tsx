@@ -10,7 +10,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { signOut } from "firebase/auth";
+import { signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { auth } from "../firebase";
 import watermark from "../assets/images/watermark.png";
 import { useState } from "react";
@@ -18,13 +18,23 @@ import { observer } from "mobx-react-lite";
 
 const AccountPage = observer(() => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [updatedName, setUpdatedName] = useState('');
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
   const [state, setState] = useState({
     resetConfirmationOpen: false,
   });
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
+  };
+
+  const toggleSecondDropdown = () => {
+    setIsSecondDropdownOpen((prevState) => !prevState);
   };
   
   var userDisplayName = "";
@@ -36,7 +46,7 @@ const AccountPage = observer(() => {
   userDisplayName = authStore.user?.displayName || "";
   userEmail = authStore.user?.email || "";
   userPhotoURL = authStore.user?.photoURL || "";
-  balance = Number(authStore.user?.balance?.toFixed(2)) || 0;
+  balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
   }
 
   const logOut = () => {
@@ -66,6 +76,28 @@ const AccountPage = observer(() => {
   const handleUpdateName = () => {
     authStore.setUpdateName(updatedName);
   };
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmNewPassword) {
+      // Show an error message or perform any necessary validation
+      return;
+    }
+  
+    setIsConfirmationDialogOpen(true);
+  };
+
+  const handleConfirmPasswordChange = async () => {
+    try {
+      const credential = EmailAuthProvider.credential(auth.currentUser!.email!, oldPassword);
+      await reauthenticateWithCredential(auth.currentUser!, credential);
+      await updatePassword(auth.currentUser!, newPassword);
+      setIsConfirmationDialogOpen(false);
+      // Password change successful
+    } catch (error) {
+      // Handle the error, e.g., display an error message
+    }
+  };
+  
 
   return (
     <Box className="account-container">
@@ -139,14 +171,38 @@ const AccountPage = observer(() => {
         )}
       </div>
       <div className="sidebar-leaderboard">
-        <h6>
+        <h6 onClick={toggleSecondDropdown}>
           Change Password
-          {isDropdownOpen ? (
+          {isSecondDropdownOpen ? (
             <ArrowUp2 size={16} style={{ marginLeft: "0.5vw" }} />
           ) : (
             <ArrowRight2 size={16} style={{ marginLeft: "0.5vw" }} />
           )}
         </h6>
+        {isSecondDropdownOpen && (
+  <Box>
+    <input
+      type="password"
+      value={oldPassword}
+      onChange={(event) => setOldPassword(event.target.value)}
+      placeholder="Old Password"
+    />
+    <input
+      type="password"
+      value={newPassword}
+      onChange={(event) => setNewPassword(event.target.value)}
+      placeholder="New Password"
+    />
+    <input
+      type="password"
+      value={confirmNewPassword}
+      onChange={(event) => setConfirmNewPassword(event.target.value)}
+      placeholder="Confirm New Password"
+    />
+    <Button onClick={handleChangePassword}>Change Password</Button>
+  </Box>
+)}
+
       </div>{" "}
       <Box sx={{ flex: 1 }}>
         <Button
@@ -201,6 +257,27 @@ const AccountPage = observer(() => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+  open={isConfirmationDialogOpen}
+  onClose={() => setIsConfirmationDialogOpen(false)}
+  aria-labelledby="confirm-password-change-dialog-title"
+  aria-describedby="confirm-password-change-dialog-description"
+>
+  <DialogTitle id="confirm-password-change-dialog-title">Confirm Password Change</DialogTitle>
+  <DialogContent>
+    <DialogContentText id="confirm-password-change-dialog-description">
+      Are you sure you want to change your password? This action cannot be undone.
+    </DialogContentText>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setIsConfirmationDialogOpen(false)} color="primary">
+      Cancel
+    </Button>
+    <Button onClick={handleConfirmPasswordChange} color="primary" variant="contained">
+      Confirm
+    </Button>
+  </DialogActions>
+</Dialog>
     </Box>
   );
 });
