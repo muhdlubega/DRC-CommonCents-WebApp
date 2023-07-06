@@ -39,7 +39,7 @@ const [confirmNewPassword, setConfirmNewPassword] = useState("");
   
   var userDisplayName = auth.currentUser?.displayName;
   var userEmail = auth.currentUser?.email;
-  var userPhotoURL = auth.currentUser?.photoURL;
+  // var userPhotoURL = auth.currentUser?.photoURL;
   var balance = 100000;
 
   // if (auth.currentUser !== null) {
