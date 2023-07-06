@@ -37,17 +37,36 @@ const [confirmNewPassword, setConfirmNewPassword] = useState("");
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
   
-  var userDisplayName = "";
-  var userEmail = "";
-  var userPhotoURL = "";
+  var userDisplayName = auth.currentUser?.displayName;
+  var userEmail = auth.currentUser?.email;
+  var userPhotoURL = auth.currentUser?.photoURL;
   var balance = 100000;
 
-  if (authStore.user !== null) {
-  userDisplayName = authStore.user?.displayName || "";
-  userEmail = authStore.user?.email || "";
-  userPhotoURL = authStore.user?.photoURL || "";
-  balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
-  }
+  // if (auth.currentUser !== null) {
+  //   console.log(auth.currentUser.displayName);
+  //   console.log(auth.currentUser.email);
+  //   userDisplayName = auth.currentUser.displayName || "";
+  //   userEmail = auth.currentUser.displayName || auth.currentUser.email || "";
+  //   userPhotoURL = auth.currentUser.photoURL || ""; String  
+  //   balance = Number(authStore.user!.balance?.toFixed(2)) || 100000;
+  // }
+
+  // const querySnapshot = await getDocs(collection(db, "users"));
+  //     const leaderboardData: User[] = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const { balance, displayName, email } = doc.data();
+  //       leaderboardData.push({ displayName, email, balance });
+  //       if (auth.currentUser && auth.currentUser.uid === doc.id) {
+  //         this.user!.balance = balance || null;
+  //       }
+  //     });
+  // if (authStore.user !== null) {
+  //   console.log(authStore.user.displayName);
+  //   userDisplayName = authStore.user?.displayName || "";
+  //   userEmail = authStore.user?.displayName || authStore.user?.email || "";
+  //   userPhotoURL = authStore.user?.photoURL || "";
+  //   balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
+  // }
 
   const logOut = () => {
     signOut(auth);
@@ -118,8 +137,8 @@ const [confirmNewPassword, setConfirmNewPassword] = useState("");
         >
           <Avatar
             className="account-picture"
-            src={userPhotoURL}
-            alt={userDisplayName || userEmail}
+            src={auth.currentUser?.photoURL || ""}
+            alt={auth.currentUser?.displayName || ""}
             sx={{ marginRight: "0.4vw" }}
           />
           {userDisplayName}

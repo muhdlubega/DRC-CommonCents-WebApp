@@ -1,11 +1,11 @@
-import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
 import {
   collection,
   doc,
   getDocs,
   getFirestore,
   setDoc,
-  updateDoc,
+  updateDoc
 } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
 import { auth, db } from "../firebase";
@@ -312,6 +312,11 @@ class AuthStore {
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       displayName: updatedName,
     });
+    if (auth.currentUser !== null) {
+      updateProfile(auth.currentUser, {
+        displayName: updatedName
+      });
+    }
   }
 }
 
