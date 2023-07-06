@@ -222,7 +222,7 @@ class ChartsStore {
       }));
 
       this.setTicks([...this.ticks, ...historyTicks]);
-      console.log(historyTicks)
+      // console.log(historyTicks)
 
       connection?.removeEventListener(
         "message",
