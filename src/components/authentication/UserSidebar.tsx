@@ -138,7 +138,7 @@ const UserSidebar = () => {
                 fontFamily: 'Montserrat',
                 wordWrap: "break-word", margin: 0}}>
               <EmptyWallet size={22} style={{marginRight: '0.5vw'}}/>
-              {userBalance || balance.toFixed(2)} USD
+              {userBalance.toFixed(2) || balance.toFixed(2)} USD
             </span>
           </div>
           <h6 className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
