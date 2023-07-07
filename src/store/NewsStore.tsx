@@ -14,23 +14,18 @@ export interface NewsItem {
     }]
 }
 
-export const topics_array = ['blockchain', 'earnings', 'mergers_and_acquisitions', 'financial_markets', 'economy_fiscal', 'economy_monetary', 'economy_macro', 'energy_transportation', 'finance', 'life_sciences', 'manufacturing', 'real_estate', 'retail_wholesale', 'technology'];
+export const topics_array = ['all', 'blockchain', 'earnings', 'mergers_and_acquisitions', 'financial_markets', 'economy_fiscal', 'economy_monetary', 'economy_macro', 'energy_transportation', 'finance', 'life_sciences', 'manufacturing', 'real_estate', 'retail_wholesale', 'technology'];
 
 class NewsStore {
     news: NewsItem[] = [];
     selectedTopic: string = topics_array[0];
-    // currentPage: any = 1;
-    // articlesPerPage: number = 20;
   
     constructor() {
       makeObservable(this, {
         news: observable,
         selectedTopic: observable,
-        // currentPage: observable,
-        // articlesPerPage: observable,
         setNews: action.bound,
         setSelectedTopic: action.bound,
-        // setCurrentPage: action.bound
       });
     }
 
@@ -41,10 +36,6 @@ class NewsStore {
     setSelectedTopic(selectedTopic: string){
         this.selectedTopic = selectedTopic;
     }
-
-    // setCurrentPage(currentPage: any){
-    //     this.currentPage = currentPage;
-    // }
 }
 
 

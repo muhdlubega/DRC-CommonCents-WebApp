@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Tab, Tabs, Typography } from "@mui/material";
 import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import newsStore, { NewsItem, topics_array } from "../../store/NewsStore";
 import "../../styles/main.scss";
-import AliceCarousel from "react-alice-carousel";
-import { ArrowRight2, ArrowLeft2, SearchFavorite1 } from "iconsax-react";
+// import AliceCarousel from "react-alice-carousel";
+import { SearchFavorite1 } from "iconsax-react";
+
+//remove duplicate
+//all category
+//no resut found output
 
 const NewsTopic = observer(() => {
   // const [news, setNews] = useState<NewsItem[]>([]);
@@ -21,7 +25,7 @@ const NewsTopic = observer(() => {
   };
 
   const filteredNews = newsStore.news.filter((article) => {
-    const { topics, summary, authors, title } = article;
+    const { topics, summary, authors, title, source } = article;
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
     return (
@@ -32,7 +36,8 @@ const NewsTopic = observer(() => {
       authors.some((author) =>
         author.toLowerCase().includes(lowerCaseSearchTerm)
       ) ||
-      title.toLowerCase().includes(lowerCaseSearchTerm)
+      title.toLowerCase().includes(lowerCaseSearchTerm) ||
+      source.toLowerCase().includes(lowerCaseSearchTerm)
     );
   });
 
@@ -60,61 +65,70 @@ const NewsTopic = observer(() => {
 
   useEffect(() => {
     fetchNews(newsStore.selectedTopic);
-  }, [newsStore.selectedTopic]);
+  }, []);
 
-  const handleTopicChange = (topic: string) => {
-    newsStore.setSelectedTopic(topic);
+  // const handleTopicChange = (topic: string) => {
+  //   newsStore.setSelectedTopic(topic);
+  // };
+
+  const handleTopicChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
+    const selectedTopic = topics_array[newValue];
+    newsStore.setSelectedTopic(selectedTopic);
+    console.log(selectedTopic);
+    
+    fetchNews(selectedTopic);
   };
+  
 
   const goToNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goToPreviousPage = () => {
     setCurrentPage((prevPage) => prevPage - 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const items = topics_array.map((topic, index) => (
-    <Button
-      key={index}
-      variant={topic === newsStore.selectedTopic ? "contained" : "outlined"}
-      onClick={() => handleTopicChange(topic)}
-      sx={{
-        mx: 1,
-        paddingY: "1vw",
-        border: "0.2vw solid #3366ff",
-        borderRadius: "1vw",
-        width: "17vw",
-        backgroundColor:
-          topic === newsStore.selectedTopic ? "#3366ff" : "#ffffff",
-      }}
-    >
-      {topic.replace(/_/g, " ")}
-    </Button>
-  ));
+  // const items = topics_array.map((topic, index) => (
+  //   <Button
+  //     key={index}
+  //     variant={topic === newsStore.selectedTopic ? "contained" : "outlined"}
+  //     onClick={() => handleTopicChange(topic)}
+  //     sx={{
+  //       mx: 1,
+  //       paddingY: "1vw",
+  //       border: "0.2vw solid #3366ff",
+  //       borderRadius: "1vw",
+  //       width: "17vw",
+  //       backgroundColor:
+  //         topic === newsStore.selectedTopic ? "#3366ff" : "#ffffff",
+  //     }}
+  //   >
+  //     {topic.replace(/_/g, " ")}
+  //   </Button>
+  // ));
 
-  const responsive = {
-    0: {
-      items: 2,
-    },
-    1024: {
-      items: 5,
-    },
-  };
+  // const responsive = {
+  //   0: {
+  //     items: 2,
+  //   },
+  //   1024: {
+  //     items: 5,
+  //   },
+  // };
 
-  const renderPrevButton = () => (
-    <button className="carousel-button prev-button">
-      <ArrowLeft2 color="#3366ff" />
-    </button>
-  );
+  // const renderPrevButton = () => (
+  //   <button className="carousel-button prev-button">
+  //     <ArrowLeft2 color="#3366ff" />
+  //   </button>
+  // );
 
-  const renderNextButton = () => (
-    <button className="carousel-button next-button">
-      <ArrowRight2 color="#3366ff" />
-    </button>
-  );
+  // const renderNextButton = () => (
+  //   <button className="carousel-button next-button">
+  //     <ArrowRight2 color="#3366ff" />
+  //   </button>
+  // );
 
   return (
     <Box>
@@ -126,9 +140,13 @@ const NewsTopic = observer(() => {
           placeholder="Search articles..."
           className="news-searchbox"
         />
-        <SearchFavorite1 color="#3366ff" size={40} style={{marginLeft: '1vw'}}/>
+        <SearchFavorite1
+          color="#3366ff"
+          size={40}
+          style={{ marginLeft: "1vw" }}
+        />
       </Box>
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -148,6 +166,39 @@ const NewsTopic = observer(() => {
           renderPrevButton={renderPrevButton}
           renderNextButton={renderNextButton}
         />
+      </Box> */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mb: 2,
+          mt: 5,
+          mx: 5,
+          alignItems: "center",
+        }}
+      >
+        <Tabs
+          value={topics_array.indexOf(newsStore.selectedTopic)}
+          onChange={handleTopicChange}
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="Topics"
+        >
+          {topics_array.map((topic, index) => (
+            <Tab
+              key={index}
+              label={topic.replace(/_/g, " ")}
+              sx={{
+                mx: 1,
+                paddingY: "1vw",
+                // border: "0.2vw solid #3366ff",
+                // borderRadius: "1vw",
+                // backgroundColor:
+                // topic === newsStore.selectedTopic ? "#3366ff" : "#ffffff",
+              }}
+            />
+          ))}
+        </Tabs>
       </Box>
       <Box className="news-card-row">
         {paginate(filteredNews, currentPage, articlesPerPage).map(
@@ -171,34 +222,65 @@ const NewsTopic = observer(() => {
                 second
               );
               return (
-                  <Link
-                    className="news-card"
-                    to={article?.url}
-                    key={article?.title}
-                  >
-                    <Box className="news-imagebox">
-                      <img
-                        className="news-image"
-                        src={article?.banner_image}
-                        alt={article?.title}
-                      />
-                      <Typography variant="h5" fontSize={18}>{article?.title}</Typography>
-                      <Typography variant="h6" fontSize={14}>
-                        {dateTime.toLocaleString()}
-                      </Typography>
-                      <Typography variant="body1" fontSize={14}>{article?.source}</Typography>
-                    </Box>
-                  </Link>
+                <Link
+                  className="news-card"
+                  to={article?.url}
+                  key={article?.title}
+                >
+                  <Box className="news-imagebox">
+                    <img
+                      className="news-image"
+                      src={article?.banner_image}
+                      alt={article?.title}
+                    />
+                  </Box>
+                  <Box className="news-textbox">
+                    <Typography variant="h5">{article?.title}</Typography>
+                    <Typography variant="h6" sx={{ color: "black" }}>
+                      {article?.summary}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "black" }}>
+                      Author(s):{" "}
+                      {article.authors.map((author, index) => (
+                        <span key={index}>
+                          {author}
+                          {index < article.authors.length - 1 && ", "}
+                        </span>
+                      ))}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "black" }}>
+                      Topic(s):{" "}
+                      {article.topics.map((topic, index) => (
+                        <span key={index}>
+                          {topic?.topic}
+                          {index < article.topics.length - 1 && ", "}
+                        </span>
+                      ))}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "black" }}>
+                      {article?.source} - {article?.source_domain}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "black" }}>
+                      {dateTime.toLocaleString()}
+                    </Typography>
+                  </Box>
+                </Link>
               );
             }
           }
         )}
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", margin: '5vw'}}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", margin: "5vw" }}>
         <Button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          sx={{ margin: '0.5vw', padding: '1vw', width: '10vw', backgroundColor: "#0033ff", borderRadius: "1vw" }}
+          sx={{
+            margin: "0.5vw",
+            padding: "1vw",
+            width: "10vw",
+            backgroundColor: "#0033ff",
+            borderRadius: "1vw",
+          }}
           variant="contained"
         >
           Previous
@@ -206,7 +288,13 @@ const NewsTopic = observer(() => {
         <Button
           onClick={goToNextPage}
           disabled={newsStore.news.length < articlesPerPage}
-          sx={{ margin: '0.5vw', padding: '1vw', width: '10vw', backgroundColor: "#0033ff", borderRadius: "1vw" }}
+          sx={{
+            margin: "0.5vw",
+            padding: "1vw",
+            width: "10vw",
+            backgroundColor: "#0033ff",
+            borderRadius: "1vw",
+          }}
           variant="contained"
         >
           Next

@@ -115,10 +115,10 @@ class AuthStore {
       });
 
       this.handleClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       authStore.setAlert({
         open: true,
-        message: error.message,
+        message: (error as { message: string }).message,
         type: "error",
       });
       return;
