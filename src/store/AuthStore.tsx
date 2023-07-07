@@ -169,22 +169,39 @@ class AuthStore {
 
   signInWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
-      .then((res) => {
-        
+      .then(async (res) => {
+        var userExists:boolean = false;
         this.setAlert({
           open: true,
           message: `Sign Up Successful. Welcome ${res.user.email}`,
           type: "success",
         });
         
-        if(!this.user){
-          this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
-        } 
-        else if (this.user) {
+        const querySnapshot = await getDocs(collection(db, "users"));
+          querySnapshot.forEach((doc) => {
+            if (doc.id === auth.currentUser!.uid) {
+              userExists = true;
+            }
+          }
+        );
+
+        if (!userExists) {
+          this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string);
+        }
+        else {
           action(() => {
-          this.user = {...this.user}
+            this.user = {...this.user};
           })
         }
+
+        // if(!this.user){
+        //   this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
+        // } 
+        // else if (this.user) {
+        //   action(() => {
+        //   this.user = {...this.user}
+        //   })
+        // }
         
         this.handleClose();
       })
@@ -281,16 +298,16 @@ class AuthStore {
     email: string,
     photoURL: string
   ) {
-    this.user!.balance = parseFloat(balance.toFixed(2));
-    this.user!.displayName = displayName;
-    this.user!.email = email;
-    this.user!.photoURL = photoURL;
-    await setDoc(doc(db, "users", auth.currentUser!.uid), {
-      balance: balance,
-      displayName: displayName,
-      email: email,
-      photoURL: photoURL,
-    });
+      this.user!.balance = parseFloat(balance.toFixed(2));
+      this.user!.displayName = displayName;
+      this.user!.email = email;
+      this.user!.photoURL = photoURL;
+      await setDoc(doc(db, "users", auth.currentUser!.uid), {
+        balance: balance,
+        displayName: displayName,
+        email: email,
+        photoURL: photoURL,
+      });
   }
 
   async setBalance(newBalance: number) {

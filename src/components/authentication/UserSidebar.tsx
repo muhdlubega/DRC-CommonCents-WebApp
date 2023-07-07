@@ -17,7 +17,7 @@ const UserSidebar = () => {
     right: false,
     resetConfirmationOpen: false,
   });
-  const [userBalance, setUserBalance] = useState(null);
+  const [userBalance, setUserBalance] = useState(0);
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -82,12 +82,13 @@ const UserSidebar = () => {
   var userDisplayName = "";
   var userEmail = "";
   var userPhotoURL = "";
-  // var balance = 100000;
+  var balance = 0;
 
   if (authStore.user !== null) {
   userDisplayName = authStore.user?.displayName || "";
   userEmail = authStore.user?.email || "";
   userPhotoURL = authStore.user?.photoURL || "";
+  balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
   // balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
   }
 
@@ -99,7 +100,7 @@ const UserSidebar = () => {
       <Box className="navbar-auth" onClick={toggleDrawer(true)}>
         <Box className="navbar-balance">
           <EmptyWallet color="#3366ff" variant="Bulk" size={26} style={{marginRight: '0.5vw'}}/>
-          {userBalance} USD
+          {userBalance.toFixed(2) || balance.toFixed(2)} USD
         </Box>
         <Avatar
           className="sidebar-picture"
@@ -137,7 +138,7 @@ const UserSidebar = () => {
                 fontFamily: 'Montserrat',
                 wordWrap: "break-word", margin: 0}}>
               <EmptyWallet size={22} style={{marginRight: '0.5vw'}}/>
-              {userBalance} USD
+              {userBalance.toFixed(2) || balance.toFixed(2)} USD
             </span>
           </div>
           <h6 className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>

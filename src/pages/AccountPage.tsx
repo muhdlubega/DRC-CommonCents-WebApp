@@ -39,7 +39,7 @@ const AccountPage = observer(() => {
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
   
-  var userDisplayName = auth.currentUser?.displayName;
+  var userDisplayName = updatedName;
   var userEmail = auth.currentUser?.email;
 
   const getUserBalance = async () => {
@@ -159,7 +159,7 @@ const AccountPage = observer(() => {
             alt={auth.currentUser?.displayName || ""}
             sx={{ marginRight: "0.4vw" }}
           />
-          {userDisplayName}
+          {auth.currentUser?.displayName}
         </span>
         <span
           style={{
@@ -187,7 +187,7 @@ const AccountPage = observer(() => {
           }}
         >
           <EmptyWallet size={22} style={{ marginRight: "0.5vw" }} />
-          {userBalance} USD
+          {userBalance.toFixed(2)} USD
         </span>
       </Box>
       <div className="sidebar-leaderboard">
