@@ -187,7 +187,7 @@ const AccountPage = observer(() => {
           }}
         >
           <EmptyWallet size={22} style={{ marginRight: "0.5vw" }} />
-          {userBalance} USD
+          {userBalance.toFixed(2)} USD
         </span>
       </Box>
       <div className="sidebar-leaderboard">
