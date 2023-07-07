@@ -665,8 +665,8 @@ cursor: pointer;
   display: flex;
 }
 .news-card-row{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  // display: grid;
+  // grid-template-columns: repeat(2, 1fr);
   justify-content: center;
   align-items: center;
   margin: 3vw;
@@ -674,18 +674,21 @@ cursor: pointer;
 
 .news-card {
   display: flex;
+  // flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   cursor: pointer;
   width: 100%;
   margin: 3vw 1vw;
 }
 
 .news-imagebox {
+  display: flex;
+  flex-direction: row;
   margin: 2vw;
   height: 22vw;
-  width: 40vw;
-  display: -webkit-box;
+  // width: 30vw;
+  // display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   // overflow: hidden;

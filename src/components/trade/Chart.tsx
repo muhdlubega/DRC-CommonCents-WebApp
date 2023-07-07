@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { Box, MenuItem, Select } from "@mui/material";
+import { Box, MenuItem, Select, Skeleton } from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
@@ -14,6 +14,7 @@ import apiStore from "../../store/ApiStore";
 const Chart = observer(() => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   AccessibilityModule(Highcharts);
 
@@ -103,7 +104,15 @@ const Chart = observer(() => {
     if (id) {
       apiStore.setSelectedSymbol(id);
     }
-    apiStore.subscribeTicks();
+    // apiStore.subscribeTicks();
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      await apiStore.subscribeTicks();
+      setIsLoading(false);
+    };
+  
+    fetchData();
 
     return () => {
       apiStore.unsubscribeTicks();
@@ -165,13 +174,18 @@ const Chart = observer(() => {
       <MenuItem value={86400} onClick={() => handleGranularityChange(86400)}>Days
       </MenuItem>
     </Select>
-      <Box className="charts-area">
-        <HighchartsReact
-          highcharts={Highcharts}
-          constructorType={"stockChart"}
-          options={chartData}
-        />
-      </Box>
+    <Box className="charts-area">
+  {isLoading ? (
+    <Skeleton variant="rectangular" width="100%" height={400} />
+  ) : (
+    <HighchartsReact
+      highcharts={Highcharts}
+      constructorType={"stockChart"}
+      options={chartData}
+    />
+  )}
+</Box>
+
     </Box>
   );
 });

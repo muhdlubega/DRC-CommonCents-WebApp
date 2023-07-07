@@ -63,7 +63,7 @@ const Proposal = observer(() => {
         }
       });
 
-      proposalStore.contractType = isHigher ? "CALL" : "PUT";
+      proposalStore.setContractType(isHigher ? "CALL" : "PUT");
 
       const currentBalance = balance;
 

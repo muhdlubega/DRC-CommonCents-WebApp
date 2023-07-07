@@ -6,7 +6,7 @@ export type Query = {
   page?: number;
 }
 
-const BASE_URL = "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&limit=200";
+const BASE_URL = "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&limit=1000";
 const API_KEY : string | undefined = import.meta.env.VITE_NEWS_API;
 
 export const getNews = () => {
@@ -14,6 +14,6 @@ export const getNews = () => {
 };
 
 export const getNewsTopics = ({topic}: Query) => {
-  return axios.get(`${BASE_URL}&sort=RELEVANCE&topic=${topic}&apikey=${API_KEY}`);
+  return axios.get(`${BASE_URL}&sort=RELEVANCE&topics=${topic}&apikey=${API_KEY}`);
 };
 
