@@ -107,6 +107,11 @@ a {
   margin: 1vw 1vw 0 1vw;
 }
 
+.proposal-btn-span{
+  display: flex;
+  align-items: center;
+}
+
 .proposal-btn-buy {
   border-radius: 0.5vw;
   margin: 1vw;
@@ -115,7 +120,7 @@ a {
   font-family: "Montserrat";
   cursor: pointer;
   color: white;
-  width: 100%;
+  width: 15vw;
 
   &.higher {
     border: 1px solid green;

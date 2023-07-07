@@ -1,11 +1,11 @@
-import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
 import {
   collection,
   doc,
   getDocs,
   getFirestore,
   setDoc,
-  updateDoc,
+  updateDoc
 } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
 import { auth, db } from "../firebase";
@@ -180,9 +180,11 @@ class AuthStore {
         if(!this.user){
           this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
         } 
-        // else if (this.user) {
-        //   authStore.initializeUser(Number(this.user.balance!), this.user.displayName!, this.user.email!, this.user.photoURL!)
-        // }
+        else if (this.user) {
+          action(() => {
+          this.user = {...this.user}
+          })
+        }
         
         this.handleClose();
       })
@@ -213,13 +215,10 @@ class AuthStore {
 
   setAlert(alert: Alert) {
     this.alert = alert;
-    // console.log(alert);
   }
 
   setUser(user: User | null) {
-    // runInAction(() => {
     this.user = user;
-    // })
   }
 
   setLoading(loading: boolean) {
@@ -286,7 +285,6 @@ class AuthStore {
     this.user!.displayName = displayName;
     this.user!.email = email;
     this.user!.photoURL = photoURL;
-    // await setDoc(this.userDocRef, { balance: newBalance });
     await setDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: balance,
       displayName: displayName,
@@ -296,37 +294,29 @@ class AuthStore {
   }
 
   async setBalance(newBalance: number) {
-    // runInAction(() => {
-    // this.user!.balance = parseFloat(newBalance.toFixed(2));
     this.user = {...this.user, ...{balance: parseFloat(newBalance.toFixed(2))}};
-
-    // })
-    // await setDoc(this.userDocRef, { balance: newBalance });
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: newBalance,
     });
   }
 
   async setResetBalance(resetBalance: number) {
-    // runInAction(() => {
-    // this.user!.balance = parseFloat(resetBalance.toFixed(2));
     this.user = {...this.user, ...{balance: parseFloat(resetBalance.toFixed(2))}};
-    // })
-    // await setDoc(this.userDocRef, { balance: resetBalance });
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: resetBalance,
     });
   }
 
   async setUpdateName(updatedName: string) {
-    // runInAction(() => {
-    // this.user!.displayName = updatedName;
     this.user = {...this.user, ...{displayName: updatedName}};
-    // })
-    // await setDoc(this.userDocRef, { balance: resetBalance });
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       displayName: updatedName,
     });
+    if (auth.currentUser !== null) {
+      updateProfile(auth.currentUser, {
+        displayName: updatedName
+      });
+    }
   }
 }
 

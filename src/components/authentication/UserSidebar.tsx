@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { EmptyWallet } from "iconsax-react";
 import { LogoutCurve, ArrowRight2 } from "iconsax-react";
 import { useNavigate } from "react-router-dom";
+import { collection, getDocs } from "firebase/firestore";
 
 const UserSidebar = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const UserSidebar = () => {
     right: false,
     resetConfirmationOpen: false,
   });
+  const [userBalance, setUserBalance] = useState(null);
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -57,6 +59,19 @@ const UserSidebar = () => {
     toggleResetConfirmation();
   };
 
+  const getUserBalance = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach((doc) => {
+        const { balance } = doc.data();
+        if (auth.currentUser && auth.currentUser.uid === doc.id) {
+          setUserBalance(balance);
+        }
+      }
+    );
+  }
+
+  getUserBalance();
+
   const sortedLeaderboard = authStore.leaderboard.slice().sort(
     (a, b) => (b.balance as number) - (a.balance as number)
   );
@@ -67,13 +82,13 @@ const UserSidebar = () => {
   var userDisplayName = "";
   var userEmail = "";
   var userPhotoURL = "";
-  var balance = 100000;
+  // var balance = 100000;
 
   if (authStore.user !== null) {
   userDisplayName = authStore.user?.displayName || "";
   userEmail = authStore.user?.email || "";
   userPhotoURL = authStore.user?.photoURL || "";
-  balance = Number(authStore.user?.balance?.toFixed(2)) || 0;
+  // balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
   }
 
   // console.log("rerender");
@@ -84,7 +99,7 @@ const UserSidebar = () => {
       <Box className="navbar-auth" onClick={toggleDrawer(true)}>
         <Box className="navbar-balance">
           <EmptyWallet color="#3366ff" variant="Bulk" size={26} style={{marginRight: '0.5vw'}}/>
-          {balance} USD
+          {userBalance} USD
         </Box>
         <Avatar
           className="sidebar-picture"
@@ -122,7 +137,7 @@ const UserSidebar = () => {
                 fontFamily: 'Montserrat',
                 wordWrap: "break-word", margin: 0}}>
               <EmptyWallet size={22} style={{marginRight: '0.5vw'}}/>
-              {authStore.user!.balance?.toFixed(2)} USD
+              {userBalance} USD
             </span>
           </div>
           <h6 className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
@@ -136,7 +151,7 @@ const UserSidebar = () => {
           ))}
         </ol>
       </Box>
-          <h6 className="sidebar-item">Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item" onClick={() => navigate("/trade-history")}>Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item">Help and Support<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item">FAQs<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <Box sx={{flex: 1}}>

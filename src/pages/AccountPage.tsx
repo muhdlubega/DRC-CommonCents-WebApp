@@ -10,15 +10,23 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { auth, db } from "../firebase";
 import watermark from "../assets/images/watermark.png";
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { collection, getDocs } from "firebase/firestore";
 
 const AccountPage = observer(() => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [updatedName, setUpdatedName] = useState('');
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [userBalance, setUserBalance] = useState(100000);
+
   const [state, setState] = useState({
     resetConfirmationOpen: false,
   });
@@ -26,18 +34,57 @@ const AccountPage = observer(() => {
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
-  
-  var userDisplayName = "";
-  var userEmail = "";
-  var userPhotoURL = "";
-  var balance = 100000;
 
-  if (authStore.user !== null) {
-  userDisplayName = authStore.user?.displayName || "";
-  userEmail = authStore.user?.email || "";
-  userPhotoURL = authStore.user?.photoURL || "";
-  balance = Number(authStore.user?.balance?.toFixed(2)) || 0;
+  const toggleSecondDropdown = () => {
+    setIsSecondDropdownOpen((prevState) => !prevState);
+  };
+  
+  var userDisplayName = auth.currentUser?.displayName;
+  var userEmail = auth.currentUser?.email;
+
+  const getUserBalance = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach((doc) => {
+        const { balance } = doc.data();
+        if (auth.currentUser && auth.currentUser.uid === doc.id) {
+          setUserBalance(balance);
+        }
+      }
+    );
   }
+
+  getUserBalance();
+
+  
+  // var userPhotoURL = auth.currentUser?.photoURL;
+
+  
+
+  // if (auth.currentUser !== null) {
+  //   console.log(auth.currentUser.displayName);
+  //   console.log(auth.currentUser.email);
+  //   userDisplayName = auth.currentUser.displayName || "";
+  //   userEmail = auth.currentUser.displayName || auth.currentUser.email || "";
+  //   userPhotoURL = auth.currentUser.photoURL || ""; String  
+  //   balance = Number(authStore.user!.balance?.toFixed(2)) || 100000;
+  // }
+
+  // const querySnapshot = await getDocs(collection(db, "users"));
+  //     const leaderboardData: User[] = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const { balance, displayName, email } = doc.data();
+  //       leaderboardData.push({ displayName, email, balance });
+  //       if (auth.currentUser && auth.currentUser.uid === doc.id) {
+  //         this.user!.balance = balance || null;
+  //       }
+  //     });
+  // if (authStore.user !== null) {
+  //   console.log(authStore.user.displayName);
+  //   userDisplayName = authStore.user?.displayName || "";
+  //   userEmail = authStore.user?.displayName || authStore.user?.email || "";
+  //   userPhotoURL = authStore.user?.photoURL || "";
+  //   balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
+  // }
 
   const logOut = () => {
     signOut(auth);
@@ -67,6 +114,28 @@ const AccountPage = observer(() => {
     authStore.setUpdateName(updatedName);
   };
 
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmNewPassword) {
+      // Show an error message or perform any necessary validation
+      return;
+    }
+  
+    setIsConfirmationDialogOpen(true);
+  };
+
+  const handleConfirmPasswordChange = async () => {
+    try {
+      const credential = EmailAuthProvider.credential(auth.currentUser!.email!, oldPassword);
+      await reauthenticateWithCredential(auth.currentUser!, credential);
+      await updatePassword(auth.currentUser!, newPassword);
+      setIsConfirmationDialogOpen(false);
+      // Password change successful
+    } catch (error) {
+      // Handle the error, e.g., display an error message
+    }
+  };
+  
+
   return (
     <Box className="account-container">
       <img className="watermark" src={watermark}></img>
@@ -86,8 +155,8 @@ const AccountPage = observer(() => {
         >
           <Avatar
             className="account-picture"
-            src={userPhotoURL}
-            alt={userDisplayName || userEmail}
+            src={auth.currentUser?.photoURL || ""}
+            alt={auth.currentUser?.displayName || ""}
             sx={{ marginRight: "0.4vw" }}
           />
           {userDisplayName}
@@ -118,7 +187,7 @@ const AccountPage = observer(() => {
           }}
         >
           <EmptyWallet size={22} style={{ marginRight: "0.5vw" }} />
-          {balance} USD
+          {userBalance} USD
         </span>
       </Box>
       <div className="sidebar-leaderboard">
@@ -139,14 +208,38 @@ const AccountPage = observer(() => {
         )}
       </div>
       <div className="sidebar-leaderboard">
-        <h6>
+        <h6 onClick={toggleSecondDropdown}>
           Change Password
-          {isDropdownOpen ? (
+          {isSecondDropdownOpen ? (
             <ArrowUp2 size={16} style={{ marginLeft: "0.5vw" }} />
           ) : (
             <ArrowRight2 size={16} style={{ marginLeft: "0.5vw" }} />
           )}
         </h6>
+        {isSecondDropdownOpen && (
+  <Box>
+    <input
+      type="password"
+      value={oldPassword}
+      onChange={(event) => setOldPassword(event.target.value)}
+      placeholder="Old Password"
+    />
+    <input
+      type="password"
+      value={newPassword}
+      onChange={(event) => setNewPassword(event.target.value)}
+      placeholder="New Password"
+    />
+    <input
+      type="password"
+      value={confirmNewPassword}
+      onChange={(event) => setConfirmNewPassword(event.target.value)}
+      placeholder="Confirm New Password"
+    />
+    <Button onClick={handleChangePassword}>Change Password</Button>
+  </Box>
+)}
+
       </div>{" "}
       <Box sx={{ flex: 1 }}>
         <Button
@@ -201,6 +294,27 @@ const AccountPage = observer(() => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+  open={isConfirmationDialogOpen}
+  onClose={() => setIsConfirmationDialogOpen(false)}
+  aria-labelledby="confirm-password-change-dialog-title"
+  aria-describedby="confirm-password-change-dialog-description"
+>
+  <DialogTitle id="confirm-password-change-dialog-title">Confirm Password Change</DialogTitle>
+  <DialogContent>
+    <DialogContentText id="confirm-password-change-dialog-description">
+      Are you sure you want to change your password? This action cannot be undone.
+    </DialogContentText>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setIsConfirmationDialogOpen(false)} color="primary">
+      Cancel
+    </Button>
+    <Button onClick={handleConfirmPasswordChange} color="primary" variant="contained">
+      Confirm
+    </Button>
+  </DialogActions>
+</Dialog>
     </Box>
   );
 });

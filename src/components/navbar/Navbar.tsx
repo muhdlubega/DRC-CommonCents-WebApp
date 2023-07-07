@@ -81,7 +81,7 @@ const Header = observer(() => {
         </Box>
         <Drawer anchor="right" open={state.right} onClose={toggleDrawer(false)}>
         <Box className="sidebar-container">
-        <h6 className="sidebar-item" onClick={() => navigate("/trade")}>Trade<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+        <h6 className="sidebar-item" onClick={() => navigate("/trade/1HZ10V")}>Trade<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item" onClick={() => navigate("/news")}>News<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item" onClick={() => navigate("/forum")}>Forum<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <h6 className="sidebar-item" onClick={() => navigate("/about")}>About<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>

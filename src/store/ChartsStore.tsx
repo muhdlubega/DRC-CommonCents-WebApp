@@ -74,6 +74,7 @@ class ChartsStore {
       setProposalTicks: action.bound,
       // setActiveSymbols: action,
       setSymbolsArray: action,
+      setMarketType: action,
       setSelectedSymbol: action.bound,
       // handleActiveSymbolsResponse: action,
       subscribeTicksGroup: action,
@@ -221,7 +222,7 @@ class ChartsStore {
       }));
 
       this.setTicks([...this.ticks, ...historyTicks]);
-      console.log(historyTicks)
+      // console.log(historyTicks)
 
       connection?.removeEventListener(
         "message",
