@@ -33,10 +33,6 @@ const Login = observer(({ }: LoginProps) => {
 
   const handleForgotPassword = async () => {
     try {
-      // Generate a 6-digit code
-      // const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-      // Send the password reset email
       const actionCodeSettings = {
         url: "http://localhost:5173/",
         handleCodeInApp: true,
@@ -49,10 +45,10 @@ const Login = observer(({ }: LoginProps) => {
         type: "success",
       });
       handleCloseForgotPassword();
-    } catch (error: any) {
+    } catch (error: unknown) {
       authStore.setAlert({
         open: true,
-        message: error.message,
+        message: (error as { message: string }).message,
         type: "error",
       });
     }

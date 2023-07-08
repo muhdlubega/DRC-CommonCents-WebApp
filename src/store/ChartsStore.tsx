@@ -44,9 +44,9 @@ interface Tick {
 
 class ChartsStore {
   activeSymbols: string[] = [];
-  data: any = null;
+  data: unknown = null;
   proposalTicks: number = 0;
-  proposalData: any[] = [];
+  proposalData: string[] = [];
   symbols: string[] = [];
   selectedSymbol: string = "1HZ10V";
   marketType: string = "volatility1s";

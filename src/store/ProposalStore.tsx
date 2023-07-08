@@ -13,7 +13,7 @@ class ProposalStore {
   contractType: string = "CALL";
 
   connection: WebSocket | null = null;
-  api: any = null;
+  api: typeof DerivAPIBasic | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -83,6 +83,8 @@ class ProposalStore {
     } else if (data.msg_type === "proposal") {
       action(() => {
         this.proposalData.push(data.proposal);
+        console.log(this.proposalData);
+        
       })();
     }
   };

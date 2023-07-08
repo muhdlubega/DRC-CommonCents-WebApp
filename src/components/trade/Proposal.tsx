@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { Box, Typography } from "@mui/material";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
@@ -51,6 +51,7 @@ const Proposal = observer(() => {
   const tickDuration = proposalStore.duration;
   const basis = proposalStore.basis;
   const marketType = apiStore.selectedSymbol;
+  var timestamp = 0;
 
   const handleBuy = async (isHigher: boolean) => {
     setIsProcessing(true);
@@ -62,6 +63,8 @@ const Proposal = observer(() => {
           balance = doc.data().balance || null;
         }
       });
+
+      timestamp = Date.now();
 
       proposalStore.setContractType(isHigher ? "CALL" : "PUT");
 
@@ -138,8 +141,7 @@ const Proposal = observer(() => {
 
     const previousSpot = apiStore.isTicks
       ? apiStore.ticks[apiStore.ticks.length - tickDuration - 1].quote
-      : apiStore.ticks[apiStore.ticks.length - tickDuration - 1]
-          .close;
+      : apiStore.ticks[apiStore.ticks.length - tickDuration - 1].close;
     const currentSpot = apiStore.isTicks
       ? apiStore.ticks[apiStore.ticks.length - 1].quote
       : apiStore.ticks[apiStore.ticks.length - 1].close;
@@ -234,13 +236,41 @@ const Proposal = observer(() => {
         strategy,
         status,
         basis,
-        marketType
+        marketType,
+        timestamp
       };
+
+      const tradeSummaryRef = doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary");
+
+    const tradeSummaryDoc = await getDoc(tradeSummaryRef);
+    if (!tradeSummaryDoc.exists()) {
+      const initialTradeSummary = {
+        totalProfit: 0,
+        totalLoss: 0,
+        netWorth: 0,
+        timestamp: Date.now()
+      };
+      await setDoc(tradeSummaryRef, initialTradeSummary);
+    }
+
+      const totalProfit = apiStore.totalAmountWon;
+      const totalLoss = apiStore.totalAmountLost;
+      const netWorth = totalProfit - totalLoss;
+      const tradeSummary = {
+        totalProfit,
+        totalLoss,
+        netWorth,
+        timestamp
+      }
       console.log("dd", tradeData);
 
       await addDoc(
         collection(db, "users", auth.currentUser!.uid, "tradeHistory"),
         tradeData
+      );
+      await updateDoc(
+        doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"),
+        tradeSummary
       );
       setIsProcessing(false);
     } catch (error) {

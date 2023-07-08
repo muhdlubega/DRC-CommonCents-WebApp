@@ -16,7 +16,7 @@ interface Tick {
 class ApiStore {
   granularity: number = 60;
   activeSymbols: any[] = [];
-  data: any = null;
+  data: unknown = null;
   chartType: string = "candlestick";
   isDurationEnded: boolean = false;
   showOnboarding: boolean = false;
@@ -40,7 +40,7 @@ class ApiStore {
     style: "candles",
   };
   connection: WebSocket | null = null;
-  api: any = null;
+  api: typeof DerivAPIBasic | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -212,7 +212,7 @@ class ApiStore {
   };
 
     this.unsubscribeTicks();
-    this.connectWebSocket();
+    // this.connectWebSocket();
 
     this.tickSubscriber();
     this.getTicksHistory();
@@ -222,7 +222,7 @@ class ApiStore {
   unsubscribeTicks = () => {
     this.connection?.removeEventListener("message", this.tickResponse, false);
     this.tickSubscriber().unsubscribe();
-    this.disconnectWebSocket();
+    // this.disconnectWebSocket();
   };
 
   getTicksHistory = async () => {

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Drawer from "@mui/material/Drawer";
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import "../../styles/main.scss";
@@ -9,7 +9,8 @@ import { observer } from "mobx-react-lite";
 import { EmptyWallet } from "iconsax-react";
 import { LogoutCurve, ArrowRight2 } from "iconsax-react";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import { Trade } from "../../pages/TradeHistoryPage";
 
 const UserSidebar = () => {
   const navigate = useNavigate();
@@ -18,6 +19,26 @@ const UserSidebar = () => {
     resetConfirmationOpen: false,
   });
   const [userBalance, setUserBalance] = useState(0);
+  const [latestTrades, setLatestTrades] = useState<Trade[]>([]);
+
+  useEffect(() => {
+    const fetchLatestTrades = async () => {
+      try {
+        const tradesQuery = query(
+          collection(db, "users", auth.currentUser!.uid, "tradeHistory"),
+          orderBy("timestamp", "desc"),
+          limit(4) 
+        );
+        const snapshot = await getDocs(tradesQuery);
+        const data = snapshot.docs.map((doc) => doc.data() as Trade);
+        setLatestTrades(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    fetchLatestTrades();
+  }, []);
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -71,11 +92,14 @@ const UserSidebar = () => {
   }
   getUserBalance();
 
+  // const sortedLeaderboard = authStore.leaderboard.slice().sort(
+  //   (a, b) => (b.balance as number) - (a.balance as number)
+  // );
+
   const sortedLeaderboard = authStore.leaderboard.slice().sort(
-    (a, b) => (b.balance as number) - (a.balance as number)
+    (a, b) => (b.netWorth as number) - (a.netWorth as number)
   );
 
-  // Extract the top 3 users from the sorted leaderboard
   const topThreeUsers = sortedLeaderboard.slice(0, 3);
 
   var userDisplayName = "";
@@ -139,20 +163,32 @@ const UserSidebar = () => {
               {userBalance.toFixed(2) || balance.toFixed(2)} USD
             </span>
           </div>
-          <h6 className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
-          <h6 className="sidebar-item" onClick={() => navigate("/leaderboard")}>Leaderboard<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
+          <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/leaderboard")}>Leaderboard<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
           <Box className="leaderboard-tthree">
         <ol>
-          {topThreeUsers.map((user, index) => (
+          {topThreeUsers.filter((user) => user.netWorth !== 0).map((user, index) => (
             <li key={index}>
-              {user.displayName || user.email} - {user?.balance?.toFixed(2)} USD
+              {user.displayName || user.email} - {user?.netWorth?.toFixed(2)} USD
             </li>
           ))}
         </ol>
       </Box>
-          <h6 className="sidebar-item" onClick={() => navigate("/trade-history")}>Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
-          <h6 className="sidebar-item" onClick={() => navigate("/enquiry")}>Help and Support<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
-          <h6 className="sidebar-item" onClick={() => navigate("/FAQ")}>FAQs<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/trade-history")}>Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
+          {latestTrades.length > 0 && (
+            <div>
+              {/* <Typography variant="h6" sx={{ margin: "1rem 0" }}>
+                Latest Trades:
+              </Typography> */}
+              {latestTrades.filter((trade) => trade.status !== undefined).map((trade, index) => (
+                <div key={index}>
+                  {trade.marketType}: {trade.status} {trade.status === "Win" ? trade.additionalAmount : `-${trade.askPrice}`} USD
+                </div>
+              ))}
+            </div>
+          )}
+          <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/enquiry")}>Help and Support<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
+          <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/FAQ")}>FAQs<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
           <Box sx={{flex: 1}}>
             <Button
               variant="contained"

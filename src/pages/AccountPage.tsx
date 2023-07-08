@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Modal,
 } from "@mui/material";
 import { signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { auth, db } from "../firebase";
@@ -26,6 +27,7 @@ const AccountPage = observer(() => {
   const [newPassword, setNewPassword] = useState("");
 const [confirmNewPassword, setConfirmNewPassword] = useState("");
 const [userBalance, setUserBalance] = useState(100000);
+const [userName, setUserName] = useState("");
 
   const [state, setState] = useState({
     resetConfirmationOpen: false,
@@ -54,7 +56,6 @@ const [userBalance, setUserBalance] = useState(100000);
   }
 
   getUserBalance();
-
   
   // var userPhotoURL = auth.currentUser?.photoURL;
   // var balance = 100000;
@@ -111,11 +112,25 @@ const [userBalance, setUserBalance] = useState(100000);
 
   const handleUpdateName = () => {
     authStore.setUpdateName(updatedName);
+    toggleDropdown();
   };
+
+  const getUserName = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach((doc) => {
+        const { displayName } = doc.data();
+        if (auth.currentUser && auth.currentUser.uid === doc.id) {
+          setUserName(displayName);
+        }
+      }
+    );
+  }
+
+  getUserName();
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmNewPassword) {
-      // Show an error message or perform any necessary validation
+      // Show an error message or perform necessary validation
       return;
     }
   
@@ -155,10 +170,10 @@ const [userBalance, setUserBalance] = useState(100000);
           <Avatar
             className="account-picture"
             src={auth.currentUser?.photoURL || ""}
-            alt={auth.currentUser?.displayName || ""}
+            alt={userName || ""}
             sx={{ marginRight: "0.4vw" }}
           />
-          {auth.currentUser?.displayName}
+          {userName}
         </span>
         <span
           style={{
@@ -198,13 +213,12 @@ const [userBalance, setUserBalance] = useState(100000);
             <ArrowRight2 size={16} style={{ marginLeft: "0.5vw" }} />
           )}
         </h6>
-        {isDropdownOpen && (
-          <Box>
-            <input type="text" value={updatedName}
-  onChange={(event) => setUpdatedName(event.target.value)}></input>
+        <Modal open={isDropdownOpen} onClose={toggleDropdown}>
+          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
+            <input type="text" value={updatedName} onChange={(event) => setUpdatedName(event.target.value)}></input>
             <Button onClick={handleUpdateName}>Submit</Button>
           </Box>
-        )}
+        </Modal>
       </div>
       <div className="sidebar-leaderboard">
         <h6 onClick={toggleSecondDropdown}>
@@ -215,30 +229,14 @@ const [userBalance, setUserBalance] = useState(100000);
             <ArrowRight2 size={16} style={{ marginLeft: "0.5vw" }} />
           )}
         </h6>
-        {isSecondDropdownOpen && (
-  <Box>
-    <input
-      type="password"
-      value={oldPassword}
-      onChange={(event) => setOldPassword(event.target.value)}
-      placeholder="Old Password"
-    />
-    <input
-      type="password"
-      value={newPassword}
-      onChange={(event) => setNewPassword(event.target.value)}
-      placeholder="New Password"
-    />
-    <input
-      type="password"
-      value={confirmNewPassword}
-      onChange={(event) => setConfirmNewPassword(event.target.value)}
-      placeholder="Confirm New Password"
-    />
-    <Button onClick={handleChangePassword}>Change Password</Button>
-  </Box>
-)}
-
+        <Modal open={isSecondDropdownOpen} onClose={toggleSecondDropdown}>
+          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
+            <input type="password" value={oldPassword} onChange={(event) => setOldPassword(event.target.value)} placeholder="Old Password" />
+            <input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="New Password" />
+            <input type="password" value={confirmNewPassword} onChange={(event) => setConfirmNewPassword(event.target.value)} placeholder="Confirm New Password" />
+            <Button onClick={handleChangePassword}>Change Password</Button>
+          </Box>
+        </Modal>
       </div>{" "}
       <Box sx={{ flex: 1 }}>
         <Button

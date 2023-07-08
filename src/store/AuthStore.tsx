@@ -2,6 +2,7 @@ import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged,
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   setDoc,
@@ -23,6 +24,15 @@ export interface User {
   email?: string | null | undefined;
   photoURL?: string | null | undefined;
   balance?: number | null | undefined;
+  totalProfit?: number  | null | undefined;
+  totalLoss?: number  | null | undefined;
+  netWorth?: number  | null | undefined;
+}
+
+export interface Summary {
+  totalProfit: number;
+  totalLoss: number;
+  netWorth: number;
 }
 
 class AuthStore {
@@ -39,13 +49,8 @@ class AuthStore {
   email: string = "";
   password: string = "";
   confirmPassword: string = "";
-  // balance: number | null | undefined = this.user?.balance;
-  // photoURL: string | null | undefined = this.user?.photoURL;
-  // displayName: string | null | undefined = this.user?.displayName;
-  // email: string | null | undefined = this.user?.email;
   leaderboard: User[] = [];
   firestore = getFirestore();
-  // citiesRef = collection(this.firestore, "users");
   usersRef = collection(this.firestore, "users");
   docs = getDocs(collection(this.firestore, "users"));
 
@@ -60,10 +65,6 @@ class AuthStore {
       email: observable,
       password: observable,
       confirmPassword: observable,
-      // balance: observable,
-      // photoURL: observable,
-      // displayName: observable,
-      // email: observable,
       leaderboard: observable,
       firestore: observable,
       usersRef: observable,
@@ -145,10 +146,10 @@ class AuthStore {
       console.log(alert);
 
       this.handleClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       authStore.setAlert({
         open: true,
-        message: error.message,
+        message: (error as { message: string }).message,
         type: "error",
       });
       return;
@@ -194,14 +195,6 @@ class AuthStore {
             this.user = {...this.user};
           })
         }
-        // if(!this.user){
-        //   this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
-        // } 
-        // else if (this.user) {
-        //   action(() => {
-        //   this.user = {...this.user}
-        //   })
-        // }
         
         this.handleClose();
       })
@@ -246,51 +239,64 @@ class AuthStore {
     this.open = open;
   }
 
-  async initializeLeaderboard() {
-    const querySnapshot = await getDocs(collection(db, "users"));
-      const leaderboardData: User[] = [];
-      querySnapshot.forEach((doc) => {
-        const { balance, displayName, email } = doc.data();
-        leaderboardData.push({ displayName, email, balance });
-        if (auth.currentUser && auth.currentUser.uid === doc.id) {
-          this.user!.balance = balance || null;
-        }
-      });
-
-      action(() => {
-      this.leaderboard = leaderboardData.sort(
-        (a, b) => (b.balance as number) - (a.balance as number)
-      );
-      })();
-  }
-  
-  // async initializeUser() {
-
+  // async initializeLeaderboard() {
   //   const querySnapshot = await getDocs(collection(db, "users"));
-  //   runInAction(() => {
-  //   querySnapshot.forEach((doc) => {
-  //     if (auth.currentUser!.uid == doc.id) {
-  //       this.balance = doc.data().balance || null;
-  //       this.displayName = doc.data().displayName || null;
-  //       this.email = doc.data().email || null;
-  //       console.log(doc.id, " => ", doc.data().balance);
-  //     }
-  //   });})
-  // if (auth.currentUser) {
-  //   this.setUser(auth.currentUser);
-  //   const userSnapshot = await getDoc(doc(this.usersRef, auth.currentUser!.uid));
-  //   if (userSnapshot.exists()) {
-  //     const userData = userSnapshot.data();
-  //     if (userData) {
-  //       this.balance = this.currUser.balance || null ;
-  //     }
-  //   }
-  // }
+  //     const leaderboardData: User[] = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const { balance, displayName, email } = doc.data();
+  //       leaderboardData.push({ displayName, email, balance });
+  //       if (auth.currentUser && auth.currentUser.uid === doc.id) {
+  //         this.user!.balance = balance || null;
+  //       }
+  //     });
+
+  //     action(() => {
+  //     this.leaderboard = leaderboardData.sort(
+  //       (a, b) => (b.balance as number) - (a.balance as number)
+  //     );
+  //     })();
   // }
 
-  // async updateUser(user: User) {
-  //   await setDoc(this.userDocRef, user);
-  // }
+  async initializeLeaderboard() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      const leaderboardData: User[] = [];
+  
+      await Promise.all(
+        querySnapshot.docs.map(async (user) => {
+          const tradeSummaryRef = doc(
+            db,
+            "users",
+            user.id,
+            "tradeHistory",
+            "tradeSummary"
+          );
+          const tradeSummarySnapshot = await getDoc(tradeSummaryRef);
+          const tradeSummary = tradeSummarySnapshot.data() as Summary;
+  
+          const { balance, displayName, email } = user.data();
+          leaderboardData.push({
+            displayName,
+            email,
+            balance,
+            netWorth: tradeSummary?.netWorth || 0,
+          });
+  
+          if (auth.currentUser && auth.currentUser.uid === user.id) {
+            this.user!.balance = balance || null;
+          }
+        })
+      );
+  
+      action(() => {
+        this.leaderboard = leaderboardData.sort(
+          (a, b) => (b.netWorth as number) - (a.netWorth as number)
+        );
+      })();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
 
   async initializeUser(
     balance: number,
