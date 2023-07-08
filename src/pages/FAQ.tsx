@@ -1,4 +1,3 @@
-//import React from "react";
 import { FAQArray } from "./FAQArray";
 import "../styles/main.scss";
 import { Link } from "react-router-dom";

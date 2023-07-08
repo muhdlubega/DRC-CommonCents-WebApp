@@ -24,8 +24,8 @@ const AccountPage = observer(() => {
   const [updatedName, setUpdatedName] = useState('');
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [userBalance, setUserBalance] = useState(100000);
+const [confirmNewPassword, setConfirmNewPassword] = useState("");
+const [userBalance, setUserBalance] = useState(100000);
 
   const [state, setState] = useState({
     resetConfirmationOpen: false,
@@ -39,7 +39,7 @@ const AccountPage = observer(() => {
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
   
-  var userDisplayName = updatedName;
+  // var userDisplayName = updatedName;
   var userEmail = auth.currentUser?.email;
 
   const getUserBalance = async () => {
@@ -57,8 +57,7 @@ const AccountPage = observer(() => {
 
   
   // var userPhotoURL = auth.currentUser?.photoURL;
-
-  
+  // var balance = 100000;
 
   // if (auth.currentUser !== null) {
   //   console.log(auth.currentUser.displayName);

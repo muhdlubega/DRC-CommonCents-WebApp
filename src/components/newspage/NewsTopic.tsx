@@ -8,10 +8,6 @@ import "../../styles/main.scss";
 // import AliceCarousel from "react-alice-carousel";
 import { SearchFavorite1 } from "iconsax-react";
 
-//remove duplicate
-//all category
-//no resut found output
-
 const NewsTopic = observer(() => {
   // const [news, setNews] = useState<NewsItem[]>([]);
   // const [selectedTopic, setSelectedTopic] = useState<string>(topics_array[0]);
@@ -51,7 +47,7 @@ const NewsTopic = observer(() => {
       const { data } = response;
       const feed = data?.feed || [];
       newsStore.setNews(feed);
-      console.log(feed);
+      console.log(response);
     } catch (error) {
       console.error("Error fetching news:", error);
     }

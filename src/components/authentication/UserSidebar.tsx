@@ -69,7 +69,6 @@ const UserSidebar = () => {
       }
     );
   }
-
   getUserBalance();
 
   const sortedLeaderboard = authStore.leaderboard.slice().sort(
@@ -89,7 +88,6 @@ const UserSidebar = () => {
   userEmail = authStore.user?.email || "";
   userPhotoURL = authStore.user?.photoURL || "";
   balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
-  // balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
   }
 
   // console.log("rerender");
@@ -153,8 +151,8 @@ const UserSidebar = () => {
         </ol>
       </Box>
           <h6 className="sidebar-item" onClick={() => navigate("/trade-history")}>Trade History<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
-          <h6 className="sidebar-item">Help and Support<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
-          <h6 className="sidebar-item">FAQs<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item" onClick={() => navigate("/enquiry")}>Help and Support<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
+          <h6 className="sidebar-item" onClick={() => navigate("/FAQ")}>FAQs<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></h6>
           <Box sx={{flex: 1}}>
             <Button
               variant="contained"

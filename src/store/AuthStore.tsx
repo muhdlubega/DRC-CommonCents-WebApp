@@ -169,8 +169,9 @@ class AuthStore {
 
   signInWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
-      .then(async (res) => {
-        var userExists:boolean = false;
+    .then(async (res) => {
+      var userExists:boolean = false;
+        
         this.setAlert({
           open: true,
           message: `Sign Up Successful. Welcome ${res.user.email}`,
@@ -193,7 +194,6 @@ class AuthStore {
             this.user = {...this.user};
           })
         }
-
         // if(!this.user){
         //   this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
         // } 

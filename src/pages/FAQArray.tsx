@@ -13,7 +13,6 @@ export const FAQArray = [
      title: "What trading market is CommonCents focused on?",
      Description : 'CommonCents only focuses on synthetic trading as it is one of the markets that people are afraid of getting into due to the risks. CommonCents exists to educate the concepts of those who have the desire to leap into synthetic trading',
      icon: <i className="fa-solid fa-arrow-pointer"></i>
-     
     },
     {
      title: "I forgot my password, what should I do now?",
