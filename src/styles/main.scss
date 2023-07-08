@@ -391,7 +391,7 @@ input[type="number"]::-webkit-outer-spin-button {
   position: relative;
   /* background-image: url("./assets/banner.jpg"); */
   background-size: cover;
-  background-color: #1e1e1e;
+ // background-color: #1e1e1e;
   height: 40vw;
   display: flex;
   flex-direction: row;
@@ -418,13 +418,13 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-bottom: 1vw;
   font-family: 'Montserrat';
   font-size: 3vw;
-  color: white;
+  color: black;
   // text-shadow: 0.2vw 0.3vw #0033ff;
 }
 
 .banner-tagline {
   font-weight: 300;
-  color: #ffffff;
+  color:black;
   font-family: 'Montserrat';
   font-size: 1.5vw;
   // text-transform: capitalize;
@@ -460,60 +460,73 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
+
 .header-main {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
-}
-
-.header-title {
-  font-weight: 600;
-  margin: 5vw;
-  font-family: 'Montserrat';
-  font-size: 2vw;
-  display: flex;
-}
-
-.header-container {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .header-card {
-  flex: 1;
-  border: solid 0.1vw black;
-  border-radius: 1vw;
-  height: 16vw;
-  width: 26vw;
-  padding: 2vw;
-  margin: 0 2vw 10vw 2vw;
+  position: relative;
+  width:100%;
+  height: 450px;
+  border: 1px;
+  max-height: 900;
+  margin-bottom: 20px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.header-card-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.header-card-content {
+  position: relative;
+  z-index: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
-
-  &:hover {
-    transform: scale(1.1);
-  }
+  justify-content: flex-start;
+  align-items: center;
+  padding: 30px;
+  background-color: #fff;
+  border: 1px solid #000;
+  box-shadow: 0 5px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-top: 8%;
+  //border-radius: 40px;
+  // padding-top:0;
+  // padding-bottom:0;
 }
-
-.header-name {
-  font-weight: bold;
-  margin-bottom: 16vw;
-}
-
 .header-content {
   font-weight: 400;
+  padding-top:10;
+  
 }
 
+
+
+
+
+
+
 .live-data-title {
-  font-weight: 600;
-  margin: 5vw;
-  font-family: 'Montserrat';
-  font-size: 2vw;
+  font-weight: 700;
+  //margin: 5vw;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 40px;
   display: flex;
+  justify-content:center;
+  margin-top:150px;
+  margin-bottom: 30px;
 }
 
 .live-data-btngroup {
@@ -521,6 +534,15 @@ input[type="number"]::-webkit-outer-spin-button {
   align-items: center;
   justify-content: center;
 }
+.chart-divider{
+  border: none;
+  border-top: 1px solid #4e4b4b;
+  margin-top: 20px; 
+  margin-left:50px;
+  margin-right:50px;
+}
+
+
 
 .sidebar {
   &-container {
@@ -658,11 +680,13 @@ cursor: pointer;
 }
 
 .news-title {
-  font-weight: 600;
-  margin: 5vw;
-  font-family: 'Montserrat';
-  font-size: 2vw;
+  font-weight: 700;
+  //margin: 5vw;
+  font-family: 'Roboto';
+  font-size: 40px;
   display: flex;
+  justify-content:center;
+  margin-top:120px;
 }
 .news-card-row{
   display: grid;
@@ -821,42 +845,50 @@ cursor: pointer;
   position: relative;
   bottom: 0;
   width: 100%;
-  padding: 2rem 0;
+  margin-top:0px;
+  //height:200px;
+  padding: 0.5rem 0;
 }
 
 .container {
   margin-left: 0px;
   margin-right: 0px;
+ 
 }
 
 .ft-1 {
-  padding-top: 20px;
-  padding-left: 80px;
+  padding-top: 0px;
+ 
+  padding-left: 0px;
   padding-right: 80px;
 }
 
-.ft-1 button {
-  font-weight: 700;
-  padding-left: 30px;
-  padding-right: 30px;
-  font-size: 24px;
-  align-items: center;
-}
+// .ft-1 button {
+//   font-weight: 700;
+//   padding-left: 80px;
+//   padding-right: 30px;
+//   font-size: 24px;
+//   align-items: center;
+// }
 
 .ft-2 {
   padding-left: 50px;
+  padding-top:0px;
 }
 
 .ft-2 h4 {
   padding-left: 45px;
+  padding-top:0px;
 }
 
 .ft-2 ul {
   list-style: none;
+  padding-top:0px;
 }
 
 .ft-2 li {
   padding-right: 50px;
+  padding-top:0px;
 }
 
 .ft-2 a {
@@ -869,13 +901,14 @@ cursor: pointer;
 
 .ft-4 {
   padding-left: 70px;
+  padding-top:0px;
 }
 
-.ft-4 i {
-  margin-top: 20px;
-  margin-right: 10px;
-  font-size: 40px;
-}
+// .ft-4 img {
+//   margin-top: 20px;
+//   margin-right: 10px;
+//   font-size: 20px;
+// }
 
 .footer-bottom p {
   margin-bottom: 0px;
@@ -883,6 +916,12 @@ cursor: pointer;
   text-align: center;
   font-size: 15px;
 }
+
+
+
+
+
+
 
 .trade-info-left img {
   max-width: 100%;
@@ -1189,47 +1228,85 @@ cursor: pointer;
 
 
 //Trade type css(hompage)
+
+
 .trade-card {
   display: flex;
-  align-items: center;
-  width: 450px;
-  height: 300px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 520px;
+  height: 350px;
   background-color: #fff;
   border-radius: 30px;
-  padding: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   border: 1px solid #000;
   box-shadow: 0 5px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-left: 80%;
 }
 
-.trade-card .card-content {
+.trade-title{
+  font-weight: 600;
+  //margin: 5vw;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 40px;
+  display: flex;
+  justify-content:center;
+  margin-top: 100px;
+ 
+}
+
+.title-icon-tradetype {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-left:40px;
+  
+}
+
+.title-icon-tradetype img {
+  width: 65px;
+  height: 65px;
+  border-radius: 8px;
+  margin-right: 20px;
+}
+
+.title-icon-tradetype h3 {
+  font-size: 25px;
+ // margin: 0;
+
+}
+.trade-carousel{
+  margin-top: 80px;
+  
+}
+.card-content {
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // padding: 40px;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  text-align: center;
+  justify-content: flex-start;
+  padding-top: 60px;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
-.trade-card img {
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
-  margin-right: 10px;
-}
-
-.trade-card h3 {
-  font-size: 20px;
-  margin: 0;
-}
-
-.trade-card p {
-  font-size: 14px;
+.card-content p {
+  font-size: 22px;
   color: #000;
-  margin: 0;
-  padding: 20px;
-  margin-top: 20px;
-  align-items: center;
+  //margin: 0;
+  margin-top: -40px;
+  line-height: 26.63px
+  //text-align: center;
 }
+
+
+
+
 
 .proposal-ticks {
   display: flex;

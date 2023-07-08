@@ -97,7 +97,7 @@ const LiveData = observer(() => {
 
   return (
     <Box>
-      <Box className="live-data-title">Stock Indices Live Data</Box>
+      <Box className="live-data-title">Synthetic Indices</Box>
       <Box className="live-data-btngroup">
         <Button
           variant={
@@ -213,28 +213,40 @@ const LiveData = observer(() => {
           Bear/Bull Market
         </Button> */}
       </Box>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         {chartData.map((data, index) => (
           <Link
             style={{ transform: "scale(0.75)" }}
             to={`/trade/${data.series[0].name}`}
             key={index}
           >
-            <div style={{ width: "20vw" }}>
+            <div style={{ width: "14vw", margin: "0.4vw" }}> 
               <HighchartsReact highcharts={Highcharts} options={data} />
             </div>
             <Box
+              // sx={{
+              //   backgroundColor:
+              //     data.latestQuote > data.previousQuote ? "green" : "red",
+              //   width: "100%",
+              //   display: "flex",
+              //   justifyContent: "center",
+              //   color: "white",
+              //   padding: "1vw",
+              //   fontWeight: "bold",
+              //   fontSize: "2vw",
+              //   borderRadius: "1vw",
+              // }}
               sx={{
-                backgroundColor:
-                  data.latestQuote > data.previousQuote ? "green" : "red",
+                // Remove backgroundColor property
                 width: "100%",
                 display: "flex",
                 justifyContent: "center",
-                color: "white",
+                color: data.latestQuote > data.previousQuote ? "green" : "red",
                 padding: "1vw",
                 fontWeight: "bold",
                 fontSize: "2vw",
                 borderRadius: "1vw",
+                
               }}
             >
               {data.latestQuote}
@@ -242,6 +254,7 @@ const LiveData = observer(() => {
           </Link>
         ))}
       </div>
+      <hr className="chart-divider" />
     </Box>
   );
 });
