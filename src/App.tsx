@@ -22,7 +22,7 @@ const LazyTradeHistoryPage = lazy(() => import("./pages/TradeHistoryPage"));
 const LazyErrorPage = lazy(() => import("./pages/Error"));
 
 interface AppProps {
-  themeStore: any;
+  themeStore: {mode: string};
 }
 
 function App({ themeStore }: AppProps) {

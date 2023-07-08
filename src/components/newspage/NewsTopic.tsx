@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Box, Button, Tab, Tabs, Typography } from "@mui/material";
 import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
@@ -15,7 +15,7 @@ const NewsTopic = observer(() => {
   const articlesPerPage = 20;
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearch = (event: { target: { value: any } }) => {
+  const handleSearch = (event: { target: { value: SetStateAction<string> } }) => {
     const { value } = event.target;
     setSearchTerm(value);
   };
@@ -53,7 +53,7 @@ const NewsTopic = observer(() => {
     }
   };
 
-  const paginate = (array: any[], pageNumber: number, pageSize: number) => {
+  const paginate = (array: NewsItem[], pageNumber: number, pageSize: number) => {
     const startIndex = (pageNumber - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return array.slice(startIndex, endIndex);
@@ -71,7 +71,6 @@ const NewsTopic = observer(() => {
     const selectedTopic = topics_array[newValue];
     newsStore.setSelectedTopic(selectedTopic);
     console.log(selectedTopic);
-    
     fetchNews(selectedTopic);
   };
   
@@ -196,7 +195,11 @@ const NewsTopic = observer(() => {
           ))}
         </Tabs>
       </Box>
-      <Box className="news-card-row">
+      {filteredNews.length === 0 ? (
+      <Typography variant="h4" align="center">
+        Sorry, no search results found.
+      </Typography>
+    ) : (<Box className="news-card-row">
         {paginate(filteredNews, currentPage, articlesPerPage).map(
           (article: NewsItem | null, index) => {
             if (!article) return null;
@@ -265,11 +268,11 @@ const NewsTopic = observer(() => {
             }
           }
         )}
-      </Box>
+      </Box>)}
       <Box sx={{ display: "flex", justifyContent: "flex-end", margin: "5vw" }}>
         <Button
           onClick={goToPreviousPage}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || filteredNews.length === 0 }
           sx={{
             margin: "0.5vw",
             padding: "1vw",
@@ -283,7 +286,8 @@ const NewsTopic = observer(() => {
         </Button>
         <Button
           onClick={goToNextPage}
-          disabled={newsStore.news.length < articlesPerPage}
+          disabled={newsStore.news.length < articlesPerPage ||
+            paginate(filteredNews, currentPage, articlesPerPage).length === 0 || filteredNews.length === 0 }
           sx={{
             margin: "0.5vw",
             padding: "1vw",

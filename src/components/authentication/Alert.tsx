@@ -4,10 +4,11 @@ import MuiAlert, { AlertColor } from "@mui/material/Alert";
 // import { useGlobalState } from "../../store/Context";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
+import { SyntheticEvent } from "react";
 
 const Alert = observer(() => {
 
-  const handleCloseAlert = (_event: any, reason?: string) => {
+  const handleCloseAlert = (_event: Event | SyntheticEvent<Element, Event>, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }
