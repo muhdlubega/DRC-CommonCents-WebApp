@@ -41,8 +41,6 @@ const [userBalance, setUserBalance] = useState(100000);
   
   // var userDisplayName = updatedName;
   var userEmail = auth.currentUser?.email;
-  // var userPhotoURL = auth.currentUser?.photoURL;
-  // var balance = 100000;
 
   const getUserBalance = async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -54,7 +52,12 @@ const [userBalance, setUserBalance] = useState(100000);
       }
     );
   }
+
   getUserBalance();
+
+  
+  // var userPhotoURL = auth.currentUser?.photoURL;
+  // var balance = 100000;
 
   // if (auth.currentUser !== null) {
   //   console.log(auth.currentUser.displayName);

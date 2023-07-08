@@ -191,7 +191,7 @@ class AuthStore {
         }
         else {
           action(() => {
-          this.user = {...this.user}
+            this.user = {...this.user};
           })
         }
         // if(!this.user){
@@ -298,16 +298,16 @@ class AuthStore {
     email: string,
     photoURL: string
   ) {
-    this.user!.balance = parseFloat(balance.toFixed(2));
-    this.user!.displayName = displayName;
-    this.user!.email = email;
-    this.user!.photoURL = photoURL;
-    await setDoc(doc(db, "users", auth.currentUser!.uid), {
-      balance: balance,
-      displayName: displayName,
-      email: email,
-      photoURL: photoURL,
-    });
+      this.user!.balance = parseFloat(balance.toFixed(2));
+      this.user!.displayName = displayName;
+      this.user!.email = email;
+      this.user!.photoURL = photoURL;
+      await setDoc(doc(db, "users", auth.currentUser!.uid), {
+        balance: balance,
+        displayName: displayName,
+        email: email,
+        photoURL: photoURL,
+      });
   }
 
   async setBalance(newBalance: number) {
