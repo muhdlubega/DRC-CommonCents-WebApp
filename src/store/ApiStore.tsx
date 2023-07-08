@@ -15,7 +15,7 @@ interface Tick {
 
 class ApiStore {
   granularity: number = 60;
-  activeSymbols: String[] = [];
+  activeSymbols: any[] = [];
   data: unknown = null;
   chartType: string = "candlestick";
   isDurationEnded: boolean = false;
