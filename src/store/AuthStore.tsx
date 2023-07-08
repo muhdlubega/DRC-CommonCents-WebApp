@@ -169,7 +169,8 @@ class AuthStore {
 
   signInWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
-      .then((res) => {
+    .then(async (res) => {
+      var userExists:boolean = false;
         
         this.setAlert({
           open: true,
@@ -177,14 +178,30 @@ class AuthStore {
           type: "success",
         });
         
-        if(!this.user){
-          this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
-        } 
-        else if (this.user) {
+        const querySnapshot = await getDocs(collection(db, "users"));
+          querySnapshot.forEach((doc) => {
+            if (doc.id === auth.currentUser!.uid) {
+              userExists = true;
+            }
+          }
+        );
+
+        if (!userExists) {
+          this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string);
+        }
+        else {
           action(() => {
           this.user = {...this.user}
           })
         }
+        // if(!this.user){
+        //   this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string)
+        // } 
+        // else if (this.user) {
+        //   action(() => {
+        //   this.user = {...this.user}
+        //   })
+        // }
         
         this.handleClose();
       })

@@ -11,10 +11,11 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import watermark from "../assets/images/watermark.png";
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { collection, getDocs } from "firebase/firestore";
 
 const AccountPage = observer(() => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -24,6 +25,7 @@ const AccountPage = observer(() => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 const [confirmNewPassword, setConfirmNewPassword] = useState("");
+const [userBalance, setUserBalance] = useState(100000);
 
   const [state, setState] = useState({
     resetConfirmationOpen: false,
@@ -37,10 +39,22 @@ const [confirmNewPassword, setConfirmNewPassword] = useState("");
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
   
-  var userDisplayName = auth.currentUser?.displayName;
+  // var userDisplayName = updatedName;
   var userEmail = auth.currentUser?.email;
   // var userPhotoURL = auth.currentUser?.photoURL;
-  var balance = 100000;
+  // var balance = 100000;
+
+  const getUserBalance = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach((doc) => {
+        const { balance } = doc.data();
+        if (auth.currentUser && auth.currentUser.uid === doc.id) {
+          setUserBalance(balance);
+        }
+      }
+    );
+  }
+  getUserBalance();
 
   // if (auth.currentUser !== null) {
   //   console.log(auth.currentUser.displayName);
@@ -141,7 +155,7 @@ const [confirmNewPassword, setConfirmNewPassword] = useState("");
             alt={auth.currentUser?.displayName || ""}
             sx={{ marginRight: "0.4vw" }}
           />
-          {userDisplayName}
+          {auth.currentUser?.displayName}
         </span>
         <span
           style={{
@@ -169,7 +183,7 @@ const [confirmNewPassword, setConfirmNewPassword] = useState("");
           }}
         >
           <EmptyWallet size={22} style={{ marginRight: "0.5vw" }} />
-          {balance} USD
+          {userBalance.toFixed(2)} USD
         </span>
       </Box>
       <div className="sidebar-leaderboard">

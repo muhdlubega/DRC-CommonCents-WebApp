@@ -54,13 +54,13 @@ const Footer: React.FC = () => {
             </Typography>
             <ul>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/enquiry">
                   Help and Support
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
-                  Team
+                <a className="nav-link" href="/FAQ">
+                  FAQs
                 </a>
               </li>
             </ul>
