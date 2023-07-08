@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            padding: "1.2vw 1vw",
+            padding: "0.9vw 0.1vw",
             borderRadius: "50%",
             backgroundColor: "grey",
             color: "white",
@@ -86,19 +86,36 @@ const Footer: React.FC = () => {
                   src={SocialMedia1}
                   alt="Image Button"
                   style={{
-                    width: "70px",
+                    width: "53px",
                     marginLeft: -5,
                     marginRight: 3,
-                    height: "72px",
+                    height: "53px",
+                    marginTop: "16px",
+                  }}
+                />
+              </a>
+              <a href="/">
+              <img
+                  src={SocialMedia2}
+                  alt="Image Button"
+                  style={{
+                    width: "38px",
+                    height: "38px",
                     marginTop: "11px",
                   }}
                 />
               </a>
               <a href="/">
-                <img src={SocialMedia2} alt="Image Button" />
-              </a>
-              <a href="/">
-                <img src={SocialMedia3} alt="Image Button" />
+              <img
+                  src={SocialMedia3}
+                  alt="Image Button"
+                  style={{
+                    width: "38px",
+                    marginRight: 3,
+                    height: "38px",
+                    marginTop: "11px",
+                  }}
+                />
               </a>
             </Box>
           </Grid>
