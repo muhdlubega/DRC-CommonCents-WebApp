@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "./../firebase";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
-import { Summary } from "../store/AuthStore";
+import authStore from "../store/AuthStore";
+import { observer } from "mobx-react-lite";
 
 export interface Trade {
   strategy: string;
@@ -19,9 +20,9 @@ export interface Trade {
 }
 
 
-const TradeHistoryPage = () => {
+const TradeHistoryPage = observer(() => {
   const [tradeData, setTradeData] = useState<Trade[]>([]);
-  const [tradeSummary, setTradeSummary] = useState<Summary | null>(null);
+  // const [tradeSummary, setTradeSummary] = useState<Summary | null>(null);
 
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -47,35 +48,40 @@ const TradeHistoryPage = () => {
 
     fetchTradeData();
 
+    authStore.getUserNetWorth();
 
-    const fetchTradeSummary = async () => {
-      try {
-        const tradeSummaryRef = doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary");
-        const snapshot = await getDoc(tradeSummaryRef);
-    const data = snapshot.data() as Summary;
-    setTradeSummary(data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
 
-    fetchTradeSummary();
+    // const fetchTradeSummary = async () => {
+    //   try {
+    //     const tradeSummaryRef = doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary");
+    //     const snapshot = await getDoc(tradeSummaryRef);
+    // const data = snapshot.data() as Summary;
+    // setTradeSummary(data);
+    //   } catch (error) {
+    //     console.error("Error:", error);
+    //   }
+    // };
+
+    // fetchTradeSummary();
   }, []);
+
+  console.log(authStore.totalAmountLost, authStore.userNetWorth);
+  
 
   return (
     <Box>
       <Typography variant="h4">
         Trade Summary
       </Typography>
-      {tradeSummary && (
+      {/* {tradeSummary && ( */}
         <Typography variant="h5">
-          Total Profit: {tradeSummary.totalProfit.toFixed(2)} USD
+          Total Profit: {authStore.totalAmountWon.toFixed(2)} USD
           <br />
-          Total Loss: {tradeSummary.totalLoss.toFixed(2)} USD
+          Total Loss: {authStore.totalAmountLost.toFixed(2)} USD
           <br />
-          <span style={{color: 'gold', fontSize: '120%'}}>Net Worth: {tradeSummary.netWorth.toFixed(2)} USD</span>
+          <span style={{color: 'gold', fontSize: '120%'}}>Net Worth: {authStore.userNetWorth.toFixed(2)} USD</span>
         </Typography>
-      )}
+      {/* )} */}
     <Grid container spacing={2}>
       {tradeData.filter((trade) => trade.status !== undefined).map((trade, index) => (
         <Grid item xs={12} sm={6} md={4} key={index}>
@@ -98,7 +104,7 @@ const TradeHistoryPage = () => {
       ))}
     </Grid></Box>
   );
-};
+});
 
 export default TradeHistoryPage;
 

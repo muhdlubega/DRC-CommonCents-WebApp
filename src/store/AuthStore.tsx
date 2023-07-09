@@ -20,8 +20,8 @@ export interface Alert {
 }
 
 export interface User {
-  displayName?: string | null | undefined;
-  email?: string | null | undefined;
+  displayName?: string | null;
+  email?: string | null;
   photoURL?: string | null | undefined;
   balance?: number | null | undefined;
   totalProfit?: number  | null | undefined;
@@ -49,6 +49,9 @@ class AuthStore {
   email: string = "";
   password: string = "";
   confirmPassword: string = "";
+  totalAmountWon: number = 0;
+  totalAmountLost: number = 0;
+  userNetWorth: number = 0;
   leaderboard: User[] = [];
   firestore = getFirestore();
   usersRef = collection(this.firestore, "users");
@@ -65,6 +68,9 @@ class AuthStore {
       email: observable,
       password: observable,
       confirmPassword: observable,
+      totalAmountWon: observable,
+      totalAmountLost: observable,
+      userNetWorth: observable,
       leaderboard: observable,
       firestore: observable,
       usersRef: observable,
@@ -73,9 +79,13 @@ class AuthStore {
       handleClose: action,
       handleOpen: action,
       handleSignUp: action,
+      getUserNetWorth: action,
       setEmail: action.bound,
       setPassword: action.bound,
       setConfirmPassword: action.bound,
+      setTotalAmountLost: action.bound,
+      setTotalAmountWon: action.bound,
+      setUserNetWorth: action.bound,
       setCurrency: action.bound,
       setAlert: action.bound,
       setUser: action.bound,
@@ -340,6 +350,42 @@ class AuthStore {
         displayName: updatedName
       });
     }
+  }
+
+
+  setTotalAmountWon(totalAmountWon: number) {
+    this.totalAmountWon = totalAmountWon;
+  }
+
+  setTotalAmountLost(totalAmountLost: number) {
+    this.totalAmountLost = totalAmountLost;
+  }
+
+  setUserNetWorth(userNetWorth: number) {
+    this.userNetWorth = userNetWorth;
+  }
+
+  getUserNetWorth = async () => {
+    const querySnapshot = await getDoc(doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"));
+    const data = querySnapshot.data() 
+    if (!querySnapshot.exists()) {
+        const initialTradeSummary = {
+          totalProfit: 0,
+          totalLoss: 0,
+          netWorth: 0,
+          timestamp: Date.now()
+        };
+        await setDoc(doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"), initialTradeSummary);
+      }
+      // querySnapshot.forEach((doc) => {
+      //   const { totalProfit, totalLoss, netWorth } = doc.data();
+        // if (auth.currentUser && auth.currentUser.uid === doc.id) {
+          this.setTotalAmountWon(data?.totalProfit);
+          this.setTotalAmountLost(data?.totalLoss);
+          this.setUserNetWorth(data?.netWorth);
+        // }
+      // }
+    // );
   }
 }
 

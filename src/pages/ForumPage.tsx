@@ -1,38 +1,14 @@
-import { useEffect } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import forumStore from "../store/ForumStore";
+import forumStore, { Post } from "../store/ForumStore";
 import { observer } from "mobx-react-lite";
+import { Avatar } from "@mui/material";
+// import { useEffect } from "react";
 
 const ForumPage = observer(() => {
-  // const [title, setTitle] = useState("");
-  // const [details, setDetails] = useState("");
-  // const [posts, setPosts] = useState<Post[]>([]);
-
-  useEffect(() => {
-    // const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-
-    // const unsubscribe = onSnapshot(q, async (snapshot) => {
-    //   const updatedPosts: Post[] = [];
-    //   snapshot.forEach(async (doc) => {
-    //     const post: Post = { id: doc.id, ...doc.data() } as Post;
-    //     const userDoc = await getDocs(collection(db, "users"));
-    //     userDoc.forEach((doc) => {
-    //       const { displayName } = doc.data();
-    //       post.author = displayName || "";
-    //     })
-
-    //     updatedPosts.push(post);
-    //   });
-    //   forumStore.setPosts(updatedPosts);
-    // });
-
-    // return () => {
-    //   unsubscribe();
-    // };
-
+  // useEffect(() => {
     forumStore.initializePosts();
-  }, []);
+  // }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,14 +18,23 @@ const ForumPage = observer(() => {
       return;
     }
     try {
-      await addDoc(collection(db, "posts"), {
+      await addDoc(collection(db, "users", auth.currentUser!.uid,  "posts"), {
         title: forumStore.title,
         details: forumStore.details,
-        author: auth.currentUser?.uid,
+        author: auth.currentUser?.displayName,
+        authorImage: auth.currentUser?.photoURL,
         timestamp: Date.now(),
       });
 
-      // Clear the form fields
+      const post: Post = {
+        title: forumStore.title,
+        details: forumStore.details,
+        author: auth.currentUser?.displayName!,
+        authorImage: auth.currentUser?.photoURL!,
+        timestamp: Date.now(),
+      };
+      forumStore.setPosts([...forumStore.posts, post]);
+
       forumStore.setTitle("");
       forumStore.setDetails("");
     } catch (error) {
@@ -71,8 +56,10 @@ const ForumPage = observer(() => {
       return `${Math.floor(timeDiff / 86400000)} day(s) ago`;
     }
   };
-  
-  console.log(forumStore.posts);
+
+  // useEffect(() => {
+  //   forumStore.initializePosts();
+  // }, [forumStore.posts])
   
   return (
     <div>
@@ -93,7 +80,12 @@ const ForumPage = observer(() => {
       </form>
       <h2>Posts</h2>
       {forumStore.posts.map((post) => (
-        <div key={post.id}>
+        <div key={post.timestamp}>
+        <Avatar
+          className="sidebar-picture"
+          src={post.authorImage!}
+          alt={post.author!}
+        />
           <h3>{post.title}</h3>
           <p>{post.details}</p>
           <p>Author: {post.author}</p>

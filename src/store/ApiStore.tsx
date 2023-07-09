@@ -27,8 +27,6 @@ class ApiStore {
   additionalAmount: number = 0;
   sellFailed: boolean = false;
   deductedAmount: number = 0;
-  totalAmountWon: number = 0;
-  totalAmountLost: number = 0;
   ticks_history_request: Record<string, number | string> = 
   {
     ticks_history: this.selectedSymbol,
@@ -57,8 +55,6 @@ class ApiStore {
       additionalAmount: observable,
       sellFailed: observable,
       deductedAmount: observable,
-      totalAmountWon: observable,
-      totalAmountLost: observable,
       ticks_history_request: observable,
       connectWebSocket: action.bound,
       disconnectWebSocket: action.bound,
@@ -70,8 +66,6 @@ class ApiStore {
       setAdditionalAmount: action.bound,
       setSellFailed: action.bound,
       setDeductedAmount: action.bound,
-      setTotalAmountLost: action.bound,
-      setTotalAmountWon: action.bound,
       setGranularity: action.bound,
       toggleTicks: action.bound,
       handleActiveSymbolsResponse: action,
@@ -131,14 +125,6 @@ class ApiStore {
 
   setDeductedAmount(deductedAmount: number) {
     this.deductedAmount = deductedAmount;
-  }
-
-  setTotalAmountWon(totalAmountWon: number) {
-    this.totalAmountWon = totalAmountWon;
-  }
-
-  setTotalAmountLost(totalAmountLost: number) {
-    this.totalAmountLost = totalAmountLost;
   }
 
   setGranularity(granularity: number){
