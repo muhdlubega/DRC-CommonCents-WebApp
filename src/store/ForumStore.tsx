@@ -1,13 +1,15 @@
 import { collection, getDocs } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 
 export interface Post {
+  id?: string;
   title?: string;
   details?: string;
   author?: string | null;
   authorImage?: string | null;
   timestamp: number;
+  isFavorite?: boolean;
 }
 
 class ForumStore {
@@ -24,6 +26,9 @@ class ForumStore {
       setDetails: action.bound,
       setPosts: action.bound,
       initializePosts: action.bound,
+      markAsFavorite: action.bound,
+      unmarkAsFavorite: action.bound,
+      getFavoritePosts: action.bound
     });
 
     this.initializePosts();
@@ -42,34 +47,52 @@ class ForumStore {
   }
 
   async initializePosts() {
-    if (auth.currentUser) {
-      const querySnapshot = await getDocs(collection(db, "users", auth.currentUser.uid, "posts"));
-      const updatedPosts: Post[] = [];
-      querySnapshot.forEach((doc) => {
-        const { title, details, author, authorImage, timestamp } = doc.data();
-        const post: Post = {
-          title,
-          details,
-          author,
-          authorImage,
-          timestamp,
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    const updatedPosts: Post[] = [];
+    querySnapshot.forEach((doc) => {
+      const { title, details, author, authorImage, timestamp } = doc.data();
+      const post: Post = {
+        id: doc.id,
+        title,
+        details,
+        author,
+        authorImage,
+        timestamp,
+      };
+      updatedPosts.push(post);
+    });
+
+    this.setPosts(updatedPosts);
+  }
+
+  markAsFavorite(postId: string) {
+    const updatedPosts = this.posts.map((post) => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          isFavorite: true,
         };
-        updatedPosts.push(post);
-      });
-  
-      if (querySnapshot.empty) {
-        const initialPost: Post = {
-          title: "",
-          details: "",
-          author: auth.currentUser?.displayName,
-          authorImage: auth.currentUser?.photoURL,
-          timestamp: Date.now(),
-        };
-        updatedPosts.push(initialPost);
       }
-  
-      this.setPosts(updatedPosts);
-    }
+      return post;
+    });
+    this.setPosts(updatedPosts);
+  }
+
+  unmarkAsFavorite(postId: string) {
+    const updatedPosts = this.posts.map((post) => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          isFavorite: false,
+        };
+      }
+      return post;
+    });
+    this.setPosts(updatedPosts);
+  }
+
+  getFavoritePosts() {
+    return this.posts.filter((post) => post.isFavorite);
   }
 }
 

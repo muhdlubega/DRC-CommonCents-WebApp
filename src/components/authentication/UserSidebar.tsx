@@ -164,6 +164,7 @@ const UserSidebar = () => {
             </span>
           </div>
           <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/account")}>My Account<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
+          <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/favourites")}>Favourite Posts<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
           <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/leaderboard")}>Leaderboard<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
           <Box className="leaderboard-tthree">
         <ol>

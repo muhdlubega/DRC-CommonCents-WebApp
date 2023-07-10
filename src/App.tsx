@@ -14,6 +14,7 @@ const LazyNewsPage = lazy(() => import("./pages/NewsPage"));
 const LazyForumPage = lazy(() => import("./pages/ForumPage"));
 const LazyAboutPage = lazy(() => import("./pages/AboutPage"));
 const LazyAccountPage = lazy(() => import("./pages/AccountPage"));
+const LazyFavouritesPage = lazy(() => import("./pages/FavouritesPage"));
 const LazyLeaderboardPage = lazy(() => import("./pages/LeaderboardPage"));
 const LazyEnquiryPage = lazy(() => import("./pages/Enquiry"));
 const LazyFAQPage = lazy(() => import("./pages/FAQ"));
@@ -39,10 +40,10 @@ function App({ themeStore }: AppProps) {
         <Route path="/enquiry" element={<Suspense fallback={<div>Loading..</div>}><LazyEnquiryPage /></Suspense>}></Route>
         <Route path="/faq" element={<Suspense fallback={<div>Loading..</div>}><LazyFAQPage /></Suspense>}></Route>
         <Route path="/account" element={authStore.user ? <Suspense fallback={<div>Loading..</div>}><LazyAccountPage /></Suspense> : <Suspense fallback={<div>Loading..</div>}><LazyLoginAccessPage /></Suspense> }></Route>
+        <Route path="/favourites" element={authStore.user ? <Suspense fallback={<div>Loading..</div>}><LazyFavouritesPage /></Suspense> : <Suspense fallback={<div>Loading..</div>}><LazyLoginAccessPage /></Suspense> }></Route>
         <Route path="/leaderboard" element={authStore.user ? <Suspense fallback={<div>Loading..</div>}><LazyLeaderboardPage /></Suspense> : <Suspense fallback={<div>Loading..</div>}><LazyLoginAccessPage /></Suspense>}></Route>
         <Route path="/trade-history" element={authStore.user ? <Suspense fallback={<div>Loading..</div>}><LazyTradeHistoryPage /></Suspense> : <Suspense fallback={<div>Loading..</div>}><LazyLoginAccessPage /></Suspense>}></Route>
         <Route path="/*" element={<Suspense fallback={<div>Loading..</div>}><LazyErrorPage /></Suspense>}></Route>
-
       </Routes>
       <Footer/>
       <Alert/>
