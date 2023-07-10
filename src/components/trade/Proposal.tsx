@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
-import { addDoc, collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { Box, Typography } from "@mui/material";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
@@ -114,10 +114,14 @@ const Proposal = observer(() => {
     }
   };
 
+  authStore.getUserNetWorth();
+  console.log(authStore.getUserNetWorth);
+
   const handleSell = async (isHigher: boolean) => {
     setIsProcessing(true);
     let balance = 0;
     var status = null;
+    
 
     const balanceSnapshot = await getDocs(collection(db, "users"));
     balanceSnapshot.forEach((doc) => {
@@ -172,8 +176,8 @@ const Proposal = observer(() => {
             status = 'Win';
             apiStore.setSellSuccessful(true);
             apiStore.setAdditionalAmount(additionalAmount);
-            apiStore.setTotalAmountWon(
-              apiStore.totalAmountWon + additionalAmount
+            authStore.setTotalAmountWon(
+              authStore.totalAmountWon + additionalAmount
             );
           } else {
             console.log("Spot is not higher", additionalAmount);
@@ -185,7 +189,7 @@ const Proposal = observer(() => {
             status = 'Lose';
             apiStore.setSellFailed(true);
             apiStore.setDeductedAmount(askPrice);
-            apiStore.setTotalAmountLost(apiStore.totalAmountLost + askPrice);
+            authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
           }
         } else {
           if (previousSpotValue > currentSpotValue) {
@@ -200,8 +204,8 @@ const Proposal = observer(() => {
             status = 'Win';
             apiStore.setSellSuccessful(true);
             apiStore.setAdditionalAmount(additionalAmount);
-            apiStore.setTotalAmountWon(
-              apiStore.totalAmountWon + additionalAmount
+            authStore.setTotalAmountWon(
+              authStore.totalAmountWon + additionalAmount
             );
           } else {
             console.log("Spot is not lower", additionalAmount);
@@ -213,7 +217,7 @@ const Proposal = observer(() => {
             status = 'Lose';
             apiStore.setSellFailed(true);
             apiStore.setDeductedAmount(askPrice);
-            apiStore.setTotalAmountLost(apiStore.totalAmountLost + askPrice);
+            authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
           }
         }
       } else {
@@ -240,21 +244,21 @@ const Proposal = observer(() => {
         timestamp
       };
 
-      const tradeSummaryRef = doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary");
+    //   const tradeSummaryRef = doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary");
 
-    const tradeSummaryDoc = await getDoc(tradeSummaryRef);
-    if (!tradeSummaryDoc.exists()) {
-      const initialTradeSummary = {
-        totalProfit: 0,
-        totalLoss: 0,
-        netWorth: 0,
-        timestamp: Date.now()
-      };
-      await setDoc(tradeSummaryRef, initialTradeSummary);
-    }
+    // const tradeSummaryDoc = await getDoc(tradeSummaryRef);
+    // if (!tradeSummaryDoc.exists()) {
+    //   const initialTradeSummary = {
+    //     totalProfit: 0,
+    //     totalLoss: 0,
+    //     netWorth: 0,
+    //     timestamp: Date.now()
+    //   };
+    //   await setDoc(tradeSummaryRef, initialTradeSummary);
+    // }
 
-      const totalProfit = apiStore.totalAmountWon;
-      const totalLoss = apiStore.totalAmountLost;
+      const totalProfit = authStore.totalAmountWon;
+      const totalLoss = authStore.totalAmountLost;
       const netWorth = totalProfit - totalLoss;
       const tradeSummary = {
         totalProfit,
@@ -327,6 +331,9 @@ const Proposal = observer(() => {
       proposalStore.proposalData[proposalStore.proposalData.length - 1]
         .longcode;
   }
+
+  console.log(authStore.totalAmountWon);
+  
 
   return (
     <Box>
@@ -626,23 +633,23 @@ const Proposal = observer(() => {
             )}
           </Box>
           <Box>
-            {apiStore.sellSuccessful && (
+            {authStore.totalAmountWon !== 0 && (
               <div>
-                <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+                {(apiStore.additionalAmount !== 0 && <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>)}
                 <div>
-                  Total Won For This Session:{" "}
-                  {apiStore.totalAmountWon.toFixed(2)} USD
+                  Total Won:{" "}
+                  {authStore.totalAmountWon.toFixed(2)} USD
                 </div>
               </div>
             )}
           </Box>
           <Box>
-            {apiStore.sellFailed && (
+            {authStore.totalAmountLost !== 0 && (
               <div>
-                <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+                {(apiStore.deductedAmount !== 0 && <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>)}
                 <div>
-                  Total Lost For This Session:{" "}
-                  {apiStore.totalAmountLost.toFixed(2)} USD
+                  Total Lost:{" "}
+                  {authStore.totalAmountLost.toFixed(2)} USD
                 </div>
               </div>
             )}
