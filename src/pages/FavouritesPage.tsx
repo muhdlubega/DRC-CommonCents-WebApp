@@ -1,10 +1,18 @@
 import { observer } from "mobx-react-lite";
-import { Avatar } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import { Star } from "iconsax-react";
 import forumStore from "../store/ForumStore";
+import { useEffect } from "react";
+import { auth } from "../firebase";
 
 const FavoritesPage = observer(() => {
-  const favoritePosts = forumStore.getFavoritePosts();
+//   const favoritePosts = forumStore.getFavoritePosts();
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      forumStore.getUserFavourites()
+    }
+  }, []);
 
   const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
@@ -21,11 +29,14 @@ const FavoritesPage = observer(() => {
     }
   };
 
+  console.log(forumStore.userFavourites);
+  
+
   return (
     <div>
       <h2>Favorite Posts</h2>
-      {favoritePosts.length > 0 ? (
-        favoritePosts.map((post) => (
+      {forumStore.userFavourites.length > 0 ? (
+        forumStore.userFavourites.map((post) => (
           <div key={post.id}>
             <Avatar
               className="sidebar-picture"
@@ -36,7 +47,11 @@ const FavoritesPage = observer(() => {
             <p>{post.details}</p>
             <p>Author: {post.author}</p>
             <p>Posted on: {formatTimestamp(post.timestamp)}</p>
-            <Star color="yellow" />
+            <IconButton onClick={() => forumStore.handleFavorite(post.id!)}>
+            <Star
+              color={post.isFavorite ? "yellow" : "gray"}
+            />
+          </IconButton>
           </div>
         ))
       ) : (

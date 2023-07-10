@@ -17,7 +17,7 @@ interface LoginProps {
   handleClose: () => void;
 }
 
-const Login = observer(({ }: LoginProps) => {
+const Login = observer(({handleClose }: LoginProps) => {
   // const [email, setEmail] = useState<string>("");
   // const [password, setPassword] = useState<string>("");
   const [openForgotPassword, setOpenForgotPassword] = useState(false);
@@ -82,7 +82,10 @@ const Login = observer(({ }: LoginProps) => {
       <Button
         variant="contained"
         size="large"
-        onClick={authStore.handleLogin}
+        onClick={() => {
+          authStore.handleLogin(); 
+          handleClose(); 
+        }}
         style={{ backgroundColor: "#0033ff" }}
       >
         Login

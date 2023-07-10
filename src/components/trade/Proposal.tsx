@@ -115,7 +115,7 @@ const Proposal = observer(() => {
   };
 
   authStore.getUserNetWorth();
-  console.log(authStore.getUserNetWorth);
+  // console.log(authStore.getUserNetWorth);
 
   const handleSell = async (isHigher: boolean) => {
     setIsProcessing(true);
@@ -143,12 +143,15 @@ const Proposal = observer(() => {
     console.log("payout/stake", payoutValue);
     console.log("balance", currentBalance);
 
+    console.log('voice of no return', apiStore.proposalTicks);
+
     const previousSpot = apiStore.isTicks
-      ? apiStore.ticks[apiStore.ticks.length - tickDuration - 1].quote
-      : apiStore.ticks[apiStore.ticks.length - tickDuration - 1].close;
+      ? apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1].quote
+      : apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1].close;
     const currentSpot = apiStore.isTicks
-      ? apiStore.ticks[apiStore.ticks.length - 1].quote
-      : apiStore.ticks[apiStore.ticks.length - 1].close;
+      ? apiStore.proposalTicks[apiStore.proposalTicks.length - 1].quote
+      : apiStore.proposalTicks[apiStore.proposalTicks.length - 1].close;
+      
 
     console.log("prev", previousSpot);
     console.log("next", currentSpot);
@@ -332,7 +335,7 @@ const Proposal = observer(() => {
         .longcode;
   }
 
-  console.log(authStore.totalAmountWon);
+  // console.log(authStore.totalAmountWon);
   
 
   return (

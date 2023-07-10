@@ -130,7 +130,36 @@ const [userName, setUserName] = useState("");
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmNewPassword) {
-      // Show an error message or perform necessary validation
+      authStore.setAlert({
+        open: true,
+        message:
+          "Passwords do not match",
+        type: "error",
+      });
+      return;
+    }
+
+    const lengthTest = /^.{8,}$/;
+
+    if (!lengthTest.test(newPassword)) {
+      authStore.setAlert({
+        open: true,
+        message:
+          "Password must be at least 8 characters long",
+        type: "error",
+      });
+      return;
+    }
+
+    const caseTest = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.!@#$%^&*]).{8,}$/;
+
+    if (!caseTest.test(newPassword)) {
+      authStore.setAlert({
+        open: true,
+        message:
+          "Password must contain at least one uppercase and lowercase letter, a special character and a number",
+        type: "error",
+      });
       return;
     }
   
@@ -143,9 +172,12 @@ const [userName, setUserName] = useState("");
       await reauthenticateWithCredential(auth.currentUser!, credential);
       await updatePassword(auth.currentUser!, newPassword);
       setIsConfirmationDialogOpen(false);
-      // Password change successful
     } catch (error) {
-      // Handle the error, e.g., display an error message
+      authStore.setAlert({
+        open: true,
+        message: (error as {message:string}).message,
+        type: "error",
+      });
     }
   };
   

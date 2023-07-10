@@ -65,7 +65,7 @@ const TradeHistoryPage = observer(() => {
     // fetchTradeSummary();
   }, []);
 
-  console.log(authStore.totalAmountLost, authStore.userNetWorth);
+  console.log(tradeData);
   
 
   return (
@@ -73,7 +73,8 @@ const TradeHistoryPage = observer(() => {
       <Typography variant="h4">
         Trade Summary
       </Typography>
-      {/* {tradeSummary && ( */}
+      {tradeData.filter((trade) => trade.status !== undefined).length > 0 ? (
+        <Box>
         <Typography variant="h5">
           Total Profit: {authStore.totalAmountWon.toFixed(2)} USD
           <br />
@@ -81,9 +82,8 @@ const TradeHistoryPage = observer(() => {
           <br />
           <span style={{color: 'gold', fontSize: '120%'}}>Net Worth: {authStore.userNetWorth.toFixed(2)} USD</span>
         </Typography>
-      {/* )} */}
     <Grid container spacing={2}>
-      {tradeData.filter((trade) => trade.status !== undefined).map((trade, index) => (
+      {tradeData.filter((trade) => trade.status !== undefined).sort((a, b) => b.timestamp - a.timestamp).map((trade, index) => (
         <Grid item xs={12} sm={6} md={4} key={index}>
           <Card>
             <CardContent>
@@ -102,7 +102,12 @@ const TradeHistoryPage = observer(() => {
           </Card>
         </Grid>
       ))}
-    </Grid></Box>
+    </Grid>
+    </Box>
+      ): (
+        <p>No trade history available. Start trading now!</p>
+      )}
+      </Box>
   );
 });
 

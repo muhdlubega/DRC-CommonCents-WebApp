@@ -5,15 +5,16 @@ import { Box } from "@mui/system";
 import AliceCarousel from "react-alice-carousel";
 import newsStore, { NewsItem } from "../../store/NewsStore";
 import { getNews } from "../../config/NewsApi";
+import { observer } from "mobx-react-lite";
 
-const LatestNews = () => {
+const LatestNews = observer(() => {
   const fetchNews = async () => {
     try {
       const response = await getNews();
       const { data } = response;
       const feed = data?.feed || [];
       newsStore.setNews(feed);
-      // console.log(feed);
+      console.log(feed);
     } catch (error) {
       console.error("Error fetching news:", error);
     }
@@ -22,14 +23,14 @@ const LatestNews = () => {
   useEffect(() => {
     fetchNews();
   }, []);
-
+  
   const responsive = {
     0: {
-      items: 1,
+      items: 3,
     },
-    1024: {
-      items: 1,
-    },
+    // 1024: {
+    //   items: 1,
+    // },
   };
 
   const items = newsStore.news.map((article: NewsItem | null) => {
@@ -44,7 +45,9 @@ const LatestNews = () => {
 
   return (
     <Box>
-      <Typography component="span" className="news-span">
+      {newsStore.news.length > 0 && (
+      <Box>
+        <Typography component="span" className="news-span">
         <Box className="news-title">Latest News</Box>
         {/* <Link className="news" to={"/news"}>
           <span>See more...</span>
@@ -63,8 +66,9 @@ const LatestNews = () => {
         items={items}
       />
       </Box>
+      </Box>)}
     </Box>
   );
-};
+});
 
 export default LatestNews;

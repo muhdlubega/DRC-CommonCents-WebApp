@@ -23,6 +23,7 @@ class ApiStore {
   isTicks: boolean = false;
   selectedSymbol: string = "1HZ10V";
   ticks: Tick[] = [];
+  proposalTicks: Tick[] = [];
   sellSuccessful: boolean = false;
   additionalAmount: number = 0;
   sellFailed: boolean = false;
@@ -51,6 +52,7 @@ class ApiStore {
       isTicks: observable,
       selectedSymbol: observable,
       ticks: observable,
+      proposalTicks: observable,
       sellSuccessful: observable,
       additionalAmount: observable,
       sellFailed: observable,
@@ -78,6 +80,7 @@ class ApiStore {
       ticksHistoryResponse: action,
       tickResponse: action,
       setTicks: action.bound,
+      setProposalTicks: action.bound
     });
     this.connectWebSocket();
   }
@@ -314,6 +317,10 @@ class ApiStore {
           low: Number(data.ohlc.low),
         };
 
+        this.setProposalTicks([...this.proposalTicks, newTick]);
+        // console.log(this.proposalTicks);
+        
+
         let currentTime = 0;
         if(this.granularity === 60){
           if (this.isTicks){
@@ -361,12 +368,17 @@ class ApiStore {
         epoch: data.tick.epoch,
         quote: data.tick.quote,
       };
+      this.setProposalTicks([...this.proposalTicks, newTick]);
       this.setTicks([...this.ticks, newTick]);
     }   
   };
 
   setTicks(ticks: Tick[]) {
     this.ticks = ticks;
+  }
+
+  setProposalTicks(proposalTicks: Tick[]) {
+    this.proposalTicks = proposalTicks;
   }
   
 }

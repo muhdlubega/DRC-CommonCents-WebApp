@@ -16,9 +16,6 @@ const LeaderboardPage = observer(() => {
   return (
     <Box className="leaderboard-main">
     <img className="watermark" src={watermark}></img>
-      {/* <div className="ts-particles">
-        <ParticlesBackground />
-      </div> */}
       <Box className="leaderboard-tthree">
         <ol>
           {topThreeUsers.filter((user) => user.netWorth !== 0).map((user, index) => (
