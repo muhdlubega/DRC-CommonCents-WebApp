@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Tab, Tabs, Typography } from "@mui/material";
 import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
@@ -6,19 +6,26 @@ import { observer } from "mobx-react-lite";
 import newsStore, { NewsItem, topics_array } from "../../store/NewsStore";
 import "../../styles/main.scss";
 // import AliceCarousel from "react-alice-carousel";
-import { SearchFavorite1 } from "iconsax-react";
+import { SearchNormal1 } from "iconsax-react";
 
 const NewsTopic = observer(() => {
   // const [news, setNews] = useState<NewsItem[]>([]);
   // const [selectedTopic, setSelectedTopic] = useState<string>(topics_array[0]);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const articlesPerPage = 20;
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearch = (event: { target: { value: SetStateAction<string> } }) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // setIsSearchFocused(true);
     const { value } = event.target;
-    setSearchTerm(value);
+    const filteredValue = value.replace(/[^\w\s]/gi, "")
+    setSearchTerm(filteredValue);
   };
+
+  // const toggleSearchbar = () => {
+  //   setIsSearchFocused((prevState) => !prevState);
+  // };
 
   const filteredNews = newsStore.news.filter((article) => {
     const { topics, summary, authors, title, source } = article;
@@ -127,18 +134,19 @@ const NewsTopic = observer(() => {
 
   return (
     <Box>
-      <Box className="news-search">
+      <Box className={`news-search ${isSearchFocused ? "focused" : ""}`}>
         <input
           type="text"
           value={searchTerm}
+          onClick={() => setIsSearchFocused(true)}
           onChange={handleSearch}
           placeholder="Search articles..."
           className="news-searchbox"
         />
-        <SearchFavorite1
+        <SearchNormal1
           color="#3366ff"
           size={40}
-          style={{ marginLeft: "1vw" }}
+          style={{ marginLeft: "1vw", visibility: isSearchFocused ? "hidden" : "visible" }}
         />
       </Box>
       {/* <Box

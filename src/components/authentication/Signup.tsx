@@ -1,4 +1,5 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 // import { useState } from "react";
 // import { useGlobalState } from "../../store/Context";
 // import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -6,16 +7,16 @@ import { Box, Button, TextField } from "@mui/material";
 // import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import authStore from "../../store/AuthStore";
+import { useState } from "react";
 
 interface SignupProps {
   handleClose: () => void;
 }
 
 const Signup = observer((
-  {  } : SignupProps
+  {} : SignupProps
   ) => {
-
-  
+    const [showPassword, setShowPassword] = useState(false);
 
   return (
     <Box
@@ -37,18 +38,42 @@ const Signup = observer((
       <TextField
         variant="outlined"
         label="Enter Password"
-        type="password"
+        type={showPassword ? "text" : "password"}
         value={authStore.password}
         onChange={(e) => authStore.setPassword(e.target.value)}
         fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <TextField
         variant="outlined"
         label="Confirm Password"
-        type="password"
+        type={showPassword ? "text" : "password"}
         value={authStore.confirmPassword}
         onChange={(e) => authStore.setConfirmPassword(e.target.value)}
         fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <Button
         variant="contained"

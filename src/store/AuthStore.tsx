@@ -116,6 +116,30 @@ class AuthStore {
       return;
     }
 
+    const lengthTest = /^.{8,}$/;
+
+    if (!lengthTest.test(authStore.password)) {
+      authStore.setAlert({
+        open: true,
+        message:
+          "Password must be at least 8 characters long",
+        type: "error",
+      });
+      return;
+    }
+
+    const caseTest = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.!@#$%^&*]).{8,}$/;
+
+    if (!caseTest.test(authStore.password)) {
+      authStore.setAlert({
+        open: true,
+        message:
+          "Password must contain at least one uppercase and lowercase letter, a special character and a number",
+        type: "error",
+      });
+      return;
+    }
+
     try {
       const result = await createUserWithEmailAndPassword(auth, this.email, this.password);
       authStore.initializeUser(100000, this.email.replace(/\@.*/,''), this.email, '')
@@ -126,7 +150,7 @@ class AuthStore {
       });
 
       this.handleClose();
-    } catch (error: unknown) {
+    } catch (error) {
       authStore.setAlert({
         open: true,
         message: (error as { message: string }).message,
@@ -150,12 +174,11 @@ class AuthStore {
       const result = await signInWithEmailAndPassword(auth, this.email, this.password);
       authStore.setAlert({
         open: true,
-        message: `Sign Up Successful. Welcome ${result.user.email}`,
+        message: `Sign In Successful. Welcome ${result.user.email}`,
         type: "success",
       });
       console.log(alert);
 
-      this.handleClose();
     } catch (error: unknown) {
       authStore.setAlert({
         open: true,
@@ -185,7 +208,7 @@ class AuthStore {
         
         this.setAlert({
           open: true,
-          message: `Sign Up Successful. Welcome ${res.user.email}`,
+          message: `Sign In Successful. Welcome ${res.user.email}`,
           type: "success",
         });
         
@@ -341,6 +364,23 @@ class AuthStore {
   }
 
   async setUpdateName(updatedName: string) {
+    // if (updatedName.trim() === "") {
+    //   authStore.setAlert({
+    //     open: true,
+    //     message: "Pas",
+    //     type: "error",
+    //   });
+    //   return;
+    // }
+  
+    if (updatedName.length < 3 || updatedName.length > 15) {
+      authStore.setAlert({
+        open: true,
+        message: "Display name should be between 3 to 15 characters",
+        type: "error",
+      });
+      return;
+    }
     this.user = {...this.user, ...{displayName: updatedName}};
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       displayName: updatedName,
@@ -366,7 +406,9 @@ class AuthStore {
   }
 
   getUserNetWorth = async () => {
-    const querySnapshot = await getDoc(doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"));
+    if(auth.currentUser){
+      const querySnapshot = await getDoc(doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"));
+  
     const data = querySnapshot.data() 
     if (!querySnapshot.exists()) {
         const initialTradeSummary = {
@@ -377,15 +419,10 @@ class AuthStore {
         };
         await setDoc(doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"), initialTradeSummary);
       }
-      // querySnapshot.forEach((doc) => {
-      //   const { totalProfit, totalLoss, netWorth } = doc.data();
-        // if (auth.currentUser && auth.currentUser.uid === doc.id) {
           this.setTotalAmountWon(data?.totalProfit);
           this.setTotalAmountLost(data?.totalLoss);
           this.setUserNetWorth(data?.netWorth);
-        // }
-      // }
-    // );
+    }
   }
 }
 

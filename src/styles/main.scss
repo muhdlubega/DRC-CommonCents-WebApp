@@ -647,19 +647,51 @@ cursor: pointer;
 // .livedata-chart{
 //   height: 2vw
 // }
-.news-search{
-  margin: 3vw;
+// .news-search{
+//   margin: 3vw;
+//   width: 97%;
+// }
+
+// .news-searchbox{
+//   width: 90%;
+//   margin-right: 1vw;
+//   height: 3vw;
+//   border-radius: 0.5vw;
+//   padding: 1vw;
+//   border: 0.2vw solid #3366ff;
+// }
+
+.news-search {
+  margin: 6vw;
   width: 97%;
 }
 
-.news-searchbox{
+.news-searchbox {
   width: 90%;
-  margin-right: 1vw;
   height: 3vw;
-  border-radius: 0.5vw;
   padding: 1vw;
-  border: 0.2vw solid #3366ff;
+  font-size: 16px;
+  border-radius: 1vw;
+    border: 0.2vw solid #3366ff;
+  transition: width 0.5s ease;
 }
+
+.news-search.focused {
+  width: 100%;
+  transition: width 0.5s ease;
+}
+
+// .news-searchbox:focus {
+//   outline: none;
+// }
+
+// .news-search .iconsax-search-normal-1 {
+//   cursor: pointer;
+// }
+
+// .news-search.focused .iconsax-search-normal-1 {
+//   visibility: hidden;
+// }
 
 .carousel-button {
   position: absolute;
@@ -732,10 +764,12 @@ cursor: pointer;
 }
 
 .news-carousel {
-  display: flex;
-  align-items: center;
-  padding: 40px;
-  max-width: 100%;
+  // display: flex;
+  // align-items: center;
+  // padding: 40px;
+  // max-width: 100%;
+
+  // margin-top: 80px;
 
   div {
     background-size: cover;
@@ -751,14 +785,19 @@ cursor: pointer;
   }
 
   span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
     position: absolute;
     width: 24vw;
     height: 12vw;
     border-radius: 1vw;
     color: white;
     font-family: 'Montserrat';
+    font-size: 1vw;
     padding: 1vw;
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
   }
 
   ul {
@@ -1238,7 +1277,7 @@ cursor: pointer;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  width: 520px;
+  width: 720px;
   height: 350px;
   background-color: #fff;
   border-radius: 30px;
