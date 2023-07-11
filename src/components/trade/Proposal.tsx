@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../styles/main.scss";
-import { addDoc, collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { Box, Typography } from "@mui/material";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
@@ -115,13 +121,11 @@ const Proposal = observer(() => {
   };
 
   authStore.getUserNetWorth();
-  // console.log(authStore.getUserNetWorth);
 
   const handleSell = async (isHigher: boolean) => {
     setIsProcessing(true);
     let balance = 0;
     var status = null;
-    
 
     const balanceSnapshot = await getDocs(collection(db, "users"));
     balanceSnapshot.forEach((doc) => {
@@ -134,7 +138,6 @@ const Proposal = observer(() => {
 
     const currentBalance = balance;
 
-
     const payoutValue = parseFloat(proposalStore.payout.toString());
     const askPrice =
       proposalStore.proposalData[proposalStore.proposalData.length - 1]
@@ -143,15 +146,16 @@ const Proposal = observer(() => {
     console.log("payout/stake", payoutValue);
     console.log("balance", currentBalance);
 
-    console.log('voice of no return', apiStore.proposalTicks);
+    console.log("voice of no return", apiStore.proposalTicks);
 
     const previousSpot = apiStore.isTicks
-      ? apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1].quote
-      : apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1].close;
+      ? apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1]
+          .quote
+      : apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1]
+          .close;
     const currentSpot = apiStore.isTicks
       ? apiStore.proposalTicks[apiStore.proposalTicks.length - 1].quote
       : apiStore.proposalTicks[apiStore.proposalTicks.length - 1].close;
-      
 
     console.log("prev", previousSpot);
     console.log("next", currentSpot);
@@ -176,7 +180,7 @@ const Proposal = observer(() => {
               message: `Spot is higher! You won USD ${additionalAmount}!`,
               type: "success",
             });
-            status = 'Win';
+            status = "Win";
             apiStore.setSellSuccessful(true);
             apiStore.setAdditionalAmount(additionalAmount);
             authStore.setTotalAmountWon(
@@ -189,7 +193,7 @@ const Proposal = observer(() => {
               message: `Spot is not higher. You lost USD ${askPrice} :(`,
               type: "error",
             });
-            status = 'Lose';
+            status = "Lose";
             apiStore.setSellFailed(true);
             apiStore.setDeductedAmount(askPrice);
             authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
@@ -204,7 +208,7 @@ const Proposal = observer(() => {
               message: `Spot is lower! You won USD ${additionalAmount}!`,
               type: "success",
             });
-            status = 'Win';
+            status = "Win";
             apiStore.setSellSuccessful(true);
             apiStore.setAdditionalAmount(additionalAmount);
             authStore.setTotalAmountWon(
@@ -217,7 +221,7 @@ const Proposal = observer(() => {
               message: `Spot is not lower. You lost USD ${askPrice} :(`,
               type: "error",
             });
-            status = 'Lose';
+            status = "Lose";
             apiStore.setSellFailed(true);
             apiStore.setDeductedAmount(askPrice);
             authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
@@ -244,22 +248,8 @@ const Proposal = observer(() => {
         status,
         basis,
         marketType,
-        timestamp
+        timestamp,
       };
-
-    //   const tradeSummaryRef = doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary");
-
-    // const tradeSummaryDoc = await getDoc(tradeSummaryRef);
-    // if (!tradeSummaryDoc.exists()) {
-    //   const initialTradeSummary = {
-    //     totalProfit: 0,
-    //     totalLoss: 0,
-    //     netWorth: 0,
-    //     timestamp: Date.now()
-    //   };
-    //   await setDoc(tradeSummaryRef, initialTradeSummary);
-    // }
-
       const totalProfit = authStore.totalAmountWon;
       const totalLoss = authStore.totalAmountLost;
       const netWorth = totalProfit - totalLoss;
@@ -267,8 +257,8 @@ const Proposal = observer(() => {
         totalProfit,
         totalLoss,
         netWorth,
-        timestamp
-      }
+        timestamp,
+      };
       console.log("dd", tradeData);
 
       await addDoc(
@@ -335,8 +325,7 @@ const Proposal = observer(() => {
         .longcode;
   }
 
-  // console.log(authStore.totalAmountWon);
-  
+  console.log(authStore.totalAmountWon);
 
   return (
     <Box>
@@ -638,21 +627,21 @@ const Proposal = observer(() => {
           <Box>
             {authStore.totalAmountWon !== 0 && (
               <div>
-                {(apiStore.additionalAmount !== 0 && <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>)}
-                <div>
-                  Total Won:{" "}
-                  {authStore.totalAmountWon.toFixed(2)} USD
-                </div>
+                {apiStore.additionalAmount !== 0 && (
+                  <div>Won {apiStore.additionalAmount.toFixed(2)} USD</div>
+                )}
+                <div>Total Won: {Number(authStore.totalAmountWon).toFixed(2)} USD</div>
               </div>
             )}
           </Box>
           <Box>
             {authStore.totalAmountLost !== 0 && (
               <div>
-                {(apiStore.deductedAmount !== 0 && <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>)}
+                {apiStore.deductedAmount !== 0 && (
+                  <div>Lost {apiStore.deductedAmount.toFixed(2)} USD</div>
+                )}
                 <div>
-                  Total Lost:{" "}
-                  {authStore.totalAmountLost.toFixed(2)} USD
+                  Total Lost: {Number(authStore.totalAmountLost).toFixed(2)} USD
                 </div>
               </div>
             )}
