@@ -7,34 +7,13 @@ const connection = new WebSocket(
 );
 const api = new DerivAPIBasic({ connection });
 
-export const id_array = [
-  '1HZ10V',
-  '1HZ25V',
-  '1HZ50V',
-  '1HZ75V',
-  '1HZ100V',
-];
+export const id_array = ["1HZ10V", "1HZ25V", "1HZ50V", "1HZ75V", "1HZ100V"];
 
-export const id_volatility_index = [
-  'R_10',
-  'R_25',
-  'R_50',
-  'R_75',
-  'R_100',
-];
+export const id_volatility_index = ["R_10", "R_25", "R_50", "R_75", "R_100"];
 
-export const id_jump_index = [
-  'JD10',
-  'JD25',
-  'JD50',
-  'JD75',
-  'JD100',
-]
+export const id_jump_index = ["JD10", "JD25", "JD50", "JD75", "JD100"];
 
-export const id_bear_bull = [
-  'RDBEAR',
-  'RDBULL',
-]
+export const id_bear_bull = ["RDBEAR", "RDBULL"];
 
 interface Tick {
   epoch: EpochTimeStamp;
@@ -61,7 +40,7 @@ class ChartsStore {
   };
 
   constructor() {
-    makeObservable(this,{
+    makeObservable(this, {
       activeSymbols: observable,
       data: observable,
       symbols: observable,
@@ -117,17 +96,17 @@ class ChartsStore {
       this.setSelectedSymbol(id);
       this.subscribeTicksGroup();
     });
-  }
-    // const active_symbols_request = {
-    //   active_symbols: "brief",
-    //   product_type: "basic",
-    // };
-  
-    // connection?.addEventListener("message", this.handleActiveSymbolsResponse);
-    // await api.activeSymbols(active_symbols_request);
-  
-    // this.setActiveSymbols(this.symbols);
-    // this.setActiveSymbols(id_array);
+  };
+  // const active_symbols_request = {
+  //   active_symbols: "brief",
+  //   product_type: "basic",
+  // };
+
+  // connection?.addEventListener("message", this.handleActiveSymbolsResponse);
+  // await api.activeSymbols(active_symbols_request);
+
+  // this.setActiveSymbols(this.symbols);
+  // this.setActiveSymbols(id_array);
   // };
 
   setSelectedSymbol(symbol: string) {
@@ -175,14 +154,14 @@ class ChartsStore {
     // };
     this.ticks_history_request.ticks_history = this.selectedSymbol;
 
-  this.unsubscribeTicksGroup();
-  this.tickSubscriberGroup();
-  this.getTicksHistoryGroup();
-  connection.addEventListener('message', this.tickResponse);
+    this.unsubscribeTicksGroup();
+    this.tickSubscriberGroup();
+    this.getTicksHistoryGroup();
+    connection.addEventListener("message", this.tickResponse);
   };
 
   unsubscribeTicksGroup = () => {
-    connection.removeEventListener('message', this.tickResponse, false);
+    connection.removeEventListener("message", this.tickResponse, false);
     this.tickSubscriberGroup().unsubscribe();
   };
 
@@ -198,11 +177,10 @@ class ChartsStore {
     return ticksSubscriber;
   };
 
-
   ticksHistoryResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     // console.log(data.msg_type);
-    
+
     if (data.error !== undefined) {
       // runInAction(() => {
       console.log("Error : ", data.error.message);
@@ -211,15 +189,17 @@ class ChartsStore {
         this.ticksHistoryResponse,
         false
       );
-    // })
+      // })
       await api.disconnect();
     }
-    if (data.msg_type === 'history') {
+    if (data.msg_type === "history") {
       // runInAction(() => {
-      const historyTicks = data.history.prices.map((price: number, index: number) => ({
-        epoch: data.history.times[index],
-        quote: price,
-      }));
+      const historyTicks = data.history.prices.map(
+        (price: number, index: number) => ({
+          epoch: data.history.times[index],
+          quote: price,
+        })
+      );
 
       this.setTicks([...this.ticks, ...historyTicks]);
       // console.log(historyTicks)
@@ -229,14 +209,14 @@ class ChartsStore {
         this.ticksHistoryResponse,
         false
       );
-    // })
+      // })
     }
   };
 
   tickResponse = async (res: MessageEvent) => {
     const data = JSON.parse(res.data);
     // console.log(data.msg_type);
-    
+
     if (data.error !== undefined) {
       // runInAction(() => {
       console.log("Error: ", data.error.message);
@@ -253,8 +233,8 @@ class ChartsStore {
       };
       this.setTicks([...this.ticks, newTick]);
       // console.log(data);
-      
-    // })
+
+      // })
     }
   };
 

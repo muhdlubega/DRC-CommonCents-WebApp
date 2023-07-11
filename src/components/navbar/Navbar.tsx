@@ -8,7 +8,7 @@ import logo from '../../assets/images/commoncents-logo.png';
 // import { MoneyRecive, Book, Global, MessageQuestion } from "iconsax-react";
 import { ArrowRight2, HambergerMenu, Moon } from "iconsax-react";
 import { useState } from "react";
-import themeStore from "../../store/ThemeStore";
+import themeStore, { themes } from "../../store/ThemeStore";
 
 const Header = observer(() => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Header = observer(() => {
 
 
   return (
-    <AppBar position="static" sx={{backgroundColor: "white", color: "black", width: "100%"}}>
+    <AppBar position="static" sx={{backgroundColor: themeStore.mode === themes.light ? "white" : "black", color: themeStore.mode === themes.light ? "black" : "white", width: "100%", transition: "transition: all 0.8s ease-in"}}>
       <Toolbar className="navbar-container">
         <img src={logo} className="navbar-logo" onClick={() => navigate("/")}></img>
         <Typography

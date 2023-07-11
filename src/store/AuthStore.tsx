@@ -1,4 +1,11 @@
-import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile,
+} from "firebase/auth";
 import {
   collection,
   doc,
@@ -6,7 +13,7 @@ import {
   getDocs,
   getFirestore,
   setDoc,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
 import { auth, db } from "../firebase";
@@ -24,9 +31,9 @@ export interface User {
   email?: string | null;
   photoURL?: string | null | undefined;
   balance?: number | null | undefined;
-  totalProfit?: number  | null | undefined;
-  totalLoss?: number  | null | undefined;
-  netWorth?: number  | null | undefined;
+  totalProfit?: number | null | undefined;
+  totalLoss?: number | null | undefined;
+  netWorth?: number | null | undefined;
 }
 
 export interface Summary {
@@ -121,8 +128,7 @@ class AuthStore {
     if (!lengthTest.test(authStore.password)) {
       authStore.setAlert({
         open: true,
-        message:
-          "Password must be at least 8 characters long",
+        message: "Password must be at least 8 characters long",
         type: "error",
       });
       return;
@@ -141,8 +147,17 @@ class AuthStore {
     }
 
     try {
-      const result = await createUserWithEmailAndPassword(auth, this.email, this.password);
-      authStore.initializeUser(100000, this.email.replace(/\@.*/,''), this.email, '')
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        this.email,
+        this.password
+      );
+      authStore.initializeUser(
+        100000,
+        this.email.replace(/\@.*/, ""),
+        this.email,
+        ""
+      );
       authStore.setAlert({
         open: true,
         message: `Sign Up Successful. Welcome ${result.user.email}`,
@@ -171,14 +186,17 @@ class AuthStore {
     }
 
     try {
-      const result = await signInWithEmailAndPassword(auth, this.email, this.password);
+      const result = await signInWithEmailAndPassword(
+        auth,
+        this.email,
+        this.password
+      );
       authStore.setAlert({
         open: true,
         message: `Sign In Successful. Welcome ${result.user.email}`,
         type: "success",
       });
       console.log(alert);
-
     } catch (error: unknown) {
       authStore.setAlert({
         open: true,
@@ -189,46 +207,49 @@ class AuthStore {
     }
   };
 
-  setEmail(email: string){
+  setEmail(email: string) {
     this.email = email;
   }
 
-  setPassword(password: string){
+  setPassword(password: string) {
     this.password = password;
   }
 
-  setConfirmPassword(confirmPassword: string){
+  setConfirmPassword(confirmPassword: string) {
     this.confirmPassword = confirmPassword;
   }
 
   signInWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
-    .then(async (res) => {
-      var userExists:boolean = false;
-        
+      .then(async (res) => {
+        var userExists: boolean = false;
+
         this.setAlert({
           open: true,
           message: `Sign In Successful. Welcome ${res.user.email}`,
           type: "success",
         });
-        
+
         const querySnapshot = await getDocs(collection(db, "users"));
-          querySnapshot.forEach((doc) => {
-            if (doc.id === auth.currentUser!.uid) {
-              userExists = true;
-            }
+        querySnapshot.forEach((doc) => {
+          if (doc.id === auth.currentUser!.uid) {
+            userExists = true;
           }
-        );
+        });
 
         if (!userExists) {
-          this.initializeUser(100000, res.user.displayName as string, res.user.email as string, res.user.photoURL as string);
-        }
-        else {
+          this.initializeUser(
+            100000,
+            res.user.displayName as string,
+            res.user.email as string,
+            res.user.photoURL as string
+          );
+        } else {
           action(() => {
-            this.user = {...this.user};
-          })
+            this.user = { ...this.user };
+          });
         }
-        
+
         this.handleClose();
       })
       .catch((error) => {
@@ -248,7 +269,6 @@ class AuthStore {
   handleClose = () => {
     this.setOpen(false);
   };
-
 
   setCurrency(currency: string) {
     this.currency = currency;
@@ -294,7 +314,7 @@ class AuthStore {
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       const leaderboardData: User[] = [];
-  
+
       await Promise.all(
         querySnapshot.docs.map(async (user) => {
           const tradeSummaryRef = doc(
@@ -306,7 +326,7 @@ class AuthStore {
           );
           const tradeSummarySnapshot = await getDoc(tradeSummaryRef);
           const tradeSummary = tradeSummarySnapshot.data() as Summary;
-  
+
           const { balance, displayName, email } = user.data();
           leaderboardData.push({
             displayName,
@@ -314,13 +334,13 @@ class AuthStore {
             balance,
             netWorth: tradeSummary?.netWorth || 0,
           });
-  
+
           if (auth.currentUser && auth.currentUser.uid === user.id) {
             this.user!.balance = balance || null;
           }
         })
       );
-  
+
       action(() => {
         this.leaderboard = leaderboardData.sort(
           (a, b) => (b.netWorth as number) - (a.netWorth as number)
@@ -337,27 +357,33 @@ class AuthStore {
     email: string,
     photoURL: string
   ) {
-      this.user!.balance = parseFloat(balance.toFixed(2));
-      this.user!.displayName = displayName;
-      this.user!.email = email;
-      this.user!.photoURL = photoURL;
-      await setDoc(doc(db, "users", auth.currentUser!.uid), {
-        balance: balance,
-        displayName: displayName,
-        email: email,
-        photoURL: photoURL,
-      });
+    this.user!.balance = parseFloat(balance.toFixed(2));
+    this.user!.displayName = displayName;
+    this.user!.email = email;
+    this.user!.photoURL = photoURL;
+    await setDoc(doc(db, "users", auth.currentUser!.uid), {
+      balance: balance,
+      displayName: displayName,
+      email: email,
+      photoURL: photoURL,
+    });
   }
 
   async setBalance(newBalance: number) {
-    this.user = {...this.user, ...{balance: parseFloat(newBalance.toFixed(2))}};
+    this.user = {
+      ...this.user,
+      ...{ balance: parseFloat(newBalance.toFixed(2)) },
+    };
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: newBalance,
     });
   }
 
   async setResetBalance(resetBalance: number) {
-    this.user = {...this.user, ...{balance: parseFloat(resetBalance.toFixed(2))}};
+    this.user = {
+      ...this.user,
+      ...{ balance: parseFloat(resetBalance.toFixed(2)) },
+    };
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: resetBalance,
     });
@@ -372,7 +398,7 @@ class AuthStore {
     //   });
     //   return;
     // }
-  
+
     if (updatedName.length < 3 || updatedName.length > 15) {
       authStore.setAlert({
         open: true,
@@ -381,17 +407,16 @@ class AuthStore {
       });
       return;
     }
-    this.user = {...this.user, ...{displayName: updatedName}};
+    this.user = { ...this.user, ...{ displayName: updatedName } };
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       displayName: updatedName,
     });
     if (auth.currentUser !== null) {
       updateProfile(auth.currentUser, {
-        displayName: updatedName
+        displayName: updatedName,
       });
     }
   }
-
 
   setTotalAmountWon(totalAmountWon: number) {
     this.totalAmountWon = totalAmountWon;
@@ -406,24 +431,35 @@ class AuthStore {
   }
 
   getUserNetWorth = async () => {
-    if(auth.currentUser){
-      const querySnapshot = await getDoc(doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"));
-  
-    const data = querySnapshot.data() 
-    if (!querySnapshot.exists()) {
+    if (auth.currentUser) {
+      const querySnapshot = await getDoc(
+        doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary")
+      );
+
+      const data = querySnapshot.data();
+      if (!querySnapshot.exists()) {
         const initialTradeSummary = {
           totalProfit: 0,
           totalLoss: 0,
           netWorth: 0,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
-        await setDoc(doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"), initialTradeSummary);
+        await setDoc(
+          doc(
+            db,
+            "users",
+            auth.currentUser!.uid,
+            "tradeHistory",
+            "tradeSummary"
+          ),
+          initialTradeSummary
+        );
       }
-          this.setTotalAmountWon(data?.totalProfit);
-          this.setTotalAmountLost(data?.totalLoss);
-          this.setUserNetWorth(data?.netWorth);
+      this.setTotalAmountWon(data?.totalProfit);
+      this.setTotalAmountLost(data?.totalLoss);
+      this.setUserNetWorth(data?.netWorth);
     }
-  }
+  };
 }
 
 const authStore = new AuthStore();

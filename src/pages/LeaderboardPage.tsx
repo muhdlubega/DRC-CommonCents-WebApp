@@ -1,16 +1,18 @@
 import { Avatar, Box } from "@mui/material";
-// import ParticlesBackground from "../components/ParticlesBackground";
 import authStore from "../store/AuthStore";
 import watermark from "../assets/images/watermark.png"
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
 const LeaderboardPage = observer(() => {
-  // Sort the leaderboard in descending order based on user balance
+
+  useEffect(() => {
+    authStore.initializeLeaderboard();
+  },[])
   const sortedLeaderboard = authStore.leaderboard.slice().sort(
     (a, b) => (b.netWorth as number) - (a.netWorth as number)
   );
 
-  // Extract the top 3 users from the sorted leaderboard
   const topThreeUsers = sortedLeaderboard.slice(0, 3);
 
   return (

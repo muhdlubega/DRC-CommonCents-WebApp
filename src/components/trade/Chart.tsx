@@ -81,7 +81,7 @@ const Chart = observer(() => {
     } else {
     apiStore.toggleTicks(false);
     apiStore.setGranularity(newGranularity);
-    apiStore.subscribeTicks();
+    await apiStore.subscribeTicks();
     }
   };
 
@@ -152,6 +152,7 @@ const Chart = observer(() => {
       className="symbols-dropdown"
       value={apiStore.chartType}
       onChange={(e) => handleChartTypeChange(e.target.value)}
+      // disabled={apiStore.isTicks}
     >
       <MenuItem value="line" onClick={() => handleChartTypeChange("line")}>
         <Chart1 color="#0033ff" variant="Bulk" size={24} /> Line
@@ -165,7 +166,7 @@ const Chart = observer(() => {
     </Select>
       <Select
         className="symbols-dropdown" value={apiStore.isTicks ? 1 : apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
-      <MenuItem hidden={apiStore.chartType === "candlestick"} value={1} onClick={() => handleGranularityChange(1)}>Ticks
+      <MenuItem disabled={apiStore.chartType === "candlestick"} value={1} onClick={() => handleGranularityChange(1)}>Ticks
       </MenuItem>
       <MenuItem value={60} onClick={() => handleGranularityChange(60)}>Minutes
       </MenuItem>
