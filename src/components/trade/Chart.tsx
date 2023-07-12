@@ -7,9 +7,8 @@ import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import { InfoCircle, Chart1, Candle } from "iconsax-react";
 import onboarding from '../../assets/images/onboarding.png'
-
-
 import apiStore from "../../store/ApiStore";
+import themeStore from "../../store/ThemeStore";
 
 const Chart = observer(() => {
   const { id } = useParams();
@@ -56,18 +55,15 @@ const Chart = observer(() => {
                 .slice(-1000)
                 .map((tick) => [tick.epoch * 1000, apiStore.isTicks ? tick.quote : tick.close]),
         type: apiStore.chartType,
-        color: apiStore.chartType === "candlestick" ? "red" : apiStore.isTicks ? isHigherTicks ? 'green' : 'red' : isHigher ? 'green' : 'red',
-        upColor: "green",
+        color: apiStore.chartType === "candlestick" ? "#ff6961" : apiStore.isTicks ? isHigherTicks ? '#77DD77' : '#ff6961' : isHigher ? '#77DD77' : '#ff6961',
+        upColor: "#77DD77",
         lineWidth: 1,
         accessibility: {
           enabled: false,
         },
       },
     ],
-  };
-
-  // console.log(apiStore.ticks[apiStore.ticks.length - 1].close);
-  
+  };  
 
   const handleChartTypeChange = (newChartType: string) => {
     apiStore.toggleTicks(false);
@@ -85,11 +81,6 @@ const Chart = observer(() => {
     }
   };
 
-  // const handleTicksChange = async () => {
-  //   apiStore.toggleTicks(true);
-  //   await apiStore.subscribeTicks();
-  // };
-
   const handleSelect = (symbol: string) => {
     navigate(`/trade/${symbol}`);
   };
@@ -98,13 +89,10 @@ const Chart = observer(() => {
     apiStore.getActiveSymbols();
   }, []);
 
-  // console.log(apiStore.granularity);
-
   useEffect(() => {
     if (id) {
       apiStore.setSelectedSymbol(id);
     }
-    // apiStore.subscribeTicks();
 
     const fetchData = async () => {
       setIsLoading(true);
@@ -135,6 +123,7 @@ const Chart = observer(() => {
         className="symbols-dropdown"
         value={apiStore.selectedSymbol || ""}
         onChange={(e) => handleSelect(e.target.value)}
+        style={{backgroundColor: themeStore.darkMode  ? '#1c1c1c' : '#FFFFFF', color: themeStore.darkMode  ? '#FFFFFF' : '#000000'}}
       >
         {apiStore.activeSymbols.map(
           (symbol) =>
@@ -147,17 +136,18 @@ const Chart = observer(() => {
             )
         )}
       </Select>
-      <InfoCircle color="#0033ff" size={36} onClick={() => apiStore.setShowOnboarding(true)}  style={{marginLeft: "1vw", cursor: "pointer"}}/>
+      <InfoCircle color="#0033ff" size={36} onClick={() => apiStore.setShowOnboarding(true)}  style={{marginLeft: "10px", cursor: "pointer"}}/>
       <Select
       className="symbols-dropdown"
       value={apiStore.chartType}
       onChange={(e) => handleChartTypeChange(e.target.value)}
-      // disabled={apiStore.isTicks}
+      style={{backgroundColor: themeStore.darkMode  ? '#1c1c1c' : '#FFFFFF', color: themeStore.darkMode  ? '#FFFFFF' : '#000000'}}
     >
       <MenuItem value="line" onClick={() => handleChartTypeChange("line")}>
         <Chart1 color="#0033ff" variant="Bulk" size={24} /> Line
       </MenuItem>
       <MenuItem
+      disabled={apiStore.isTicks}
         value="candlestick"
         onClick={() => handleChartTypeChange("candlestick")}
       >
@@ -165,7 +155,8 @@ const Chart = observer(() => {
       </MenuItem>
     </Select>
       <Select
-        className="symbols-dropdown" value={apiStore.isTicks ? 1 : apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
+        className="symbols-dropdown"
+        style={{backgroundColor: themeStore.darkMode  ? '#1c1c1c' : '#FFFFFF', color: themeStore.darkMode  ? '#FFFFFF' : '#000000'}} value={apiStore.isTicks ? 1 : apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
       <MenuItem disabled={apiStore.chartType === "candlestick"} value={1} onClick={() => handleGranularityChange(1)}>Ticks
       </MenuItem>
       <MenuItem value={60} onClick={() => handleGranularityChange(60)}>Minutes

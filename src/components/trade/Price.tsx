@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Card } from '@mui/material'
 import apiStore from '../../store/ApiStore'
 import { observer } from 'mobx-react-lite';
 
@@ -21,10 +21,10 @@ const Price = () => {
   return (
     <div>
       <Box className="pricecandle-container">
-        <Box className="pricecandle-card">Close: <Box sx={{color: closeIsHigher ? 'green' : 'red'}}>{close.toFixed(4)}</Box></Box>
-        <Box className="pricecandle-card">High: <Box sx={{color: highIsHigher ? 'green' : 'red'}}>{high.toFixed(4)}</Box></Box>
-        <Box className="pricecandle-card">Open: <Box sx={{color: openIsHigher ? 'green' : 'red'}}>{open.toFixed(4)}</Box></Box>
-        <Box className="pricecandle-card">Low: <Box sx={{color: lowIsHigher ? 'green' : 'red'}}>{low.toFixed(4)}</Box></Box>
+        <Card className="price-card">Close: <Box sx={{color: closeIsHigher ? 'green' : 'red'}}>{close.toFixed(4)}</Box></Card>
+        <Card className="price-card">High: <Box sx={{color: highIsHigher ? 'green' : 'red'}}>{high.toFixed(4)}</Box></Card>
+        <Card className="price-card">Open: <Box sx={{color: openIsHigher ? 'green' : 'red'}}>{open.toFixed(4)}</Box></Card>
+        <Card className="price-card">Low: <Box sx={{color: lowIsHigher ? 'green' : 'red'}}>{low.toFixed(4)}</Box></Card>
       </Box>
     </div>
   )} else if (apiStore.isTicks && apiStore.ticks.length > 0){
@@ -36,7 +36,7 @@ const Price = () => {
   return (
     <div>
       <Box className="pricetick-container">
-        <Box className="pricetick-card">Spot Price: <Box sx={{color: spotIsHigher ? 'green' : 'red'}}>{spot.toFixed(4)}</Box></Box>
+        <Card className="price-card">Spot Price: <Box sx={{color: spotIsHigher ? 'green' : 'red'}}>{spot.toFixed(4)}</Box></Card>
       </Box>
     </div>
   )

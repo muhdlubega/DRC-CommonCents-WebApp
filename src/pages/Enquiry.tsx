@@ -1,6 +1,8 @@
 import { Button, Grid, TextField } from "@mui/material";
+// import themeStore from "../store/ThemeStore";
+import { observer } from "mobx-react-lite";
 
-const Enquiry = () => {
+const Enquiry = observer(() => {
   const handleSubmit = () => {
     const emailInput = document.getElementById("email") as HTMLInputElement;
     const enquiryInput = document.getElementById("enquiry") as HTMLInputElement;
@@ -61,7 +63,7 @@ const Enquiry = () => {
                   variant="contained"
                   size="large"
                   style={{
-                    backgroundColor: "#6699ff",
+                    backgroundColor: "#0033ff",
                     width: "100px",
                     height: "40px",
                     marginLeft: "60px",
@@ -77,6 +79,6 @@ const Enquiry = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Enquiry;

@@ -17,8 +17,14 @@ import {
 } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
 import { auth, db } from "../firebase";
+// import '../assets/images/market'
 
 const googleProvider = new GoogleAuthProvider();
+
+// const MarketSymbols = [
+// {'1HZ10V':'../assets/images/market/1HZ10V'},
+// {'1HZ25V':'../assets/images/market/1HZ25V'},
+// {'1HZ50V':'../assets/images/market/1HZ50V'}]
 
 export interface Alert {
   open: boolean;

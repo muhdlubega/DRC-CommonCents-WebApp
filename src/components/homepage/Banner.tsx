@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import '../../styles/main.scss'
-import trading from '../../assets/images/guytablet.png'
 import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
+import phone from '../../assets/images/phoneplaceholder.png'
+import themeStore from "../../store/ThemeStore";
 
 const Banner = () => {
   const animationControls = useAnimation();
@@ -13,16 +15,16 @@ const Banner = () => {
   }, [animationControls]);
 
   return (
-    <div className="banner-main">
+    <Box className="banner-main">
       <motion.div
         className="banner-text"
         initial={{ y: -50, opacity: 0 }}
         animate={animationControls}
       >
-        <div className="banner-container">
-          <motion.h2 className="banner-title">Trading,</motion.h2>
-          <motion.h2 className="banner-title">all in one place</motion.h2>
-          <motion.p className="banner-tagline">
+        <Box className="banner-container">
+          <motion.h2 className="banner-title" style={{ color: themeStore.darkMode  ? '#ffffff' : '#000000'}}>Trading,</motion.h2>
+          <motion.h2 className="banner-title" style={{ color: themeStore.darkMode  ? '#ffffff' : '#000000'}}>all in one place</motion.h2>
+          <motion.p className="banner-tagline" style={{ color: themeStore.darkMode  ? '#ffffff' : '#000000'}}>
             Join us and learn more about trading! It's CommonCents!
           </motion.p>
           <motion.button
@@ -31,17 +33,20 @@ const Banner = () => {
       >
         Create an Account
       </motion.button>
-        </div>
+        </Box>
       </motion.div>
-      <motion.div
+      {/* <Box sx={{flex: 1}}></Box> */}
+      <Box
         className="banner-img-container"
-        initial={{ y: -50, opacity: 0 }}
-        animate={animationControls}
+        // initial={{ y: -50, opacity: 0 }}
+        // animate={animationControls}
       >
-        <div className="banner-image-box"></div>
-        <motion.img className="banner-image" src={trading} alt="trading-image" />
-      </motion.div>
-    </div>
+        <motion.img
+        initial={{ y: -50, opacity: 0 }}
+        animate={animationControls} 
+        className="banner-image" src={phone} alt="trading-image" />
+      </Box>
+    </Box>
   );
 };
 

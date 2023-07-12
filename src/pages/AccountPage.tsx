@@ -119,6 +119,12 @@ const AccountPage = observer(() => {
   const handleUpdateName = () => {
     authStore.setUpdateName(updatedName);
     toggleDropdown();
+    authStore.setAlert({
+      open: true,
+      message:
+        "Display name updated!",
+      type: "success",
+    });
   };
 
   const getUserName = async () => {
@@ -175,6 +181,12 @@ const AccountPage = observer(() => {
       );
       await reauthenticateWithCredential(auth.currentUser!, credential);
       await updatePassword(auth.currentUser!, newPassword);
+      authStore.setAlert({
+        open: true,
+        message:
+          "Password successfully updated!",
+        type: "success",
+      });
       setIsConfirmationDialogOpen(false);
     } catch (error) {
       authStore.setAlert({
@@ -202,7 +214,7 @@ const AccountPage = observer(() => {
             width: "100%",
             fontSize: "1.2vw",
             textAlign: "center",
-            fontFamily: "Montserrat",
+            fontFamily: "Roboto",
             wordWrap: "break-word",
             margin: 0,
           }}
@@ -223,7 +235,7 @@ const AccountPage = observer(() => {
             width: "100%",
             fontSize: "1.2vw",
             textAlign: "center",
-            fontFamily: "Montserrat",
+            fontFamily: "Roboto",
             wordWrap: "break-word",
             margin: 0,
           }}
@@ -235,7 +247,7 @@ const AccountPage = observer(() => {
             width: "100%",
             fontSize: "1vw",
             textAlign: "center",
-            fontFamily: "Montserrat",
+            fontFamily: "Roboto",
             wordWrap: "break-word",
             margin: 0,
           }}
