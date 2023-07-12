@@ -1,16 +1,27 @@
 import { collection, addDoc, deleteDoc, doc } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
-import { Avatar, IconButton, Typography, Card, CardContent, Box, TextField, Button } from "@mui/material";
-import { Heart, Star, Trash } from "iconsax-react";
+import {
+  Avatar,
+  IconButton,
+  Typography,
+  Card,
+  CardContent,
+  Box,
+  TextField,
+  Button,
+  useTheme,
+} from "@mui/material";
+import { ArrowRight2, Star, Trash } from "iconsax-react";
 import forumStore, { Post } from "../store/ForumStore";
 import { useEffect } from "react";
 import { auth, db } from "../firebase";
 import authStore from "../store/AuthStore";
 import { useNavigate } from "react-router";
 import CommentSection from "../components/forum/CommentSection";
-import '../styles/main.scss'
+import "../styles/main.scss";
 
 const ForumPage = observer(() => {
+  const theme = useTheme();
   const navigate = useNavigate();
   useEffect(() => {
     forumStore.initializePosts();
@@ -34,7 +45,7 @@ const ForumPage = observer(() => {
         author: auth.currentUser?.displayName,
         authorImage: auth.currentUser?.photoURL,
         timestamp: Date.now(),
-        comments: []
+        comments: [],
       });
 
       const post: Post = {
@@ -43,7 +54,7 @@ const ForumPage = observer(() => {
         author: auth.currentUser?.displayName!,
         authorImage: auth.currentUser?.photoURL!,
         timestamp: Date.now(),
-        comments: []
+        comments: [],
       };
       forumStore.setPosts([...forumStore.posts, post]);
 
@@ -61,7 +72,9 @@ const ForumPage = observer(() => {
   const handleDelete = async (postId: string) => {
     try {
       await deleteDoc(doc(db, "posts", postId));
-      const updatedPosts = forumStore.posts.filter((post) => post.id !== postId);
+      const updatedPosts = forumStore.posts.filter(
+        (post) => post.id !== postId
+      );
       forumStore.setPosts(updatedPosts);
     } catch (error) {
       authStore.setAlert({
@@ -87,69 +100,115 @@ const ForumPage = observer(() => {
     }
   };
 
-  const sortedPosts = forumStore.posts.slice().sort((a, b) => b.timestamp - a.timestamp);
+  const sortedPosts = forumStore.posts
+    .slice()
+    .sort((a, b) => b.timestamp - a.timestamp);
 
   return (
-    <div style={{ display: 'flex' }}>
-
-{authStore.user && (
-  <Box style={{ flex: 1 }}>
-    <Card style={{ margin: '2vw 0 1vw 2vw', border: '0.1vw solid black', borderRadius: '1vw' }}>
-      <CardContent>
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            width: "100%",
-            fontSize: "1.2vw",
-            textAlign: "center",
-            fontFamily: "Roboto",
-            wordWrap: "break-word",
-            margin: "1vw",
-          }}
-        >
-          <Avatar
-            className="account-picture"
-            src={auth.currentUser?.photoURL || ""}
-            alt={auth.currentUser?.displayName || ""}
-            sx={{ margin: "0.4vw", width: '5vw', height: '5vw' }}
-          />
-          {auth.currentUser?.displayName}
+    <div style={{ display: "flex" }}>
+      {authStore.user && (
+        <Box style={{ flex: 1 }}>
+          <Card
+            style={{
+              margin: "2vw 0 1vw 2vw",
+              border: "0.1vw solid black",
+              borderRadius: "1vw",
+            }}
+          >
+            <CardContent>
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  width: "100%",
+                  // fontSize: "1.2vw",
+                  textAlign: "center",
+                  fontFamily: "Roboto",
+                  // wordWrap: "break-word",
+                  margin: "10px",
+                }}
+              >
+                <Avatar
+                  className="account-picture"
+                  src={auth.currentUser?.photoURL || ""}
+                  alt={auth.currentUser?.displayName || ""}
+                  sx={{ width: "60px", height: "60px" }}
+                />
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-start",
+                    alignItems: "flex-start",
+                    marginLeft: "10px",
+                  }}
+                >
+                  <Typography variant="h6"
+                    style={{
+                      color: theme.palette.text.primary,
+                    }}>
+                  {auth.currentUser?.displayName}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      cursor: "pointer",
+                      color: theme.palette.text.secondary,
+                    }}
+                    onClick={() => navigate("/favourites")}
+                  >
+                    Check Favourites
+                    <ArrowRight2 size={16} style={{ margin: "0 5px" }} />
+                  </Typography>
+                </Box>
+              </Box>
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  type="textarea"
+                  inputProps={{ maxLength: 3000 }}
+                  label="Title"
+                  value={forumStore.title}
+                  onChange={(e) => forumStore.setTitle(e.target.value)}
+                  sx={{ my: "1vw", width: "100%" }}
+                />
+                <TextField
+                  multiline
+                  inputProps={{ maxLength: 3000 }}
+                  label="Details"
+                  value={forumStore.details}
+                  onChange={(e) => forumStore.setDetails(e.target.value)}
+                  sx={{ my: "1vw", width: "100%" }}
+                />
+                {forumStore.errorMessage && (
+                  <Typography style={{ color: "red" }}>
+                    {forumStore.errorMessage}
+                  </Typography>
+                )}
+                <Button
+                  type="submit"
+                  sx={{ backgroundColor: "blue", color: "white", px: "3vw" }}
+                >
+                  Post
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </Box>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            type="text"
-            placeholder="Title"
-            value={forumStore.title}
-            onChange={(e) => forumStore.setTitle(e.target.value)}
-            sx={{my: '1vw', width: '100%', backgroundColor: '#F5F5F5'}}
-          />
-          <TextField
-            multiline
-            inputProps={{ maxLength: 3000 }}
-            placeholder="Details"
-            value={forumStore.details}
-            onChange={(e) => forumStore.setDetails(e.target.value)}
-            sx={{my: '1vw', width: '100%', backgroundColor: '#F5F5F5'}}
-          />
-          {forumStore.errorMessage && <Typography style={{ color: 'red' }}>{forumStore.errorMessage}</Typography>}
-          <Button type="submit" sx={{backgroundColor: 'blue', color: 'white', px: '3vw'}}>Post</Button>
-        </form>
-        <Typography variant="h6" className="sidebar-item" onClick={() => navigate("/favourites")}>
-          <Heart size={16} style={{ marginLeft: '0.5vw' }} />
-          Favourites
-        </Typography>
-      </CardContent>
-    </Card>
-  </Box>
-)}
+      )}
 
       <Box style={{ flex: 3 }}>
         {sortedPosts.map((post) => (
-          <Card key={post.timestamp} style={{ margin: '2vw', border: '0.1vw solid black', borderRadius: '1vw' }}>
+          <Card
+            key={post.timestamp}
+            style={{
+              margin: "2vw",
+              border: "0.1vw solid black",
+              borderRadius: "1vw",
+            }}
+          >
             <CardContent>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <Avatar
                   className="sidebar-picture"
                   src={post.authorImage!}
@@ -161,16 +220,22 @@ const ForumPage = observer(() => {
                   </IconButton>
                 )}
                 <IconButton onClick={() => forumStore.handleFavorite(post.id!)}>
-                  <Star
-                    color={post.isFavorite ? "yellow" : "gray"}
-                  />
+                  <Star color={post.isFavorite ? "yellow" : "gray"} />
                 </IconButton>
               </div>
-              <Typography variant="h6" component="h3">{post.title}</Typography>
-              <Typography variant="body1" component="p">{post.details}</Typography>
-              <Typography variant="body2" component="p">Author: {post.author}</Typography>
-              <Typography variant="body2" component="p">{formatTimestamp(post.timestamp)}</Typography>
-              <CommentSection postId={post.id!}/>
+              <Typography variant="h6" component="h3">
+                {post.title}
+              </Typography>
+              <Typography variant="body1" component="p">
+                {post.details}
+              </Typography>
+              <Typography variant="body2" component="p">
+                Author: {post.author}
+              </Typography>
+              <Typography variant="body2" component="p">
+                {formatTimestamp(post.timestamp)}
+              </Typography>
+              <CommentSection postId={post.id!} />
             </CardContent>
           </Card>
         ))}

@@ -12,6 +12,7 @@ import {
   DialogContentText,
   DialogTitle,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
@@ -23,10 +24,10 @@ import { LogoutCurve, ArrowRight2 } from "iconsax-react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { MarketName, MarketSymbols, Trade } from "../../pages/TradeHistoryPage";
-import themeStore from "../../store/ThemeStore";
 
 const UserSidebar = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [state, setState] = useState({
     right: false,
     resetConfirmationOpen: false,
@@ -152,7 +153,7 @@ const UserSidebar = () => {
         />
       </Box>
       <Drawer anchor="right" open={state.right} onClose={toggleDrawer(false)}>
-        <div  style={{backgroundColor: themeStore.darkMode  ? '#000000' : '#ffffff', color: themeStore.darkMode  ? '#ffffff' : '#000000' }} className="sidebar-container">
+        <div  style={{backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }} className="sidebar-container">
           <div className="sidebar-profile">
             <Avatar
               className="sidebar-picture"
@@ -276,7 +277,7 @@ const UserSidebar = () => {
                        ? trade.additionalAmount
                        : `-${trade.askPrice}`}{" "}
                      USD */}
-                  <Card onClick={() => navigate('/trade-history')} style={{cursor: 'pointer', height: '80px', width: '100%', margin: '10px 0', padding: '0 auto', border: '1px solid #000000', borderRadius: '10px', backgroundColor: themeStore.darkMode  ? '#C6C6C6' : '#FFFFFF'}}>
+                  <Card onClick={() => navigate('/trade-history')} style={{cursor: 'pointer', height: '80px', width: '100%', margin: '10px 0', padding: '0 auto', border: '1px solid #000000', borderRadius: '10px', backgroundColor: theme.palette.mode === "dark"  ? '#C6C6C6' : '#FFFFFF'}}>
             <CardContent style={{padding: '8px'}}>
             <span style={{display: 'flex', justifyContent: 'center'}}><img
           src={MarketSymbols[trade.marketType]}
@@ -293,7 +294,7 @@ const UserSidebar = () => {
                   </div>
                 ))}
             </div>
-          ): <Card onClick={() => navigate('/trade-history')} style={{cursor: 'pointer', height: '85px', width: '100%', margin: '10px 0', padding: '0 auto', border: '1px solid #000000', borderRadius: '10px', backgroundColor: themeStore.darkMode  ? '#C6C6C6' : '#FFFFFF'}}>
+          ): <Card onClick={() => navigate('/trade-history')} style={{cursor: 'pointer', height: '85px', width: '100%', margin: '10px 0', padding: '0 auto', border: '1px solid #000000', borderRadius: '10px', backgroundColor: theme.palette.background.default, color: theme.palette.text.primary}}>
           <CardContent style={{padding: '5px 10px'}}>
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <Clock size={50} style={{ margin: "10px", color: 'gray' }} />
@@ -313,7 +314,7 @@ const UserSidebar = () => {
                 backgroundColor: "#6699ff",
                 borderRadius: "10px",
                 marginBottom: "10px",
-                width: "100%",
+                width: "100%", color: 'white'
               }}
             >
               Reset Balance
@@ -323,7 +324,7 @@ const UserSidebar = () => {
               variant="contained"
               className="sidebar-logout"
               onClick={logOut}
-              style={{ backgroundColor: "#0033ff", borderRadius: "10px" }}
+              style={{ backgroundColor: "#0033ff", borderRadius: "10px", color: 'white' }}
             >
               <LogoutCurve color="white" style={{ marginRight: "20px" }} />
               Log Out

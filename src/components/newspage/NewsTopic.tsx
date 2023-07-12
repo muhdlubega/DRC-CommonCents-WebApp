@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Button, IconButton, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
 import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -15,6 +15,7 @@ const NewsTopic = observer(() => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const articlesPerPage = 20;
   const [searchTerm, setSearchTerm] = useState("");
+  const theme = useTheme();
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     // setIsSearchFocused(true);
@@ -135,20 +136,22 @@ const NewsTopic = observer(() => {
   return (
     <Box>
       <Box className={`news-search ${isSearchFocused ? "focused" : ""}`}>
-        <input
-          type="text"
-          value={searchTerm}
-          onClick={() => setIsSearchFocused(true)}
-          onChange={handleSearch}
-          placeholder="Search articles..."
-          className="news-searchbox"
-        />
-        <SearchNormal1
-          color="#3366ff"
-          size={40}
-          style={{ marginLeft: "1vw", visibility: isSearchFocused ? "hidden" : "visible" }}
-        />
-      </Box>
+    <TextField
+      type="text"
+      value={searchTerm}
+      onClick={() => setIsSearchFocused(true)}
+      onChange={handleSearch}
+      placeholder="Search articles..."
+      className="news-searchbox"
+    />
+    <IconButton
+      color="primary"
+      onClick={() => setIsSearchFocused(true)}
+      style={{ marginLeft: "1vw", visibility: isSearchFocused ? "hidden" : "visible" }}
+    >
+      <SearchNormal1 />
+    </IconButton>
+  </Box>
       {/* <Box
         sx={{
           display: "flex",
@@ -242,11 +245,11 @@ const NewsTopic = observer(() => {
                     />
                   </Box>
                   <Box className="news-textbox">
-                    <Typography variant="h5">{article?.title}</Typography>
-                    <Typography variant="h6" sx={{ color: "black" }}>
+                    <Typography variant="h5" style={{ color: theme.palette.text.primary }}>{article?.title}</Typography>
+                    <Typography variant="h6" style={{ color: theme.palette.text.secondary }}>
                       {article?.summary}
                     </Typography>
-                    <Typography variant="body1" sx={{ color: "black" }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
                       Author(s):{" "}
                       {article.authors.map((author, index) => (
                         <span key={index}>
@@ -255,7 +258,7 @@ const NewsTopic = observer(() => {
                         </span>
                       ))}
                     </Typography>
-                    <Typography variant="body1" sx={{ color: "black" }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
                       Topic(s):{" "}
                       {article.topics.map((topic, index) => (
                         <span key={index}>
@@ -264,10 +267,10 @@ const NewsTopic = observer(() => {
                         </span>
                       ))}
                     </Typography>
-                    <Typography variant="body1" sx={{ color: "black" }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
                       {article?.source} - {article?.source_domain}
                     </Typography>
-                    <Typography variant="body1" sx={{ color: "black" }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
                       {dateTime.toLocaleString()}
                     </Typography>
                   </Box>

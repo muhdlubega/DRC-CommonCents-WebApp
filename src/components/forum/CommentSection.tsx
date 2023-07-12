@@ -99,13 +99,13 @@ const CommentSection = observer(({postId}: { postId: string }) => {
           <TextField
             multiline
             inputProps={{ maxLength: 3000 }}
-            placeholder="Leave a comment.."
+            label="Leave a comment.."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            sx={{my: '1vw', width: '100%', backgroundColor: '#F5F5F5'}}
+            sx={{my: '1vw', width: '100%'}}
           />
           {forumStore.errorMessage && <Typography style={{ color: 'red' }}>{forumStore.errorMessage}</Typography>}
-          <Button type="submit" sx={{backgroundColor: 'blue', color: 'white', px: '3vw'}}>Post</Button>
+          <Button type="submit" sx={{backgroundColor: '#3366ff', color: 'white', px: '3vw'}}>Comment</Button>
         </form>
   </Box>
 )}
