@@ -212,6 +212,8 @@ class ForumStore {
           );
           this.markAsFavorite(postId);
         } catch (error) {
+          console.log(error);
+          
           authStore.setAlert({
             open: true,
             message: "Unable to add to favorites. Try again later",

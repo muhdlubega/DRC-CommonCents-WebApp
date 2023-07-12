@@ -5,14 +5,19 @@ import forumStore, { Comment } from "../../store/ForumStore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase";
 import authStore from "../../store/AuthStore";
-import { Trash } from "iconsax-react";
+import { ArrowDown2, Trash } from "iconsax-react";
 
 const CommentSection = observer(({postId}: { postId: string }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   useEffect(() => {
     forumStore.initializeComments(postId);
-  }, [forumStore.comments]);
+  }, [isDropdownOpen]);
 
   const [content, setContent] = useState(""); 
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,7 +109,14 @@ const CommentSection = observer(({postId}: { postId: string }) => {
         </form>
   </Box>
 )}
-      <Box>
+<div className="sidebar-leaderboard">
+        <h6 onClick={toggleDropdown}>
+          Comments 
+            <ArrowDown2 size={16} style={{ marginLeft: "0.5vw" }} />
+          {isDropdownOpen ? (
+            <Box>
+              {/* <ArrowUp2 size={16} style={{ marginLeft: "0.5vw" }} /> */}
+              <Box>
         {sortedComments.map((comment) => (
           <Card key={comment.timestamp} style={{ margin: '2vw', border: '0.1vw solid black', borderRadius: '1vw' }}>
             <CardContent>
@@ -127,6 +139,16 @@ const CommentSection = observer(({postId}: { postId: string }) => {
           </Card>
         ))}
       </Box>
+              </Box>
+          ) : (
+            <Box></Box>
+          )}
+        </h6>
+        {/* <Modal open={isDropdownOpen} onClose={toggleDropdown}>
+          
+        </Modal> */}
+      </div>
+      
     </div>
   );
 });
