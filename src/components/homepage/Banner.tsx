@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import '../../styles/main.scss'
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import phone from '../../assets/images/phoneplaceholder.png'
-import themeStore from "../../store/ThemeStore";
 
 const Banner = () => {
   const animationControls = useAnimation();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => {
     animationControls.start({ y: 0, opacity: 1, transition: { duration: 2 } });
@@ -22,9 +22,9 @@ const Banner = () => {
         animate={animationControls}
       >
         <Box className="banner-container">
-          <motion.h2 className="banner-title" style={{ color: themeStore.darkMode  ? '#ffffff' : '#000000'}}>Trading,</motion.h2>
-          <motion.h2 className="banner-title" style={{ color: themeStore.darkMode  ? '#ffffff' : '#000000'}}>all in one place</motion.h2>
-          <motion.p className="banner-tagline" style={{ color: themeStore.darkMode  ? '#ffffff' : '#000000'}}>
+          <motion.h2 className="banner-title" style={{ color: theme.palette.text.primary }}>Trading,</motion.h2>
+          <motion.h2 className="banner-title" style={{ color: theme.palette.text.primary }}>all in one place</motion.h2>
+          <motion.p className="banner-tagline" style={{ color: theme.palette.text.primary }}>
             Join us and learn more about trading! It's CommonCents!
           </motion.p>
           <motion.button

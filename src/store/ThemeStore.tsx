@@ -1,3 +1,18 @@
+
+import { createTheme } from '@mui/material/styles';
+
+export const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+  },
+});
+
+export const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
 import { action, makeObservable, observable } from "mobx";
 export const themes = {
   light: "light",
@@ -33,3 +48,5 @@ export class ThemeStore {
 const themeStore = new ThemeStore();
 
 export default themeStore;
+
+

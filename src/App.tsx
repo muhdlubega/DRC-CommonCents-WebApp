@@ -7,6 +7,8 @@ import "./styles/main.scss";
 import { observer } from "mobx-react-lite";
 import authStore from "./store/AuthStore";
 import loading from "./assets/images/loading.gif";
+import { lightTheme, darkTheme, themes } from "./store/ThemeStore";
+import { ThemeProvider } from "@mui/material/styles";
 
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 const LazyTradePage = lazy(() => import("./pages/TradePage"));
@@ -27,7 +29,10 @@ interface AppProps {
 }
 
 function App({ themeStore }: AppProps) {
+  const theme = themeStore.mode === themes.dark ? darkTheme : lightTheme;
+
   return (
+    <ThemeProvider theme={theme}>
     <div className={themeStore?.mode}>
       <BrowserRouter>
         <Navbar />
@@ -46,7 +51,7 @@ function App({ themeStore }: AppProps) {
                   >
                     <img
                       src={loading}
-                      style={{ height: "20%", width: "20%" }}
+                      style={{ height: "50%", width: "50%" }}
                     ></img>
                   </div>
                 }
@@ -397,6 +402,7 @@ function App({ themeStore }: AppProps) {
         <Alert />
       </BrowserRouter>
     </div>
+    </ThemeProvider>
   );
 }
 

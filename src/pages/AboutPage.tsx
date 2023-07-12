@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import member1 from "../assets/images/bega.jpeg";
 import member2 from "../assets/images/cass.jpeg";
@@ -19,30 +19,30 @@ const AboutPage = () => {
         {/* <Box className="backgroundCircleTopLeft"></Box> */}
         {/* <Box className="backgroundCircleBottomRight"></Box> */}
         <Box className="about-us">
-          <Typography variant="h2">Meet our Team</Typography>
+          <Typography variant="h4" style={{fontFamily: 'Roboto'}}>Meet our Team</Typography>
           <Box className="row">
             <Box className="column">
-              <Box className="card" style={{}}>
+              <Card className="card" style={{borderRadius: '25px'}}>
                 <img src={member1} alt="Bega" />
                 <Box className="container">
                   <Typography variant="h2">Muhammad Lubega</Typography>
                   <Typography className="title">Front-End Developer</Typography>
                   <Typography> "Quotes"</Typography>
                 </Box>
-              </Box>
+              </Card>
             </Box>
             <Box className="column">
-              <Box className="card">
+              <Card className="card" style={{borderRadius: '25px'}}>
                 <img src={member2} alt="CassJ" />
                 <Box className="container">
                   <Typography variant="h2">Cassandra Jacklya</Typography>
                   <Typography className="title">Product Designer</Typography>
                   <Typography> "Quotes"</Typography>
                 </Box>
-              </Box>
+              </Card>
             </Box>
             <Box className="column">
-              <Box className="card">
+              <Card className="card" style={{borderRadius: '25px'}}>
                 <img
                   src={member3}
                   alt="Vino"
@@ -53,17 +53,17 @@ const AboutPage = () => {
                   <Typography className="title">Quality Assurance</Typography>
                   <Typography> "Quotes"</Typography>
                 </Box>
-              </Box>
+              </Card>
             </Box>
             <Box className="column">
-              <Box className="card">
+              <Card className="card" style={{borderRadius: '25px'}}>
                 <img src={member4} alt="Bentley" />
                 <Box className="container">
                   <Typography variant="h2">Bentley Teh</Typography>
                   <Typography className="title">Mobile Developer</Typography>
                   <Typography> "Quotes"</Typography>
                 </Box>
-              </Box>
+              </Card>
             </Box>
           </Box>
         </Box>

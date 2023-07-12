@@ -1,4 +1,4 @@
-import { Avatar, Box } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import authStore from "../store/AuthStore";
 import watermark from "../assets/images/watermark.png"
 import { observer } from "mobx-react-lite";
@@ -34,7 +34,8 @@ const LeaderboardPage = observer(() => {
         </ol>
       </Box>
       <Box className="leaderboard-list">
-        <h3>Full Leaderboard</h3>
+        <Typography variant="h6" sx={{fontFamily: 'Roboto', 
+    borderBottom: '1px solid #888', margin: '20px'}}>Full Leaderboard</Typography>
         <ol>
           {sortedLeaderboard.filter((user) => user.netWorth !== 0).map((user, index) => (
             <li key={index}>

@@ -21,6 +21,7 @@ import jumpfour from '../assets/images/market/JD_75.svg';
 import jumpfive from '../assets/images/market/JD_100.svg';
 import bear from '../assets/images/market/RDBEAR.svg';
 import bull from '../assets/images/market/RDBULL.svg';
+import { Clock } from "iconsax-react";
 
 export interface Trade {
   strategy: string;
@@ -197,7 +198,10 @@ const TradeHistoryPage = observer(() => {
     </Modal>
     </Box>
       ): (
-        <p>No trade history available. Start trading now!</p>
+      <Box style={{height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '60px'}}>
+        <Clock size={300}/>
+        <Typography variant="h6" style={{margin: '15px'}}>No trade history available. Start trading now!</Typography>
+        </Box>
       )}
       </Box>
   );

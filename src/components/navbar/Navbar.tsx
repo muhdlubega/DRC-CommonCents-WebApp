@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { AppBar, Typography, Box, Drawer } from "@mui/material";
+import { AppBar, Typography, Box, Drawer, useTheme } from "@mui/material";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
 import AuthStore from "../../store/AuthStore";
@@ -13,6 +13,7 @@ import themeStore, { themes } from "../../store/ThemeStore";
 
 const Header = observer(() => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [state, setState] = useState({
     right: false,
   });
@@ -48,12 +49,12 @@ const MaterialUISwitch = styled(Switch)(() => ({
       },
       '& + .MuiSwitch-track': {
         opacity: 1,
-        backgroundColor: themeStore.mode === themes.light  ? '#000000' : '#ffffff',
+        backgroundColor: theme.palette.background.default,
       },
     },
   },
   '& .MuiSwitch-thumb': {
-    backgroundColor: themeStore.mode === themes.light  ? '#3366ff' : '#0e34cc',
+    backgroundColor: '#0033ff',
     width: 32,
     height: 32,
     '&:before': {
@@ -80,7 +81,7 @@ const MaterialUISwitch = styled(Switch)(() => ({
 
 
   return (
-    <AppBar position="static" className="navbar-container" sx={{backgroundColor: themeStore.mode === themes.light ? "white" : "black", color: themeStore.mode === themes.light ? "black" : "white", width: "100%"}}>
+    <AppBar position="static" className="navbar-container" sx={{backgroundColor: theme.palette.background.default, color: theme.palette.text.primary, width: "100%"}}>
       {/* <Toolbar className="navbar-container"> */}
 
       <Box className="navbar-main">
