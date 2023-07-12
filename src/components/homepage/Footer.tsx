@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
         <Grid container spacing={2}>
           <Grid item md={6} lg={3} className="ft-1">
             <a href="/">
-              <img src={Image1} alt="Image Button" />
+              <img style={{height:'80%', width:'80%'}} src={Image1} alt="Image Button" />
             </a>
           </Grid>
 

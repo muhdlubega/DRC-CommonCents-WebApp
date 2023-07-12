@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { Box, MenuItem, Select, Skeleton } from "@mui/material";
+import { Box, MenuItem, Select, Skeleton, useTheme } from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import { InfoCircle, Chart1, Candle } from "iconsax-react";
 import onboarding from '../../assets/images/onboarding.png'
 import apiStore from "../../store/ApiStore";
-import themeStore from "../../store/ThemeStore";
+// import themeStore from "../../store/ThemeStore";
 
 const Chart = observer(() => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const theme = useTheme();
 
   AccessibilityModule(Highcharts);
 
@@ -35,9 +36,35 @@ const Chart = observer(() => {
     rangeSelector: {
       enabled: false,
     },
+    xAxis: {
+      labels: {
+        style: {
+          color: theme.palette.text.secondary,
+        },
+      },
+    },
+    yAxis: {
+      opposite: false,
+      labels: {
+        style: {
+          color: theme.palette.text.secondary,
+        },
+      },
+    },
+    plotOptions: {
+      candlestick: {
+        color: theme.palette.primary.main,
+        upColor: theme.palette.success.main,
+        lineColor: theme.palette.secondary.main,
+        upLineColor: theme.palette.success.main,
+      },
+    },
     chart: {
       height: `${(9 / 16) * 100}%`,
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
+    style: {
+      fontFamily: theme.typography.fontFamily,
+    },
     },
     series: [
       {
@@ -54,10 +81,10 @@ const Chart = observer(() => {
             : apiStore.ticks
                 .slice(-1000)
                 .map((tick) => [tick.epoch * 1000, apiStore.isTicks ? tick.quote : tick.close]),
-        type: apiStore.chartType,
-        color: apiStore.chartType === "candlestick" ? "#ff6961" : apiStore.isTicks ? isHigherTicks ? '#77DD77' : '#ff6961' : isHigher ? '#77DD77' : '#ff6961',
-        upColor: "#77DD77",
-        lineWidth: 1,
+                type: apiStore.chartType,
+                color: apiStore.chartType === "candlestick" ? theme.palette.error.main : apiStore.isTicks ? isHigherTicks ? theme.palette.success.main : theme.palette.error.main : isHigher ? theme.palette.success.main : theme.palette.error.main,
+        upColor: theme.palette.success.main,
+                lineWidth: 1,
         accessibility: {
           enabled: false,
         },
@@ -123,7 +150,7 @@ const Chart = observer(() => {
         className="symbols-dropdown"
         value={apiStore.selectedSymbol || ""}
         onChange={(e) => handleSelect(e.target.value)}
-        style={{backgroundColor: themeStore.darkMode  ? '#1c1c1c' : '#FFFFFF', color: themeStore.darkMode  ? '#FFFFFF' : '#000000'}}
+        style={{backgroundColor: theme.palette.background.default, color: theme.palette.text.primary}}
       >
         {apiStore.activeSymbols.map(
           (symbol) =>
@@ -141,7 +168,7 @@ const Chart = observer(() => {
       className="symbols-dropdown"
       value={apiStore.chartType}
       onChange={(e) => handleChartTypeChange(e.target.value)}
-      style={{backgroundColor: themeStore.darkMode  ? '#1c1c1c' : '#FFFFFF', color: themeStore.darkMode  ? '#FFFFFF' : '#000000'}}
+      style={{backgroundColor: theme.palette.background.default, color: theme.palette.text.primary}}
     >
       <MenuItem value="line" onClick={() => handleChartTypeChange("line")}>
         <Chart1 color="#0033ff" variant="Bulk" size={24} /> Line
@@ -156,7 +183,7 @@ const Chart = observer(() => {
     </Select>
       <Select
         className="symbols-dropdown"
-        style={{backgroundColor: themeStore.darkMode  ? '#1c1c1c' : '#FFFFFF', color: themeStore.darkMode  ? '#FFFFFF' : '#000000'}} value={apiStore.isTicks ? 1 : apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
+        style={{backgroundColor: theme.palette.background.default, color: theme.palette.text.primary}} value={apiStore.isTicks ? 1 : apiStore.granularity} onChange={(e) => handleGranularityChange(e.target.value as number)}>
       <MenuItem disabled={apiStore.chartType === "candlestick"} value={1} onClick={() => handleGranularityChange(1)}>Ticks
       </MenuItem>
       <MenuItem value={60} onClick={() => handleGranularityChange(60)}>Minutes

@@ -8,7 +8,7 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Button, Card, Slider, TextField, Typography, useTheme } from "@mui/material";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
@@ -25,6 +25,7 @@ const Proposal = observer(() => {
   const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const [isSecondQuoteOpen, setIsSecondQuoteOpen] = useState(false);
+  const theme = useTheme();
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -44,11 +45,11 @@ const Proposal = observer(() => {
     setIsSecondQuoteOpen((prevState) => !prevState);
   };
 
-  const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newDuration = parseInt(event.target.id, 10);
+  const handleDurationChange = (_event: Event, value: number | number[]) => {
+    const newDuration = value as number;
     proposalStore.setDuration(newDuration);
   };
-
+  
   const handlePayoutChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newPayout = parseFloat(event.target.value);
     proposalStore.setPayout(newPayout);
@@ -336,179 +337,94 @@ const Proposal = observer(() => {
               Ticks:{" "}
             </Typography>
             <Box className="duration-change-slider">
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="1"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="1">
-                1
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="2"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="2">
-                2
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="3"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="3">
-                3
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="4"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="4">
-                4
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="5"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-                defaultChecked
-              />
-              <label className="duration-change-label" htmlFor="5">
-                5
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="6"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="6">
-                6
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="7"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="7">
-                7
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="8"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="8">
-                8
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="9"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="9">
-                9
-              </label>
-              <input
-                required
-                type="radio"
-                name="duration-change"
-                className="duration-change-btn"
-                id="10"
-                value={proposalStore.duration}
-                onChange={handleDurationChange}
-              />
-              <label className="duration-change-label" htmlFor="10">
-                10
-              </label>
-            </Box>
+    <Slider
+      name="duration-change"
+      value={proposalStore.duration}
+      onChange={handleDurationChange}
+      defaultValue={5}
+      marks
+      min={1}
+      max={10}
+      step={1}
+      sx={{
+        "& .MuiSlider-thumb": {
+          width: 26,
+          height: 26,
+          backgroundColor: "blue",
+          border: theme.palette.mode === "dark" ? "5px solid white" : "5px solid #C5C5C5",
+          marginTop: -6,
+          marginLeft: -8,
+          transform: 'translate(210%,140%)',
+          "&:hover, &:active, &.Mui-focusVisible": {
+            boxShadow: "none",
+          },
+        },
+        "& .MuiSlider-mark": {
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          marginTop: -3,
+          transform: 'translateY(260%)',
+          backgroundColor: theme.palette.mode === "dark" ? 'white' : '#C5C5C5',
+        },
+      }}
+    />
+  </Box>
           </Box>
           <Box className="proposal-btn-group">
-            <button
+            <Button
               style={{
                 backgroundColor:
-                  proposalStore.basis === "payout" ? "blue" : "white",
+                  proposalStore.basis === "payout" ? "blue" : theme.palette.background.default,
                 color: proposalStore.basis === "payout" ? "white" : "blue",
               }}
               className="proposal-options"
               onClick={() => proposalStore.setBasis("payout")}
             >
               Payout
-            </button>
-            <button
+            </Button>
+            <Button
               style={{
                 backgroundColor:
-                  proposalStore.basis === "stake" ? "blue" : "white",
+                  proposalStore.basis === "stake" ? "blue" : theme.palette.background.default,
                 color: proposalStore.basis === "stake" ? "white" : "blue",
               }}
               className="proposal-options"
               onClick={() => proposalStore.setBasis("stake")}
             >
               Stake
-            </button>
+            </Button>
           </Box>
           <Box className="proposal-input-container">
-            <button
-              className="proposal-input-btn left"
-              onClick={decrementPayout}
-              disabled={proposalStore.payout <= 0.99}
-            >
-              -
-            </button>
-            <input
-              type="number"
-              value={proposalStore.payout}
-              onChange={handlePayoutChange}
-              min="1.00"
-              max="500.00"
-              step="0.01"
-              disabled={apiStore.ticks.length < 0}
-              className="proposal-input-field"
-            />
-            <button
-              className="proposal-input-btn right"
-              onClick={incrementPayout}
-              disabled={proposalStore.payout >= 500.01}
-            >
-              +
-            </button>
-          </Box>
+    <Button
+      variant="outlined"
+      className="proposal-input-btn left"
+      onClick={decrementPayout}
+      disabled={proposalStore.payout <= 0.99}
+    >
+      -
+    </Button>
+    <TextField
+      type="number"
+      value={proposalStore.payout}
+      onChange={handlePayoutChange}
+      inputProps={{
+        min: "1.00",
+        max: "500.00",
+        step: "0.01",
+      }}
+      disabled={apiStore.ticks.length < 0}
+      className="proposal-input-field"
+    />
+    <Button
+      variant="outlined"
+      className="proposal-input-btn right"
+      onClick={incrementPayout}
+      disabled={proposalStore.payout >= 500.01}
+    >
+      +
+    </Button>
+  </Box>
           <Typography
             sx={{
               marginRight: "1vw",
@@ -653,9 +569,11 @@ const Proposal = observer(() => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            flexDirection: 'column',
+            height: '500px'
           }}
         >
-          Login to start trading
+          <Typography variant="body1">Login to start trading</Typography>
         </Box>
       )}
     </Box>

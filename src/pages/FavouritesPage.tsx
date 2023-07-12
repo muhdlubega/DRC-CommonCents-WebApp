@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
-import { Avatar } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import forumStore from "../store/ForumStore";
 import { useEffect } from "react";
 import { auth } from "../firebase";
+import { Clock } from "iconsax-react";
 
 const FavoritesPage = observer(() => {
 
@@ -30,7 +31,8 @@ const FavoritesPage = observer(() => {
 
   return (
     <div>
-      <h2>Favorite Posts</h2>
+      <Typography variant="h6" sx={{fontFamily: 'Roboto', 
+    borderBottom: '1px solid #888', margin: '20px'}}>Favorite Posts</Typography>
       {forumStore.userFavourites.length > 0 ? (
         forumStore.userFavourites.map((post) => (
           <div key={post.id}>
@@ -51,7 +53,10 @@ const FavoritesPage = observer(() => {
           </div>
         ))
       ) : (
-        <p>No favorite posts yet.</p>
+        <Box style={{height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '60px'}}>
+        <Clock size={300}/>
+        <Typography variant="h6" style={{margin: '15px'}}>No favourite posts yet. Check out our forum page</Typography>
+        </Box>
       )}
     </div>
   );
