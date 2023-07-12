@@ -22,7 +22,7 @@ const AboutPage = () => {
           <Typography variant="h2">Meet our Team</Typography>
           <Box className="row">
             <Box className="column">
-              <Box className="card">
+              <Box className="card" style={{}}>
                 <img src={member1} alt="Bega" />
                 <Box className="container">
                   <Typography variant="h2">Muhammad Lubega</Typography>

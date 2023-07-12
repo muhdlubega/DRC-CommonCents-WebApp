@@ -17,10 +17,10 @@ class ApiStore {
   granularity: number = 60;
   activeSymbols: any[] = [];
   data: unknown = null;
-  chartType: string = "candlestick";
+  chartType: string = "line";
   isDurationEnded: boolean = false;
   showOnboarding: boolean = false;
-  isTicks: boolean = false;
+  isTicks: boolean = true;
   selectedSymbol: string = "1HZ10V";
   ticks: Tick[] = [];
   proposalTicks: Tick[] = [];

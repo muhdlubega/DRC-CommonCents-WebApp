@@ -8,7 +8,7 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { Box, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
@@ -180,7 +180,7 @@ const Proposal = observer(() => {
               message: `Spot is higher! You won USD ${additionalAmount}!`,
               type: "success",
             });
-            status = "Win";
+            status = "Won";
             apiStore.setSellSuccessful(true);
             apiStore.setAdditionalAmount(additionalAmount);
             authStore.setTotalAmountWon(
@@ -193,7 +193,7 @@ const Proposal = observer(() => {
               message: `Spot is not higher. You lost USD ${askPrice} :(`,
               type: "error",
             });
-            status = "Lose";
+            status = "Lost";
             apiStore.setSellFailed(true);
             apiStore.setDeductedAmount(askPrice);
             authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
@@ -208,7 +208,7 @@ const Proposal = observer(() => {
               message: `Spot is lower! You won USD ${additionalAmount}!`,
               type: "success",
             });
-            status = "Win";
+            status = "Won";
             apiStore.setSellSuccessful(true);
             apiStore.setAdditionalAmount(additionalAmount);
             authStore.setTotalAmountWon(
@@ -221,7 +221,7 @@ const Proposal = observer(() => {
               message: `Spot is not lower. You lost USD ${askPrice} :(`,
               type: "error",
             });
-            status = "Lose";
+            status = "Lost";
             apiStore.setSellFailed(true);
             apiStore.setDeductedAmount(askPrice);
             authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
@@ -330,9 +330,9 @@ const Proposal = observer(() => {
   return (
     <Box>
       {AuthStore.user ? (
-        <Box>
+        <Box style={{margin: '10px'}}>
           <Box className="proposal-ticks">
-            <Typography sx={{ marginRight: "1vw", fontFamily: "Montserrat" }}>
+            <Typography sx={{ marginRight: "1vw", fontFamily: "Roboto" }}>
               Ticks:{" "}
             </Typography>
             <Box className="duration-change-slider">
@@ -513,7 +513,7 @@ const Proposal = observer(() => {
             sx={{
               marginRight: "1vw",
               fontSize: "1vw",
-              fontFamily: "Montserrat",
+              fontFamily: "Roboto",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -563,7 +563,7 @@ const Proposal = observer(() => {
                 sx={{
                   marginLeft: "12vw",
                   fontSize: "1vw",
-                  fontFamily: "Montserrat",
+                  fontFamily: "Roboto",
                 }}
               >
                 {proposalStore.basis === "stake"
@@ -612,7 +612,7 @@ const Proposal = observer(() => {
                 sx={{
                   marginLeft: "12vw",
                   fontSize: "1vw",
-                  fontFamily: "Montserrat",
+                  fontFamily: "Roboto",
                 }}
               >
                 {proposalStore.basis === "stake"
@@ -624,7 +624,7 @@ const Proposal = observer(() => {
               <Box>{longcode.replace("higher", "lower")}</Box>
             )}
           </Box>
-          <Box>
+          <Card style={{margin: '10px', padding: '10px'}}>
             {authStore.totalAmountWon !== 0 && (
               <div>
                 {apiStore.additionalAmount !== 0 && (
@@ -633,8 +633,8 @@ const Proposal = observer(() => {
                 <div>Total Won: {Number(authStore.totalAmountWon).toFixed(2)} USD</div>
               </div>
             )}
-          </Box>
-          <Box>
+          </Card>
+          <Card style={{margin: '10px', padding: '10px'}}>
             {authStore.totalAmountLost !== 0 && (
               <div>
                 {apiStore.deductedAmount !== 0 && (
@@ -645,7 +645,7 @@ const Proposal = observer(() => {
                 </div>
               </div>
             )}
-          </Box>
+          </Card>
         </Box>
       ) : (
         <Box

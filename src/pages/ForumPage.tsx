@@ -104,7 +104,7 @@ const ForumPage = observer(() => {
             width: "100%",
             fontSize: "1.2vw",
             textAlign: "center",
-            fontFamily: "Montserrat",
+            fontFamily: "Roboto",
             wordWrap: "break-word",
             margin: "1vw",
           }}

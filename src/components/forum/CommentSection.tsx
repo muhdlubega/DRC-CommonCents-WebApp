@@ -115,7 +115,6 @@ const CommentSection = observer(({postId}: { postId: string }) => {
             <ArrowDown2 size={16} style={{ marginLeft: "0.5vw" }} />
           {isDropdownOpen ? (
             <Box>
-              {/* <ArrowUp2 size={16} style={{ marginLeft: "0.5vw" }} /> */}
               <Box>
         {sortedComments.map((comment) => (
           <Card key={comment.timestamp} style={{ margin: '2vw', border: '0.1vw solid black', borderRadius: '1vw' }}>
@@ -144,9 +143,6 @@ const CommentSection = observer(({postId}: { postId: string }) => {
             <Box></Box>
           )}
         </h6>
-        {/* <Modal open={isDropdownOpen} onClose={toggleDropdown}>
-          
-        </Modal> */}
       </div>
       
     </div>
