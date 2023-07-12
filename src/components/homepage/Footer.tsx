@@ -5,7 +5,7 @@ import Image1 from "../../assets/images/google-ps.png";
 import SocialMedia1 from "../../assets/images/facebook.png";
 import SocialMedia2 from "../../assets/images/ig.png";
 import SocialMedia3 from "../../assets/images/twitter.png";
-import { ArrowUp2 } from "iconsax-react";
+import { ArrowCircleUp } from "iconsax-react";
 
 const Footer: React.FC = () => {
   const handleScrollToTop = () => {
@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            padding: "0.9vw 0.1vw",
+            padding: "1px",
             borderRadius: "50%",
             backgroundColor: "grey",
             color: "white",
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
           }}
           onClick={handleScrollToTop}
         >
-          <ArrowUp2 />
+          <ArrowCircleUp size={60} />
         </Button>
       </Box>
       <Box className="footer-container">
