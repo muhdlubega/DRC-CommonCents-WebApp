@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Box, Button, IconButton, InputAdornment, TextField, useTheme } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 // import { useState } from "react";
 // import { useGlobalState } from "../../store/Context";
@@ -17,6 +17,7 @@ const Signup = observer((
   {} : SignupProps
   ) => {
     const [showPassword, setShowPassword] = useState(false);
+    const theme = useTheme();
 
   return (
     <Box
@@ -24,7 +25,7 @@ const Signup = observer((
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: "20px",
+        gap: "20px",backgroundColor: theme.palette.background.default, color: theme.palette.text.primary
       }}
     >
       <TextField

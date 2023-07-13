@@ -27,7 +27,7 @@ export const TradeType = [
     image: photo4
    },
    {
-    title: "Crytocurrency Trading",
+    title: "Cryptocurrency Trading",
     Description : "A buying and sellling digital currencies to make a profit from the changing th value of the underlying asset by either buying cryptocurrency at the current market rate and profit by selling at a higher price or trade crytocurrencies as CFDs where you trade on the price movements",
     image: photo5
    },

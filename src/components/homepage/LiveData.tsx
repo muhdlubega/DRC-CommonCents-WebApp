@@ -1,16 +1,18 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { Box, Button } from "@mui/material";
+import { Box, Button, useTheme } from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
 // import AliceCarousel from 'react-alice-carousel';
 import "react-alice-carousel/lib/alice-carousel.css";
 import chartsStore from "../../store/ChartsStore";
+import { MarketName } from "../../pages/TradeHistoryPage";
 
 const LiveData = observer(() => {
   // const carouselRef = useRef<AliceCarousel>(null);
+  const theme = useTheme();
 
   useEffect(() => {
     AccessibilityModule(Highcharts);
@@ -43,6 +45,9 @@ const LiveData = observer(() => {
     return {
       chart: {
         backgroundColor: 'transparent',
+        style: {
+          fontFamily: theme.typography.fontFamily,
+        },
       },
       series: [
         {
@@ -51,12 +56,15 @@ const LiveData = observer(() => {
             .slice(-10)
             .map((tick) => [tick.epoch * 1000, tick.quote]),
           type: "line",
-          color: isHigher ? "green" : "red",
+          color: isHigher ? theme.palette.success.main : theme.palette.error.main,
           lineWidth: 5,
         },
       ],
       title: {
-        text: id,
+        text: MarketName[id],
+        style: {
+          color: theme.palette.text.primary,
+        },
       },
       time: {
         useUTC: false,
@@ -90,6 +98,11 @@ const LiveData = observer(() => {
         },
         gridLineWidth: 0,
       },
+      legend: { // Add this legend object
+        itemStyle: {
+          color: theme.palette.text.secondary
+        },
+      },
       latestQuote,
       previousQuote,
     };
@@ -105,13 +118,12 @@ const LiveData = observer(() => {
           }
           onClick={() => chartsStore.setMarketType("volatility1s")}
           sx={{
-            mx: 1,
-            paddingY: "1vw",
-            border: "0.2vw solid #3366ff",
-            borderRadius: "1vw",
-            width: "17vw",
+            mx: '10px',
+            paddingY: "16px",
+            borderRadius: "10px",
+            width: "325px",
             backgroundColor:
-              chartsStore.marketType === "volatility1s" ? "#3366ff" : "#ffffff",
+              chartsStore.marketType === "volatility1s" ? "#3366ff" : theme.palette.background.default,
           }}
         >
           Volatility Index (1s)
@@ -122,13 +134,12 @@ const LiveData = observer(() => {
           }
           onClick={() => chartsStore.setMarketType("volatility")}
           sx={{
-            mx: 1,
-            paddingY: "1vw",
-            border: "0.2vw solid #3366ff",
-            borderRadius: "1vw",
-            width: "17vw",
+            mx: '10px',
+            paddingY: "16px",
+            borderRadius: "10px",
+            width: "325px",
             backgroundColor:
-              chartsStore.marketType === "volatility" ? "#3366ff" : "#ffffff",
+              chartsStore.marketType === "volatility" ? "#3366ff" : theme.palette.background.default,
           }}
         >
           Volatility Index
@@ -139,13 +150,12 @@ const LiveData = observer(() => {
           }
           onClick={() => chartsStore.setMarketType("jump")}
           sx={{
-            mx: 1,
-            paddingY: "1vw",
-            border: "0.2vw solid #3366ff",
-            borderRadius: "1vw",
-            width: "17vw",
+            mx: '10px',
+            paddingY: "16px",
+            borderRadius: "10px",
+            width: "325px",
             backgroundColor:
-              chartsStore.marketType === "jump" ? "#3366ff" : "#ffffff",
+              chartsStore.marketType === "jump" ? "#3366ff" : theme.palette.background.default,
           }}
         >
           Jump Index
@@ -156,13 +166,12 @@ const LiveData = observer(() => {
           }
           onClick={() => chartsStore.setMarketType("bear_bull")}
           sx={{
-            mx: 1,
-            paddingY: "1vw",
-            border: "0.2vw solid #3366ff",
-            borderRadius: "1vw",
-            width: "17vw",
+            mx: '10px',
+            paddingY: "16px",
+            borderRadius: "10px",
+            width: "325px",
             backgroundColor:
-              chartsStore.marketType === "bear_bull" ? "#3366ff" : "#ffffff",
+              chartsStore.marketType === "bear_bull" ? "#3366ff" : theme.palette.background.default,
           }}
         >
           Bear/Bull Market
@@ -241,7 +250,7 @@ const LiveData = observer(() => {
                 width: "100%",
                 display: "flex",
                 justifyContent: "center",
-                color: data.latestQuote > data.previousQuote ? "green" : "red",
+                color: data.latestQuote > data.previousQuote ? theme.palette.success.main : theme.palette.error.main,
                 padding: "1vw",
                 fontWeight: "bold",
                 fontSize: "2vw",

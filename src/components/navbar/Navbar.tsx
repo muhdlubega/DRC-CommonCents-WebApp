@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { AppBar, Typography, Box, Drawer, useTheme } from "@mui/material";
+import { AppBar, Typography, Box, Drawer, useTheme, useMediaQuery } from "@mui/material";
 import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
 import AuthStore from "../../store/AuthStore";
@@ -78,6 +78,8 @@ const MaterialUISwitch = styled(Switch)(() => ({
   },
 }));
 
+const isScreenSmall = useMediaQuery('(max-width: 767px)');
+
 
 
   return (
@@ -118,12 +120,13 @@ const MaterialUISwitch = styled(Switch)(() => ({
           >
             About
           </Typography>
-      <MaterialUISwitch
+          {isScreenSmall ? null : (
+      <MaterialUISwitch className="navbar-switch"
           checked={themeStore.mode === themes.dark}
           onChange={themeStore.toggleMode}
           color="default"
-        />
-          <HambergerMenu className="hamberger-menu" color="#3366ff" size={26} onClick={toggleDrawer(true)}/> 
+        />)}
+          <HambergerMenu className="hamberger-menu" color="#0033ff" size={26} onClick={toggleDrawer(true)}/> 
           {AuthStore.user ? (
               <UserSidebar />
           ) : (
@@ -132,6 +135,11 @@ const MaterialUISwitch = styled(Switch)(() => ({
         </Box>
         <Drawer anchor="right" open={state.right} onClose={toggleDrawer(false)}>
         <Box className="sidebar-container">
+        <MaterialUISwitch 
+          checked={themeStore.mode === themes.dark}
+          onChange={themeStore.toggleMode}
+          color="default"
+        />
         <Typography className="sidebar-item" onClick={() => navigate("/trade/1HZ10V")}>Trade<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
           <Typography className="sidebar-item" onClick={() => navigate("/news")}>News<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
           <Typography className="sidebar-item" onClick={() => navigate("/forum")}>Forum<ArrowRight2 size={16} style={{marginLeft: '0.5vw'}}/></Typography>
