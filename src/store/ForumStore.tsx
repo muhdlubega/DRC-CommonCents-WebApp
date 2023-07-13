@@ -25,13 +25,14 @@ export interface Comment {
   postId: string;
   content: string;
   author?: string | null;
-  authorImage?: string | null;
+  authorImage?: string | "";
   timestamp: number;
 }
 
 class ForumStore {
   title: string = "";
   details: string = "";
+  isFavourite: boolean = false;
   content: string = "";
   posts: Post[] = [];
   comments: Comment[] = [];
@@ -86,6 +87,7 @@ class ForumStore {
   async initializePosts() {
     const querySnapshot = await getDocs(collection(db, "posts"));
     const updatedPosts: Post[] = [];
+    this.getUserFavourites();
     querySnapshot.forEach((doc) => {
       const { title, details, author, authorImage, timestamp, comments } = doc.data();
       const post: Post = {
@@ -98,6 +100,16 @@ class ForumStore {
         comments
       };
       updatedPosts.push(post);
+
+      updatedPosts.forEach(element => {
+        for (let i = 0; i < this.userFavourites.length; i++) {
+          if (this.userFavourites[i].id === element.id) {
+            console.log("this is working");
+            element.isFavorite = true;
+          }
+        }
+      });
+      
     });
 
     this.setPosts(updatedPosts);
@@ -205,12 +217,18 @@ class ForumStore {
             message: "Post added to favourites",
             type: "success",
           });
+
           post.isFavorite = true;
-          await setDoc(
-            doc(db, "users", auth.currentUser!.uid, "favorites", postId),
-            post
-          );
-          this.markAsFavorite(postId);
+          
+          if (auth.currentUser != null) {
+            let currentUser = auth.currentUser.uid;
+            await setDoc(
+              doc(db, "users", currentUser, "favorites", postId),
+              {'id': post.id, 'title': post.title, 'details': post.details, 'author': post.author, 'authorImage': post.authorImage,
+                'timestamp': post.timestamp, 'favourite':post.isFavorite}
+            );
+            this.markAsFavorite(postId);
+          }
         } catch (error) {
           console.log(error);
           
