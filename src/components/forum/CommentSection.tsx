@@ -12,12 +12,14 @@ const CommentSection = observer(({postId}: { postId: string }) => {
   useEffect(() => {
     forumStore.initializeComments(postId);
   }, [isDropdownOpen]);
-
+  
   const [content, setContent] = useState(""); 
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
+
+  let sortedComments = forumStore.comments.slice().sort((a, b) => b.timestamp - a.timestamp);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +90,7 @@ const CommentSection = observer(({postId}: { postId: string }) => {
     }
   };
 
-  const sortedComments = forumStore.comments.slice().sort((a, b) => b.timestamp - a.timestamp);
+  
 
   return (
     <div>
