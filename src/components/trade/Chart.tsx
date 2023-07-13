@@ -80,11 +80,28 @@ const Chart = observer(() => {
               }))
             : apiStore.ticks
                 .slice(-1000)
-                .map((tick) => [tick.epoch * 1000, apiStore.isTicks ? tick.quote : tick.close]),
+                .map((tick) =>({
+                  x: tick.epoch * 1000,
+                  y: apiStore.isTicks ? tick.quote : tick.close,
+                  open: Number(tick.open),
+                  high: Number(tick.high),
+                  low: Number(tick.low),
+                  close: Number(tick.close),
+                })),
                 type: apiStore.chartType,
                 color: apiStore.chartType === "candlestick" ? theme.palette.error.main : apiStore.isTicks ? isHigherTicks ? theme.palette.success.main : theme.palette.error.main : isHigher ? theme.palette.success.main : theme.palette.error.main,
         upColor: theme.palette.success.main,
-                lineWidth: 1,
+                lineWidth: 1.5,
+                tooltip: {
+                  pointFormat: apiStore.isTicks ? 
+                  '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>' +
+                  'Spot Price: <b>{point.y}</b><br/>':
+                    '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>' +
+                    'Open: <b>{point.open}</b><br/>' +
+                    'High: <b>{point.high}</b><br/>' +
+                    'Low: <b>{point.low}</b><br/>' +
+                    'Close: <b>{point.close}</b><br/>',
+                },
         accessibility: {
           enabled: false,
         },

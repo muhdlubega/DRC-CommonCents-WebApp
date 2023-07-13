@@ -5,23 +5,16 @@ import { Box, Button, useTheme } from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
-// import AliceCarousel from 'react-alice-carousel';
 import "react-alice-carousel/lib/alice-carousel.css";
 import chartsStore from "../../store/ChartsStore";
 import { MarketName } from "../../pages/TradeHistoryPage";
 
 const LiveData = observer(() => {
-  // const carouselRef = useRef<AliceCarousel>(null);
   const theme = useTheme();
 
   useEffect(() => {
     AccessibilityModule(Highcharts);
     chartsStore.setSymbolsArray();
-
-    // chartsStore.symbols.forEach((id) => {
-    //   chartsStore.setSelectedSymbol(id);
-    //   chartsStore.subscribeTicksGroup();
-    // });
 
     return () => {
       chartsStore.activeSymbols.forEach((id) => {
@@ -30,9 +23,6 @@ const LiveData = observer(() => {
       });
     };
   }, []);
-
-  // console.log(chartsStore.symbols);
-  // console.log(chartsStore.selectedSymbol);
 
   const chartData = chartsStore.symbols.map((id) => {
     const filteredTicks = chartsStore.ticks.filter(
@@ -98,7 +88,7 @@ const LiveData = observer(() => {
         },
         gridLineWidth: 0,
       },
-      legend: { // Add this legend object
+      legend: {
         itemStyle: {
           color: theme.palette.text.secondary
         },
@@ -111,7 +101,7 @@ const LiveData = observer(() => {
   return (
     <Box>
       <Box className="live-data-title">Synthetic Indices</Box>
-      <Box className="live-data-btngroup">
+      <Box className="live-data-btngroup" style={{ display: "grid", gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',gridGap: '20px'}}>
         <Button
           variant={
             chartsStore.marketType === "volatility1s" ? "contained" : "outlined"
@@ -121,7 +111,7 @@ const LiveData = observer(() => {
             mx: '10px',
             paddingY: "16px",
             borderRadius: "10px",
-            width: "325px",
+            height: "75px",
             backgroundColor:
               chartsStore.marketType === "volatility1s" ? "#3366ff" : theme.palette.background.default,
           }}
@@ -137,7 +127,7 @@ const LiveData = observer(() => {
             mx: '10px',
             paddingY: "16px",
             borderRadius: "10px",
-            width: "325px",
+            height: "75px",
             backgroundColor:
               chartsStore.marketType === "volatility" ? "#3366ff" : theme.palette.background.default,
           }}
@@ -153,7 +143,7 @@ const LiveData = observer(() => {
             mx: '10px',
             paddingY: "16px",
             borderRadius: "10px",
-            width: "325px",
+            height: "75px",
             backgroundColor:
               chartsStore.marketType === "jump" ? "#3366ff" : theme.palette.background.default,
           }}
@@ -169,84 +159,27 @@ const LiveData = observer(() => {
             mx: '10px',
             paddingY: "16px",
             borderRadius: "10px",
-            width: "325px",
+            height: "75px",
             backgroundColor:
               chartsStore.marketType === "bear_bull" ? "#3366ff" : theme.palette.background.default,
           }}
         >
           Bear/Bull Market
         </Button>
-        {/* <Button onClick={() => chartsStore.setMarketType("volatility1s")} style={{ width: '16vw', margin: '2vw', padding: '0.5vw' , borderRadius: '1vw', fontSize: '1vw', backgroundColor: '#3366ff', color: 'white'}} >
-            Volatility Index (1s)
-          </Button> */}
-        {/* <Button
-          onClick={() => chartsStore.setMarketType("volatility")}
-          style={{
-            width: "16vw",
-            margin: "2vw",
-            padding: "0.5vw",
-            borderRadius: "1vw",
-            fontSize: "1vw",
-            backgroundColor: "#3366ff",
-            color: "white",
-          }}
-        >
-          Volatility Index
-        </Button>
-        <Button
-          onClick={() => chartsStore.setMarketType("jump")}
-          style={{
-            width: "16vw",
-            margin: "2vw",
-            padding: "0.5vw",
-            borderRadius: "1vw",
-            fontSize: "1vw",
-            backgroundColor: "#3366ff",
-            color: "white",
-          }}
-        >
-          Jump Index
-        </Button>
-        <Button
-          onClick={() => chartsStore.setMarketType("bear_bull")}
-          style={{
-            width: "16vw",
-            margin: "2vw",
-            padding: "0.5vw",
-            borderRadius: "1vw",
-            fontSize: "1vw",
-            backgroundColor: "#3366ff",
-            color: "white",
-          }}
-        >
-          Bear/Bull Market
-        </Button> */}
       </Box>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <Box style={{ display: "grid", gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))'}}>
         {chartData.map((data, index) => (
+          <Box style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '10px'}}>
           <Link
-            style={{ transform: "scale(0.75)" }}
+            style={{ transform: "scale(0.8)", width: "240px" }} className="livedata-link"
             to={`/trade/${data.series[0].name}`}
             key={index}
           >
-            <div style={{ width: "14vw", margin: "0.4vw" }}> 
-              <HighchartsReact highcharts={Highcharts} options={data} />
-            </div>
+            <Box> 
+              <HighchartsReact highcharts={Highcharts} options={data}/>
+            </Box>
             <Box
-              // sx={{
-              //   backgroundColor:
-              //     data.latestQuote > data.previousQuote ? "green" : "red",
-              //   width: "100%",
-              //   display: "flex",
-              //   justifyContent: "center",
-              //   color: "white",
-              //   padding: "1vw",
-              //   fontWeight: "bold",
-              //   fontSize: "2vw",
-              //   borderRadius: "1vw",
-              // }}
               sx={{
-                // Remove backgroundColor property
                 width: "100%",
                 display: "flex",
                 justifyContent: "center",
@@ -261,9 +194,10 @@ const LiveData = observer(() => {
               {data.latestQuote}
             </Box>
           </Link>
+          </Box>
         ))}
-      </div>
-      <hr className="chart-divider" />
+      </Box>
+      {/* <hr className="chart-divider" /> */}
     </Box>
   );
 });

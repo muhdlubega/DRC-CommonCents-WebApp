@@ -1,13 +1,16 @@
 import AliceCarousel from "react-alice-carousel";
 import "../../styles/main.scss";
 import { TradeType } from "./TradeTypeArray";
-import { Box, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 
 const TradingType = () => {
   const theme = useTheme();
   const responsive = {
     0: {
-      items: 2,
+      items: 1,
+    },
+    425: {
+      items: 2
     },
     768: {
       items: 3
@@ -15,15 +18,15 @@ const TradingType = () => {
   };
 
   const items = TradeType.map((tradeType, index) => (
-    <div style={{ border: `1px solid ${theme.palette.text.primary}` }} className="trade-card" key={index}>
-      <div className="title-icon-tradetype">
+    <Box style={{ border: `1px solid ${theme.palette.text.primary}` }} className="trade-card" key={index}>
+      <Box className="title-icon-tradetype">
         <img style={{ filter: theme.palette.mode === "dark" ? 'invert(1)' : 'invert(0)' }} src={tradeType.image} alt={tradeType.title} />
-        <h3>{tradeType.title}</h3>
-      </div>
-      <div style={{ color: theme.palette.text.primary }} className="card-content">
-        <p style={{ color: theme.palette.text.primary }}>{tradeType.Description}</p>
-      </div>
-    </div>
+        <Typography className="card-title" variant="h3" style={{ color: theme.palette.text.primary }}>{tradeType.title}</Typography>
+      </Box>
+      <Box style={{ color: theme.palette.text.primary }} className="card-content">
+        <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>{tradeType.Description}</Typography>
+      </Box>
+    </Box>
   ));
 
   return (

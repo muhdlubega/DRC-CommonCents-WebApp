@@ -37,7 +37,7 @@ const AuthModal = observer(() => {
       >
         <LoginCurve size={26} color="white" style={{ marginRight: "5px" }} />
         <Typography 
-        className="navbar-login-btn">Login</Typography>
+        className="navbar-login-btn" style={{textTransform: 'capitalize'}}>Login</Typography>
       </Button>
       <Modal
         aria-labelledby="transition-modal-title"
