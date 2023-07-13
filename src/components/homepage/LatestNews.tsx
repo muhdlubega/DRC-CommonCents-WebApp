@@ -26,11 +26,11 @@ const LatestNews = observer(() => {
   
   const responsive = {
     0: {
+      items: 1,
+    },
+    1080: {
       items: 3,
     },
-    // 1024: {
-    //   items: 1,
-    // },
   };
 
   const items = newsStore.news.map((article: NewsItem | null) => {
@@ -49,9 +49,6 @@ const LatestNews = observer(() => {
       <Box>
         <Typography component="span" className="news-span">
         <Box className="news-title">Latest News</Box>
-        {/* <Link className="news" to={"/news"}>
-          <span>See more...</span>
-        </Link> */}
       </Typography>
       <Box className="news-carousel">
       <AliceCarousel
