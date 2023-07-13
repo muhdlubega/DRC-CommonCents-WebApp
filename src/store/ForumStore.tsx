@@ -45,6 +45,7 @@ class ForumStore {
       title: observable,
       details: observable,
       posts: observable,
+      comments: observable,
       maxLength: observable,
       errorMessage: observable,
       userFavourites: observable,
@@ -104,7 +105,6 @@ class ForumStore {
       updatedPosts.forEach(element => {
         for (let i = 0; i < this.userFavourites.length; i++) {
           if (this.userFavourites[i].id === element.id) {
-            console.log("this is working");
             element.isFavorite = true;
           }
         }
