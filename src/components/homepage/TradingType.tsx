@@ -7,8 +7,11 @@ const TradingType = () => {
   const theme = useTheme();
   const responsive = {
     0: {
-      items: 3,
+      items: 2,
     },
+    768: {
+      items: 3
+    }
   };
 
   const items = TradeType.map((tradeType, index) => (

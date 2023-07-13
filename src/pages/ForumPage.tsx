@@ -105,7 +105,7 @@ const ForumPage = observer(() => {
     .sort((a, b) => b.timestamp - a.timestamp);
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", height: '600px' }}>
       {authStore.user && (
         <Box style={{ flex: 1 }}>
           <Card

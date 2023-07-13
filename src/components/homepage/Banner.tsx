@@ -3,7 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import '../../styles/main.scss'
 import { useNavigate } from "react-router-dom";
 import { Box, useTheme } from "@mui/material";
-import phone from '../../assets/images/phoneplaceholder.png'
+// import phone from '../../assets/images/phoneplaceholder.png'
 
 const Banner = () => {
   const animationControls = useAnimation();
@@ -41,10 +41,10 @@ const Banner = () => {
         // initial={{ y: -50, opacity: 0 }}
         // animate={animationControls}
       >
-        <motion.img
+        {/* <motion.img
         initial={{ y: -50, opacity: 0 }}
         animate={animationControls} 
-        className="banner-image" src={phone} alt="trading-image" />
+        className="banner-image" src={phone} alt="trading-image" /> */}
       </Box>
     </Box>
   );

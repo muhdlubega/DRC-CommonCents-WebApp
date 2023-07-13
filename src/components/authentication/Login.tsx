@@ -1,7 +1,10 @@
 import { Box, Button, TextField, Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle, } from "@mui/material";
+  DialogTitle,
+  useTheme,
+  InputAdornment,
+  IconButton, } from "@mui/material";
 // import { useState } from "react";
 // import { useGlobalState } from "../../store/Context";
 // import { auth } from "../../firebase";
@@ -12,6 +15,7 @@ import authStore from "../../store/AuthStore";
 import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface LoginProps {
   handleClose: () => void;
@@ -22,6 +26,8 @@ const Login = observer(({handleClose }: LoginProps) => {
   // const [password, setPassword] = useState<string>("");
   const [openForgotPassword, setOpenForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const theme = useTheme();
 
   const handleOpenForgotPassword = () => {
     setOpenForgotPassword(true);
@@ -60,7 +66,7 @@ const Login = observer(({handleClose }: LoginProps) => {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: "20px",
+        gap: "20px",backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary
       }}
     >
       <TextField
@@ -74,10 +80,22 @@ const Login = observer(({handleClose }: LoginProps) => {
       <TextField
         variant="outlined"
         label="Enter Password"
-        type="password"
+        type={showPassword ? "text" : "password"}
         value={authStore.password}
         onChange={(e) => authStore.setPassword(e.target.value)}
         fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <Button
         variant="contained"
