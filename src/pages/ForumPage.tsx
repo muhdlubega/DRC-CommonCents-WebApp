@@ -1,4 +1,4 @@
-import { collection, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import {
   Avatar,
@@ -11,8 +11,8 @@ import {
   Button,
   useTheme,
 } from "@mui/material";
-import { ArrowRight2, Heart, Trash } from "iconsax-react";
-import forumStore, { Comment, Post } from "../store/ForumStore";
+import { Heart, Trash } from "iconsax-react";
+import forumStore, { Post } from "../store/ForumStore";
 import { useEffect } from "react";
 import { auth, db } from "../firebase";
 import authStore from "../store/AuthStore";
@@ -69,113 +69,18 @@ const ForumPage = observer(() => {
     }
   };
 
-  const handleDelete = async (postId: string) => {
-    try {
-      await deleteDoc(doc(db, "posts", postId));
-      const updatedPosts = forumStore.posts.filter(
-        (post) => post.id !== postId
-      );
-      forumStore.setPosts(updatedPosts);
-    } catch (error) {
-      authStore.setAlert({
-        open: true,
-        message: "Unable to remove post currently. Try again later",
-        type: "error",
-      });
-    }
-  };
-
-  const handleSubmitComment = async (e: React.FormEvent, postId: string) => {
-    e.preventDefault();
-
-    if (!forumStore.content) {
-      authStore.setAlert({
-        open: true,
-        message: "Please input content",
-        type: "error",
-      });
-      return;
-    }
-
-    try {
-      const commentData = {
-        postId: postId,
-        content: forumStore.content,
-        author: auth.currentUser?.displayName,
-        authorImage: auth.currentUser?.photoURL!,
-        timestamp: Date.now(),
-      };
-
-      const docRef = await addDoc(
-        collection(db, "posts", postId, "comments"),
-        commentData
-      );
-
-      const comment: Comment = {
-        id: docRef.id,
-        ...commentData,
-      };
-
-      const updatedPosts = forumStore.posts.map((post) => {
-        if (post.id === postId) {
-          return {
-            ...post,
-            comments: [...(post.comments || []), comment],
-          };
-        }
-        return post;
-      });
-
-      forumStore.setPosts(updatedPosts);
-      forumStore.setContent("");
-    } catch (error) {
-      authStore.setAlert({
-        open: true,
-        message: "Unable to leave a comment currently. Try again later",
-        type: "error",
-      });
-    }
-  };
-
-  const handleDeleteComment = async (postId: string, commentId: string) => {
-    try {
-      await deleteDoc(doc(db, "posts", postId, "comments", commentId));
-
-      const updatedPosts = forumStore.posts.map((post) => {
-        if (post.id === postId) {
-          const updatedComments = post.comments?.filter(
-            (comment) => comment.id !== commentId
-          );
-          return {
-            ...post,
-            comments: updatedComments,
-          };
-        }
-        return post;
-      });
-
-      forumStore.setPosts(updatedPosts);
-    } catch (error) {
-      authStore.setAlert({
-        open: true,
-        message: "Unable to remove comment currently. Try again later",
-        type: "error",
-      });
-    }
-  };
-
-  const formatTimestamp = (timestamp: number) => {
+    const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - timestamp;
 
     if (timeDiff < 60000) {
       return `Less than 1 minute ago`;
     } else if (timeDiff < 3600000) {
-      return `${Math.floor(timeDiff / 60000)} minute(s) ago`;
+      return `${Math.floor(timeDiff / 60000)} minute${Math.floor(timeDiff / 60000) !== 1 ? 's' : ''} ago`;
     } else if (timeDiff < 86400000) {
-      return `${Math.floor(timeDiff / 3600000)} hour(s) ago`;
+      return `${Math.floor(timeDiff / 3600000)} hour${Math.floor(timeDiff / 3600000) !== 1 ? 's' : ''} ago`;
     } else {
-      return `${Math.floor(timeDiff / 86400000)} day(s) ago`;
+      return `${Math.floor(timeDiff / 86400000)} day${Math.floor(timeDiff / 86400000) !== 1 ? 's' : ''} ago`;
     }
   };
 
@@ -184,10 +89,10 @@ const ForumPage = observer(() => {
     .sort((a, b) => b.timestamp - a.timestamp);
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", flexDirection: 'row' }} className="forum-main">
       {authStore.user && (
         <Box style={{ flex: 1 }}>
-          <Card
+          <Card className="forum-left-card"
             style={{
               margin: "2vw 0 1vw 2vw",
               border: "0.1vw solid black",
@@ -231,17 +136,7 @@ const ForumPage = observer(() => {
                   >
                     {auth.currentUser?.displayName}
                   </Typography>
-                  <Typography
-                    variant="body1"
-                    style={{
-                      cursor: "pointer",
-                      color: theme.palette.text.secondary,
-                    }}
-                    onClick={() => navigate("/favourites")}
-                  >
-                    Check Favourites
-                    <ArrowRight2 size={16} style={{ margin: "0 5px" }} />
-                  </Typography>
+                 
                 </Box>
               </Box>
               <form onSubmit={handleSubmit}>
@@ -296,7 +191,23 @@ const ForumPage = observer(() => {
                   >
                     Post
                   </Button>
+                  
                 </Box>
+                <Typography
+                    variant="body1"
+                    style={{
+                      cursor: "pointer",
+                      marginTop: '20px',
+                      paddingTop: '10px',
+                      color: theme.palette.text.secondary,
+                      borderTop: '1px solid grey'
+                      // fontSize: '20px'
+                    }}
+                    onClick={() => navigate("/favourites")}
+                  >
+                    
+                    <Heart size={20} style={{ margin: "0 5px" }} />Check Favourites
+                  </Typography>
               </form>
             </CardContent>
           </Card>
@@ -315,7 +226,7 @@ const ForumPage = observer(() => {
             }}
           >
             <CardContent>
-              <Box style={{ display: "flex" }}>
+              <Box style={{ flexDirection: "row", display: "flex" }} className="forum-right-card">
                 <Box
                   style={{
                     display: "flex",
@@ -355,17 +266,17 @@ const ForumPage = observer(() => {
                   >
                     {post.details}
                   </Typography>
-                  <Typography variant="body2" component="p">
+                  <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
                     {formatTimestamp(post.timestamp)}
                   </Typography>
                   <Box
                     style={{
                       display: "flex",
-                      justifyContent: "flex-end",
+                      justifyContent: "space-between",
                       alignItems: "flex-end",
                     }}
                   >
-                    <Typography variant="body2" component="p">
+                    <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
                       {post.commentCount} comment
                       {post.commentCount !== 1 ? "s" : ""}
                       <IconButton
@@ -376,18 +287,18 @@ const ForumPage = observer(() => {
                           color={post.isFavorite ? "#0033ff" : "gray"}
                         />
                       </IconButton>
-                      {post.author === auth.currentUser?.displayName && (
-                        <IconButton onClick={() => handleDelete(post.id!)}>
+                    </Typography>
+                    {post.author === auth.currentUser?.displayName && (
+                        <IconButton onClick={() => forumStore.handleDelete(post.id!)}>
                           <Trash color="gray" />
                         </IconButton>
                       )}
-                    </Typography>
                   </Box>
                 </Box>
               </Box>
               {authStore.user && (
                 <Box>
-                  <form style={{display: 'flex'}} onSubmit={(e) => handleSubmitComment(e, post.id!)}>
+                  <form style={{display: 'flex'}} onSubmit={(e) => forumStore.handleSubmitComment(e, post.id!)}>
                     <TextField
                       multiline
                       inputProps={{ maxLength: 3000 }}
@@ -418,43 +329,63 @@ const ForumPage = observer(() => {
                 ?.slice()
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .map((comment) => (
-                  <Card
-                    key={comment.id}
+                <Card style={{ display: "flex", margin: '10px 0' }}>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: 'center',
+                    flexDirection: "column",
+                    margin: "20px",
+                  }}
+                >
+                  <Avatar
                     style={{
-                      margin: "10px",
-                      backgroundColor: theme.palette.background.paper
-                      // border: "0.1vw solid transparent",
-                      // borderRadius: "1vw",
+                      width: "40px",
+                      height: "40px",
+                      marginBottom: "10px",
+                    }}
+                    className="sidebar-picture"
+                    src={comment.authorImage!}
+                    alt={comment.author!}
+                  />
+                  <Typography variant="body1" component="p" style={{fontSize: '12px'}}>
+                    {comment.author}
+                  </Typography>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                    marginTop: '20px'
+                  }}
+                >
+                  <Typography
+                    style={{ width: "100%", wordBreak: "break-word" }}
+                    variant="body1"
+                    component="p"
+                  >
+                    {comment.content}
+                  </Typography>
+                  <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
+                    {formatTimestamp(comment.timestamp)}
+                  </Typography>
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
                     }}
                   >
-                    <CardContent>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Avatar
-                          className="sidebar-picture"
-                          src={comment.authorImage!}
-                          alt={comment.author!}
-                        />
-                        {comment.author === auth.currentUser?.displayName && (
-                          <IconButton
-                            onClick={() =>
-                              handleDeleteComment(post.id!, comment.id!)
-                            }
-                          >
-                            <Trash />
-                          </IconButton>
-                        )}
-                      </div>
-                      <Typography variant="body1" component="p">
-                        {comment.content}
-                      </Typography>
-                      <Typography variant="body2" component="p">
-                        Author: {comment.author}
-                      </Typography>
-                      <Typography variant="body2" component="p">
-                        {formatTimestamp(comment.timestamp)}
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                    {comment.author === auth.currentUser?.displayName && (
+                        <IconButton onClick={() => forumStore.handleDeleteComment(post.id!, comment.id!)}>
+                          <Trash color="gray" />
+                        </IconButton>
+                      )}
+                  </Box>
+                </Box>
+              </Card>
                 ))}
             </CardContent>
           </Card>

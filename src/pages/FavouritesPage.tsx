@@ -1,17 +1,16 @@
 import { observer } from "mobx-react-lite";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, IconButton, Typography, Card } from "@mui/material";
 import forumStore from "../store/ForumStore";
 import { useEffect } from "react";
 import { auth } from "../firebase";
-import { Clock } from "iconsax-react";
+import { Clock, Heart } from "iconsax-react";
 
 const FavoritesPage = observer(() => {
-
   useEffect(() => {
     if (auth.currentUser) {
       forumStore.getUserFavourites()
     }
-  }, [forumStore.userFavourites]);
+  }, []);
 
   const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
@@ -27,7 +26,6 @@ const FavoritesPage = observer(() => {
       return `${Math.floor(timeDiff / 86400000)} day(s) ago`;
     }
   };
-  // console.log(forumStore.userFavourites);  
 
   return (
     <div>
@@ -36,20 +34,69 @@ const FavoritesPage = observer(() => {
       {forumStore.userFavourites.length > 0 ? (
         forumStore.userFavourites.map((post) => (
           <div key={post.id}>
-            <Avatar
-              className="sidebar-picture"
-              src={post.authorImage!}
-              alt={post.author!}
-            />
-            <h3>{post.title}</h3>
-            <p>{post.details}</p>
-            <p>Author: {post.author}</p>
-            <p>Posted on: {formatTimestamp(post.timestamp)}</p>
-            {/* <IconButton onClick={() => forumStore.handleFavorite(post.id!)}>
-            <Star
-              color={post.isFavorite ? "yellow" : "gray"}
-            />
-          </IconButton> */}
+            <Card style={{ flexDirection: "row", display: "flex", border: '1px solid black',margin: '20px' }} className="forum-right-card">
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    margin: "20px",
+                  }}
+                >
+                  <Avatar
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      marginBottom: "10px",
+                    }}
+                    className="sidebar-picture"
+                    src={post.authorImage!}
+                    alt={post.author!}
+                  />
+                  <Typography variant="body1" component="p">
+                    {post.author}
+                  </Typography>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%", margin: '20px 0'
+                  }}
+                >
+                  <Typography variant="h6" component="h3">
+                    {post.title}
+                  </Typography>
+                  <Typography
+                    style={{ width: "100%", wordBreak: "break-word" }}
+                    variant="body1"
+                    component="p"
+                  >
+                    {post.details}
+                  </Typography>
+                  <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
+                    {formatTimestamp(post.timestamp)}
+                  </Typography>
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
+                      <IconButton
+                        onClick={() => forumStore.handleFavorite(post.id!)}
+                      >
+                        <Heart
+                          variant="Bold"
+                          color="#0033ff"
+                        />
+                      </IconButton>
+                    </Typography>
+                  </Box>
+                </Box>
+              </Card>
           </div>
         ))
       ) : (
