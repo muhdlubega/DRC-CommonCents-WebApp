@@ -208,15 +208,6 @@ const UserSidebar = () => {
           <Typography
             style={{fontWeight: 500}}
             className="sidebar-item"
-            onClick={() => navigate("/favourites")}
-          >
-            Favourite Posts
-            <ArrowRight2 size={16} style={{ marginLeft: "0.5vw" }} />
-          </Typography>
-
-          <Typography
-            style={{fontWeight: 500}}
-            className="sidebar-item"
             onClick={() => navigate("/enquiry")}
           >
             Help and Support

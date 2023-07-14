@@ -1886,3 +1886,21 @@ cursor: pointer;
   background-color: #d9d9d9;
   margin-left: 20px;
   }
+
+
+
+@media (max-width: 800px) {
+  .forum-main{
+flex-direction: column !important;
+  }
+
+  .forum-left-card{
+    margin: 2vw !important
+  }
+}
+
+@media (max-width: 425px) {
+  .forum-right-card{
+flex-direction: column !important;
+  }
+}

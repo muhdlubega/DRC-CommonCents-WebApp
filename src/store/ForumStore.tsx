@@ -1,4 +1,5 @@
 import {
+  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -69,6 +70,9 @@ class ForumStore {
       setUserFavourites: action.bound,
       getUserFavourites: action,
       handleFavorite: action,
+      handleDelete: action,
+      handleSubmitComment: action,
+      handleDeleteComment: action
     });
 
     this.initializePosts();
@@ -184,6 +188,101 @@ class ForumStore {
 
   //   this.setComments(updatedComments);
   // }
+
+  handleDelete = async (postId: string) => {
+    try {
+      await deleteDoc(doc(db, "posts", postId));
+      const updatedPosts = this.posts.filter(
+        (post) => post.id !== postId
+      );
+      this.setPosts(updatedPosts);
+    } catch (error) {
+      authStore.setAlert({
+        open: true,
+        message: "Unable to remove post currently. Try again later",
+        type: "error",
+      });
+    }
+  };
+
+  handleSubmitComment = async (e: React.FormEvent, postId: string) => {
+    e.preventDefault();
+
+    if (!this.content) {
+      authStore.setAlert({
+        open: true,
+        message: "Please input content",
+        type: "error",
+      });
+      return;
+    }
+
+    try {
+      const commentData = {
+        postId: postId,
+        content: this.content,
+        author: auth.currentUser?.displayName,
+        authorImage: auth.currentUser?.photoURL!,
+        timestamp: Date.now(),
+      };
+
+      const docRef = await addDoc(
+        collection(db, "posts", postId, "comments"),
+        commentData
+      );
+
+      const comment: Comment = {
+        id: docRef.id,
+        ...commentData,
+      };
+
+      const updatedPosts = this.posts.map((post) => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            comments: [...(post.comments || []), comment],
+          };
+        }
+        return post;
+      });
+
+      this.setPosts(updatedPosts);
+      this.setContent("");
+    } catch (error) {
+      authStore.setAlert({
+        open: true,
+        message: "Unable to leave a comment currently. Try again later",
+        type: "error",
+      });
+    }
+  };
+
+  handleDeleteComment = async (postId: string, commentId: string) => {
+    try {
+      await deleteDoc(doc(db, "posts", postId, "comments", commentId));
+
+      const updatedPosts = this.posts.map((post) => {
+        if (post.id === postId) {
+          const updatedComments = post.comments?.filter(
+            (comment) => comment.id !== commentId
+          );
+          return {
+            ...post,
+            comments: updatedComments,
+          };
+        }
+        return post;
+      });
+
+      this.setPosts(updatedPosts);
+    } catch (error) {
+      authStore.setAlert({
+        open: true,
+        message: "Unable to remove comment currently. Try again later",
+        type: "error",
+      });
+    }
+  };
 
   async markAsFavorite(postId: string) {
     const updatedPosts = this.posts.map((post) => {
