@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { Box, MenuItem, Select, Skeleton, useTheme } from "@mui/material";
+import { Box, MenuItem, Select, Skeleton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
-import { InfoCircle, Chart1, Candle } from "iconsax-react";
+import { Chart1, Candle, VideoPlay } from "iconsax-react";
 import onboarding from '../../assets/images/onboarding.png'
 import apiStore from "../../store/ApiStore";
 // import themeStore from "../../store/ThemeStore";
@@ -13,6 +13,7 @@ import apiStore from "../../store/ApiStore";
 const Chart = observer(() => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const isSmallScreen = useMediaQuery('(max-width: 767px)');
   const [isLoading, setIsLoading] = useState(true);
   const theme = useTheme();
 
@@ -53,14 +54,14 @@ const Chart = observer(() => {
     },
     plotOptions: {
       candlestick: {
-        color: theme.palette.primary.main,
-        upColor: theme.palette.success.main,
-        lineColor: theme.palette.secondary.main,
-        upLineColor: theme.palette.success.main,
+        color: theme.palette.error.dark,
+        upColor: theme.palette.success.dark,
+        lineColor: theme.palette.error.dark,
+        upLineColor: theme.palette.success.dark,
       },
     },
     chart: {
-      height: `${(9 / 16) * 100}%`,
+      height: isSmallScreen ? `${(4 / 3) * 100}%` : `${(9 / 16) * 100}%`,
       backgroundColor: 'transparent',
     style: {
       fontFamily: theme.typography.fontFamily,
@@ -89,9 +90,9 @@ const Chart = observer(() => {
                   close: Number(tick.close),
                 })),
                 type: apiStore.chartType,
-                color: apiStore.chartType === "candlestick" ? theme.palette.error.main : apiStore.isTicks ? isHigherTicks ? theme.palette.success.main : theme.palette.error.main : isHigher ? theme.palette.success.main : theme.palette.error.main,
-        upColor: theme.palette.success.main,
-                lineWidth: 1.5,
+                color: apiStore.chartType === "candlestick" ? theme.palette.error.dark : apiStore.isTicks ? isHigherTicks ? theme.palette.success.dark : theme.palette.error.dark : isHigher ? theme.palette.success.dark : theme.palette.error.dark,
+        upColor: theme.palette.success.dark,
+                lineWidth: apiStore.chartType === "candlestick" ? 1 : 2.5,
                 tooltip: {
                   pointFormat: apiStore.isTicks ? 
                   '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>' +
@@ -163,6 +164,7 @@ const Chart = observer(() => {
       </button>
         </Box>
       )}
+      <Box style={{ display: "grid", gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'}}>
       <Select
         className="symbols-dropdown"
         value={apiStore.selectedSymbol || ""}
@@ -180,7 +182,6 @@ const Chart = observer(() => {
             )
         )}
       </Select>
-      <InfoCircle color="#0033ff" size={36} onClick={() => apiStore.setShowOnboarding(true)}  style={{marginLeft: "10px", cursor: "pointer"}}/>
       <Select
       className="symbols-dropdown"
       value={apiStore.chartType}
@@ -210,6 +211,13 @@ const Chart = observer(() => {
       <MenuItem value={86400} onClick={() => handleGranularityChange(86400)}>Days
       </MenuItem>
     </Select>
+    <Box component="span" style={{margin: '10px 30px 0 30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', cursor: "pointer"}} onClick={() => apiStore.setShowOnboarding(true)}>
+    <VideoPlay color="#0033ff" size={36} style={{marginLeft: '8px'}}/>
+    <Typography style={{fontSize:'10px', color:"#0033ff", marginLeft: '12px'}}>Show</Typography>
+    <Typography style={{fontSize:'10px', color:"#0033ff"}}>Onboarding</Typography>
+     {/* <Typography  style={{color:"#0033ff", marginLeft: '5px', fontFamily: 'Roboto', fontWeight: 500}}>Check Onboarding</Typography> */}
+    </Box>
+    </Box>
     <Box className="charts-area">
   {isLoading ? (
     <Skeleton variant="rectangular" width="100%" height={400} />
