@@ -21,10 +21,10 @@ const Price = () => {
   return (
     <div>
       <Box className="pricecandle-container">
-        <Card className="price-card">Close: <Box sx={{color: closeIsHigher ? 'green' : 'red'}}>{close.toFixed(4)}</Box></Card>
-        <Card className="price-card">High: <Box sx={{color: highIsHigher ? 'green' : 'red'}}>{high.toFixed(4)}</Box></Card>
-        <Card className="price-card">Open: <Box sx={{color: openIsHigher ? 'green' : 'red'}}>{open.toFixed(4)}</Box></Card>
-        <Card className="price-card">Low: <Box sx={{color: lowIsHigher ? 'green' : 'red'}}>{low.toFixed(4)}</Box></Card>
+        <Card className="price-card">Close:&ensp; <Box sx={{color: closeIsHigher ? 'green' : 'red'}}>{close.toFixed(4)}</Box></Card>
+        <Card className="price-card">High:&ensp; <Box sx={{color: highIsHigher ? 'green' : 'red'}}>{high.toFixed(4)}</Box></Card>
+        <Card className="price-card">Open:&ensp; <Box sx={{color: openIsHigher ? 'green' : 'red'}}>{open.toFixed(4)}</Box></Card>
+        <Card className="price-card">Low:&ensp; <Box sx={{color: lowIsHigher ? 'green' : 'red'}}>{low.toFixed(4)}</Box></Card>
       </Box>
     </div>
   )} else if (apiStore.isTicks && apiStore.ticks.length > 0){
@@ -36,7 +36,7 @@ const Price = () => {
   return (
     <div>
       <Box className="pricetick-container">
-        <Card className="price-card">Spot Price: <Box sx={{color: spotIsHigher ? 'green' : 'red'}}>{spot.toFixed(4)}</Box></Card>
+        <Card className="price-card">Spot Price:&ensp; <Box sx={{color: spotIsHigher ? 'green' : 'red'}}>{spot.toFixed(4)}</Box></Card>
       </Box>
     </div>
   )

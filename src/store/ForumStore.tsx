@@ -4,6 +4,7 @@ import {
   doc,
   getDocs,
   setDoc,
+  // updateDoc,
 } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
 import { auth, db } from "../firebase";
@@ -18,6 +19,7 @@ export interface Post {
   timestamp: number;
   isFavorite?: boolean;
   comments?: Comment[];
+  commentCount?: number; 
 }
 
 export interface Comment {
@@ -37,8 +39,10 @@ class ForumStore {
   posts: Post[] = [];
   comments: Comment[] = [];
   userFavourites: Post[] = [];
-  maxLength: number = 3000;
-  errorMessage: string = "";
+  // maxLength: number = 3000;
+  maxTitle: number = 80;
+  // errorMessage: string = "";
+  errorTitle: string = "";
 
   constructor() {
     makeObservable(this, {
@@ -46,14 +50,20 @@ class ForumStore {
       details: observable,
       posts: observable,
       comments: observable,
-      maxLength: observable,
-      errorMessage: observable,
+      // maxLength: observable,
+      maxTitle: observable,
+      // errorMessage: observable,
+      errorTitle: observable,
       userFavourites: observable,
       setTitle: action.bound,
       setDetails: action.bound,
       setPosts: action.bound,
-      setErrorMessage: action.bound,
+      // setErrorMessage: action.bound,
+      setErrorTitle: action.bound,
       initializePosts: action.bound,
+      setContent: action.bound,
+      // setComments: action.bound,
+      // initializeComments: action.bound,
       markAsFavorite: action.bound,
       unmarkAsFavorite: action.bound,
       setUserFavourites: action.bound,
@@ -66,19 +76,28 @@ class ForumStore {
 
   setTitle(title: string) {
     this.title = title;
+    if (title.length > this.maxTitle) {
+      this.setErrorTitle("Character count limit reached");
+    } else {
+      this.setErrorTitle("");
+    }
   }
 
   setDetails(details: string) {
     this.details = details;
-    if (details.length === this.maxLength) {
-      this.setErrorMessage("Character count limit reached");
-    } else {
-      this.setErrorMessage("");
-    }
+    // if (details.length > this.maxLength) {
+    //   this.setErrorMessage("Character count limit reached");
+    // } else {
+    //   this.setErrorMessage("");
+    // }
   }
 
-  setErrorMessage(errorMessage: string) {
-    this.errorMessage = errorMessage;
+  // setErrorMessage(errorMessage: string) {
+  //   this.errorMessage = errorMessage;
+  // }
+
+  setErrorTitle(errorTitle: string) {
+    this.errorTitle = errorTitle;
   }
 
   setPosts(posts: Post[]) {
@@ -89,65 +108,84 @@ class ForumStore {
     const querySnapshot = await getDocs(collection(db, "posts"));
     const updatedPosts: Post[] = [];
     this.getUserFavourites();
-    querySnapshot.forEach((doc) => {
-      const { title, details, author, authorImage, timestamp, comments } = doc.data();
+  
+    for (const doc of querySnapshot.docs) {
+      const postData = doc.data();
       const post: Post = {
         id: doc.id,
-        title,
-        details,
-        author,
-        authorImage,
-        timestamp,
-        comments
+        title: postData.title,
+        details: postData.details,
+        author: postData.author,
+        authorImage: postData.authorImage,
+        timestamp: postData.timestamp,
+        comments: [],
       };
-      updatedPosts.push(post);
-
-      updatedPosts.forEach(element => {
-        for (let i = 0; i < this.userFavourites.length; i++) {
-          if (this.userFavourites[i].id === element.id) {
-            element.isFavorite = true;
-          }
-        }
+  
+      const commentsQuerySnapshot = await getDocs(collection(db, "posts", doc.id, "comments"));
+      const comments: Comment[] = commentsQuerySnapshot.docs.map((commentDoc) => {
+        const commentData = commentDoc.data();
+        return {
+          id: commentDoc.id,
+          postId: doc.id,
+          content: commentData.content,
+          author: commentData.author,
+          authorImage: commentData.authorImage,
+          timestamp: commentData.timestamp,
+        };
       });
-      
+  
+      post.comments = comments;
+      post.commentCount = comments.length; 
+      updatedPosts.push(post);
+      console.log(post.comments);
+    }
+    
+  
+    updatedPosts.forEach((element) => {
+      for (let i = 0; i < this.userFavourites.length; i++) {
+        if (this.userFavourites[i].id === element.id) {
+          element.isFavorite = true;
+        }
+      }
     });
-
+  
     this.setPosts(updatedPosts);
   }
+  
 
   setContent(content: string) {
     this.content = content;
-    if (content.length === this.maxLength) {
-      this.setErrorMessage("Character count limit reached");
-    } else {
-      this.setErrorMessage("");
-    }
+    // if (content.length === this.maxLength) {
+    //   this.setErrorMessage("Character count limit reached");
+    // } else {
+    //   this.setErrorMessage("");
+    // }
   }
 
-  setComments(comments: Comment[]) {
-    this.comments = comments;
-  }
+  // setComments(comments: Comment[]) {
+  //   this.comments = comments;
+  // }
 
-  async initializeComments(postId: string) {
-    const querySnapshot = await getDocs(collection(db, "posts", postId, "comments"));
-    const updatedComments: Comment[] = [];
-    querySnapshot.forEach((doc) => {
-      const { postId, content, author, authorImage, timestamp } = doc.data();
-      const comments: Comment = {
-        id: doc.id,
-        postId: postId,
-        content,
-        author,
-        authorImage,
-        timestamp
-      };
-      updatedComments.push(comments);
-    });
+  // async initializeComments(postId: string) {
+  //   const querySnapshot = await getDocs(collection(db, "posts", postId, "comments"));
+  //   const updatedComments: Comment[] = [];
+  //   querySnapshot.forEach((doc) => {
+  //     const { postId, content, author, authorImage, timestamp } = doc.data();
+  //     const comments: Comment = {
+  //       id: doc.id,
+  //       postId: postId,
+  //       content,
+  //       author,
+  //       authorImage,
+  //       timestamp
+  //     };
+  //     updatedComments.push(comments);
+  //   });
 
-    this.setComments(updatedComments);
-  }
+  //   this.setComments(updatedComments);
+  // }
 
-  markAsFavorite(postId: string) {
+  async markAsFavorite(postId: string) {
     const updatedPosts = this.posts.map((post) => {
       if (post.id === postId) {
         return {

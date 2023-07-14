@@ -78,7 +78,7 @@ const MaterialUISwitch = styled(Switch)(() => ({
   },
 }));
 
-const isScreenSmall = useMediaQuery('(max-width: 767px)');
+const isSmallScreen = useMediaQuery('(max-width: 767px)');
 
 
 
@@ -120,7 +120,7 @@ const isScreenSmall = useMediaQuery('(max-width: 767px)');
           >
             About
           </Typography>
-          {isScreenSmall ? null : (
+          {isSmallScreen ? null : (
       <MaterialUISwitch className="navbar-switch"
           checked={themeStore.mode === themes.dark}
           onChange={themeStore.toggleMode}
