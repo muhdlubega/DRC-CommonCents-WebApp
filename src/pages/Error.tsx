@@ -18,7 +18,8 @@ const Error = observer(() => {
     <img className="watermark" src={watermark}></img>
     <Typography className="error-title" variant="h4" style={{width: '750px', fontWeight: 700, marginBottom:'20px'}}>Sorry! We’ve looked everywhere but we can’t seem to find the page you are looking for.</Typography>
     <Typography className="error-subtitle" variant="h5">Don’t worry, CommonCents will chain you back to safety.</Typography>
-    <motion.button
+    <motion.button initial={{ y: 50, opacity: 0 }}
+          animate={animationControls}
         className="error-btn"
         onClick={() => navigate("/")}
       >

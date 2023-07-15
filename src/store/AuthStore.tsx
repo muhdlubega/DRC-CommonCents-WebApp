@@ -8,10 +8,12 @@ import {
 } from "firebase/auth";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   getFirestore,
+  query,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -333,11 +335,12 @@ class AuthStore {
           const tradeSummarySnapshot = await getDoc(tradeSummaryRef);
           const tradeSummary = tradeSummarySnapshot.data() as Summary;
 
-          const { balance, displayName, email } = user.data();
+          const { balance, displayName, email, photoURL } = user.data();
           leaderboardData.push({
             displayName,
             email,
             balance,
+            photoURL,
             netWorth: tradeSummary?.netWorth || 0,
           });
 
@@ -390,6 +393,19 @@ class AuthStore {
       ...this.user,
       ...{ balance: parseFloat(resetBalance.toFixed(2)) },
     };
+    const tradeHistoryRef = collection(
+      db,
+      "users",
+      auth.currentUser!.uid,
+      "tradeHistory"
+    );
+    const tradeHistoryQuery = query(tradeHistoryRef);
+    const tradeHistorySnapshot = await getDocs(tradeHistoryQuery);
+  
+    tradeHistorySnapshot.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
+
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       balance: resetBalance,
     });

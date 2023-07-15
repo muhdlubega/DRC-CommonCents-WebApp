@@ -4,6 +4,7 @@ import "../../styles/main.scss";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid, useTheme } from "@mui/material";
 import phone from "../../assets/images/phoneplaceholder.png";
+import authStore from "../../store/AuthStore";
 
 const Banner = () => {
   const animationControls = useAnimation();
@@ -49,9 +50,9 @@ const Banner = () => {
             </motion.p>
             <motion.button
               className="banner-btn"
-              onClick={() => navigate("/trade/1HZ10V")}
+              onClick={authStore.user ? () => navigate("/trade/1HZ10V") : authStore.handleOpen}
             >
-              Create an Account
+              {authStore.user ? "Learn Trading Now!" : "Create an Account"}
             </motion.button>
           </Box>
         </motion.div>

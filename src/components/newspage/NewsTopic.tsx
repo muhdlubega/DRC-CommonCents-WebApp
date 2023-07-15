@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Box, Button, IconButton, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Button, IconButton, Tab, Tabs, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import newsStore, { NewsItem, topics_array } from "../../store/NewsStore";
 import "../../styles/main.scss";
+import placeholder from '../../assets/images/placeholder.png'
 // import AliceCarousel from "react-alice-carousel";
 import { SearchNormal1 } from "iconsax-react";
 
@@ -13,8 +14,9 @@ const NewsTopic = observer(() => {
   // const [selectedTopic, setSelectedTopic] = useState<string>(topics_array[0]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const articlesPerPage = 20;
+  const articlesPerPage = 40;
   const [searchTerm, setSearchTerm] = useState("");
+  const isSmallScreen = useMediaQuery('(max-width: 767px)');
   const theme = useTheme();
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,9 +147,8 @@ const NewsTopic = observer(() => {
       className="news-searchbox"
     />
     <IconButton
-      color="primary"
       onClick={() => setIsSearchFocused(true)}
-      style={{ marginLeft: "1vw", visibility: isSearchFocused ? "hidden" : "visible" }}
+      style={{ marginLeft: "1vw", color: '#0033ff', visibility: isSearchFocused ? "hidden" : "visible", display: isSmallScreen ? "none" : "" }}
     >
       <SearchNormal1 size={40}/>
     </IconButton>
@@ -207,9 +208,10 @@ const NewsTopic = observer(() => {
         </Tabs>
       </Box>
       {filteredNews.length === 0 ? (
-      <Typography variant="h4" align="center">
-        Sorry, no search results found.
-      </Typography>
+        <Box style={{height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '60px'}}>
+        <SearchNormal1 size={280} color="gray"/>
+        <Typography variant="h6" style={{margin: '15px'}}>Sorry, no search results found</Typography>
+        </Box>
     ) : (<Box className="news-card-row">
         {paginate(filteredNews, currentPage, articlesPerPage).map(
           (article: NewsItem | null, index) => {
@@ -240,16 +242,16 @@ const NewsTopic = observer(() => {
                   <Box className="news-imagebox">
                     <img
                       className="news-image"
-                      src={article?.banner_image}
+                      src={article?.banner_image || placeholder}
                       alt={article?.title}
                     />
                   </Box>
                   <Box className="news-textbox">
-                    <Typography variant="h5" style={{ color: theme.palette.text.primary }}>{article?.title}</Typography>
-                    <Typography variant="h6" style={{ color: theme.palette.text.secondary }}>
+                    <Typography variant="h5" style={{ color: theme.palette.text.primary, fontSize: '20px' }}>{article?.title}</Typography>
+                    <Typography variant="h6" style={{ color: theme.palette.text.secondary, fontSize: '16px' }}>
                       {article?.summary}
                     </Typography>
-                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}>
                       Author(s):{" "}
                       {article.authors.map((author, index) => (
                         <span key={index}>
@@ -258,7 +260,7 @@ const NewsTopic = observer(() => {
                         </span>
                       ))}
                     </Typography>
-                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary, fontSize: '12px'  }}>
                       Topic(s):{" "}
                       {article.topics.map((topic, index) => (
                         <span key={index}>
@@ -267,10 +269,10 @@ const NewsTopic = observer(() => {
                         </span>
                       ))}
                     </Typography>
-                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary, fontSize: '12px'  }}>
                       {article?.source} - {article?.source_domain}
                     </Typography>
-                    <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>
+                    <Typography variant="body1" style={{ color: theme.palette.text.secondary, fontSize: '10px'  }}>
                       {dateTime.toLocaleString()}
                     </Typography>
                   </Box>
@@ -285,11 +287,12 @@ const NewsTopic = observer(() => {
           onClick={goToPreviousPage}
           disabled={currentPage === 1 || filteredNews.length === 0 }
           sx={{
-            margin: "0.5vw",
-            padding: "1vw",
-            width: "10vw",
+            margin: "10px",
+            padding: "10px 20px",
+            width: "120px",
             backgroundColor: "#0033ff",
-            borderRadius: "1vw",
+            color: 'white',
+            borderRadius: "10px",
           }}
           variant="contained"
         >
@@ -300,11 +303,12 @@ const NewsTopic = observer(() => {
           disabled={newsStore.news.length < articlesPerPage ||
             paginate(filteredNews, currentPage, articlesPerPage).length === 0 || filteredNews.length === 0 }
           sx={{
-            margin: "0.5vw",
-            padding: "1vw",
-            width: "10vw",
+            margin: "10px",
+            padding: "10px 20px",
+            width: "120px",
             backgroundColor: "#0033ff",
-            borderRadius: "1vw",
+            color: 'white',
+            borderRadius: "10px",
           }}
           variant="contained"
         >
