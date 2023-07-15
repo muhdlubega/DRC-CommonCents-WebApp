@@ -199,7 +199,7 @@ const TradeHistoryPage = observer(() => {
     </Box>
       ): (
       <Box style={{height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '60px'}}>
-        <Clock size={300}/>
+        <Clock size={280} color="grey"/>
         <Typography variant="h6" style={{margin: '15px'}}>No trade history available. Start trading now!</Typography>
         </Box>
       )}

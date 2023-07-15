@@ -1,4 +1,4 @@
-import { ArrowRight2, ArrowUp2, EmptyWallet, LogoutCurve } from "iconsax-react";
+import { EmptyWallet, LogoutCurve } from "iconsax-react";
 import authStore from "../store/AuthStore";
 import {
   Avatar,
@@ -9,7 +9,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
+  InputAdornment,
   Modal,
+  TextField,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import {
   signOut,
@@ -23,10 +28,11 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
     useState(false);
@@ -34,23 +40,26 @@ const AccountPage = observer(() => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [userBalance, setUserBalance] = useState(100000);
   const [userName, setUserName] = useState("");
+  const theme = useTheme()
+
 
   const [state, setState] = useState({
     resetConfirmationOpen: false,
   });
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
+  // const toggleDropdown = () => {
+  //   setIsDropdownOpen((prevState) => !prevState);
+  // };
 
   const toggleSecondDropdown = () => {
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
 
   // var userDisplayName = updatedName;
-  var userEmail = auth.currentUser?.email;
+  // var userEmail = auth.currentUser?.email;
 
   const getUserBalance = async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -94,6 +103,7 @@ const AccountPage = observer(() => {
 
   const logOut = () => {
     signOut(auth);
+    navigate('/');
     authStore.setAlert({
       open: true,
       type: "success",
@@ -118,7 +128,7 @@ const AccountPage = observer(() => {
 
   const handleUpdateName = () => {
     authStore.setUpdateName(updatedName);
-    toggleDropdown();
+    // toggleDropdown();
     authStore.setAlert({
       open: true,
       message:
@@ -203,60 +213,57 @@ const AccountPage = observer(() => {
   }, [authStore.user])
 
   return (
-    <Box className="account-container">
+    <Box>
       <img className="watermark" src={watermark}></img>
+      <Typography variant="h6" sx={{fontFamily: 'Roboto', 
+    borderBottom: '1px solid #888', margin: '20px'}}>
+        Account Details
+      </Typography>
+      <Box  className="account-container">
       <Box className="account-profile">
-        <span
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            fontSize: "1.2vw",
-            textAlign: "center",
-            fontFamily: "Roboto",
-            wordWrap: "break-word",
-            margin: 0,
-          }}
-        >
-          <Avatar
+        <Avatar
             className="account-picture"
             src={auth.currentUser?.photoURL || ""}
             alt={userName || ""}
-            sx={{ marginRight: "0.4vw" }}
+            sx={{ marginRight: "0.4vw", width: '60px', height:'60px' }}
           />
-          {userName}
-        </span>
-        <span
+        <Box
           style={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
+            alignItems: "flex-start",
+            flexDirection: 'column',
             width: "100%",
-            fontSize: "1.2vw",
-            textAlign: "center",
             fontFamily: "Roboto",
             wordWrap: "break-word",
-            margin: 0,
+            margin: '10px',
           }}
         >
-          {userEmail}
-        </span>
-        <span
+          <Typography>{userName}</Typography>
+          <Typography component="span"
           style={{
-            width: "100%",
-            fontSize: "1vw",
-            textAlign: "center",
-            fontFamily: "Roboto",
-            wordWrap: "break-word",
-            margin: 0,
+            fontSize: "12px"
           }}
         >
-          <EmptyWallet size={22} style={{ marginRight: "0.5vw" }} />
+          <EmptyWallet variant="Bold" size={16} style={{ marginRight: "0.5vw" }} />
           {userBalance.toFixed(2)} USD
-        </span>
+        </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          className="account-reset-balance"
+          onClick={handleResetBalance}
+          style={{
+            backgroundColor: "#6699ff",
+            borderRadius: "10px",
+            width: '190px',
+            fontSize: '9px', color: 'white'
+          }}
+        >
+          Reset Balance
+        </Button>
       </Box>
-      <div className="sidebar-leaderboard">
+      {/* <div className="sidebar-leaderboard">
         <h6 onClick={toggleDropdown}>
           Change Username
           {isDropdownOpen ? (
@@ -286,18 +293,62 @@ const AccountPage = observer(() => {
             <Button onClick={handleUpdateName}>Submit</Button>
           </Box>
         </Modal>
-      </div>
-      <div className="sidebar-leaderboard">
-        <h6 onClick={toggleSecondDropdown}>
+      </div> */}
+      <TextField
+                  variant="outlined"
+                  label="Username"
+                  type="text"
+                  value={updatedName}
+              onChange={(event) => setUpdatedName(event.target.value)}
+                  fullWidth
+                  style={{
+                    // width: "30vw",
+                    // height: "97px",
+                    margin: '30px 0 10px',
+                    borderRadius: "20px",
+                  }}
+                  required
+                  id="username"
+                  inputProps={{
+                    maxLength: 50,
+                  }}
+                />
+                <Box style={{display: 'flex', justifyContent: 'flex-end'}}>
+      <Button style={{
+            backgroundColor: "#6699ff",
+            borderRadius: "10px",
+            marginBottom: "1vw",
+            width: '100px',
+            fontSize: '9px', color: 'white'
+          }} onClick={handleUpdateName}>Save</Button>
+          </Box>
+          <Box style={{marginTop: '30px', display: 'flex', justifyContent: 'flex-start'}}>
+            <Typography variant="body2">
+              This is the email associated with CommonCents
+            </Typography>
+          </Box>
+      <Typography component="span"
+          style={{
+            width: "100%",
+            fontSize: "12px", fontWeight: 500,
+            fontFamily: "Roboto",
+            margin: 0,
+          }}
+        >
+          {auth.currentUser?.email}
+        </Typography>
+      <Box className="sidebar-leaderboard">
+        <Button style={{
+            backgroundColor: "#0033ff",
+            borderRadius: "10px",
+            marginTop: "20px",
+            width: '180px',
+            fontSize: '12px', color: 'white'
+          }} onClick={toggleSecondDropdown}>
           Change Password
-          {isSecondDropdownOpen ? (
-            <ArrowUp2 size={16} style={{ marginLeft: "0.5vw" }} />
-          ) : (
-            <ArrowRight2 size={16} style={{ marginLeft: "0.5vw" }} />
-          )}
-        </h6>
+        </Button>
         <Modal open={isSecondDropdownOpen} onClose={toggleSecondDropdown}>
-          <Box
+          <Box  className="change-pwd-modal"
             sx={{
               position: "absolute",
               top: "50%",
@@ -305,11 +356,15 @@ const AccountPage = observer(() => {
               transform: "translate(-50%, -50%)",
               width: 400,
               bgcolor: "background.paper",
+              alignItems: 'flex-end',
+              display: 'flex',
+              flexDirection: 'column',
+              borderRadius: '10px',
               boxShadow: 24,
-              p: 4,
+              paddingBottom: '20px',
             }}
           >
-            <input
+            {/* <input
               type="password"
               value={oldPassword}
               onChange={(event) => setOldPassword(event.target.value)}
@@ -326,13 +381,89 @@ const AccountPage = observer(() => {
               value={confirmNewPassword}
               onChange={(event) => setConfirmNewPassword(event.target.value)}
               placeholder="Confirm New Password"
-            />
-            <Button onClick={handleChangePassword}>Change Password</Button>
+            /> */}
+            <Typography style={{marginBottom: '30px', alignSelf: 'center', backgroundColor: '#0033ff', width: '100%', borderTopRightRadius: '10px', borderTopLeftRadius: '10px',
+          padding: '15px 20px', fontWeight: 700, color: 'white'}}>Enter your current password to continue</Typography>
+          <Box style={{margin: '0 20px', alignItems: 'flex-end',
+              display: 'flex',
+              flexDirection: 'column', width: '90%'}}>
+            <TextField
+        variant="outlined"
+        style={{margin: '10px 0'}}
+        label="Enter Your Current Password"
+        type={showPassword ? "text" : "password"}
+        value={oldPassword}
+        onChange={(e) => setOldPassword(e.target.value)}
+        fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+            <TextField
+        variant="outlined"
+        style={{margin: '10px 0'}}
+        label="Enter Your New Password"
+        type={showPassword ? "text" : "password"}
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <TextField
+        variant="outlined"
+        style={{margin: '10px 0'}}
+        label="Confirm Your New Password"
+        type={showPassword ? "text" : "password"}
+        value={confirmNewPassword}
+        onChange={(e) => setConfirmNewPassword(e.target.value)}
+        fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+            <Button style={{
+            backgroundColor: "#0033ff",
+            borderRadius: "10px",
+            marginTop: "20px",
+            width: '180px',
+            padding: '10px 0', 
+            alignItems: 'flex-end',
+            fontSize: '12px', color: 'white'
+          }}  onClick={handleChangePassword}>Continue</Button></Box>
           </Box>
         </Modal>
-      </div>{" "}
+      </Box>
       <Box sx={{ flex: 1 }}>
-        <Button
+        {/* <Button
           variant="contained"
           className="sidebar-reset-balance"
           onClick={() => navigate("/")}
@@ -344,30 +475,20 @@ const AccountPage = observer(() => {
           }}
         >
           Return to Homepage
-        </Button>
-        <Button
-          variant="contained"
-          className="sidebar-reset-balance"
-          onClick={handleResetBalance}
-          style={{
-            backgroundColor: "#6699ff",
-            borderRadius: "0.5vw",
-            marginBottom: "1vw",
-            width: "100%",
-          }}
-        >
-          Reset Balance
-        </Button>
-
+        </Button> */}
         <Button
           variant="contained"
           className="sidebar-logout"
           onClick={logOut}
-          style={{ backgroundColor: "#0033ff", borderRadius: "0.5vw" }}
+          style={{ backgroundColor: "#0033ff",
+          borderRadius: "10px",
+          width: '120px',
+          fontSize: '12px', color: 'white'}}
         >
-          <LogoutCurve color="white" style={{ marginRight: "1vw" }} />
+          <LogoutCurve size={20} color="white" style={{ marginRight: "5px" }} />
           Log Out
         </Button>
+      </Box>
       </Box>
       <Dialog
         open={state.resetConfirmationOpen}
@@ -385,12 +506,12 @@ const AccountPage = observer(() => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={toggleResetConfirmation} color="primary">
+          <Button onClick={toggleResetConfirmation} style={{color: theme.palette.text.secondary}}>
             Cancel
           </Button>
           <Button
             onClick={confirmResetBalance}
-            color="primary"
+            style={{backgroundColor: '#0033ff', color: 'white'}}
             variant="contained"
           >
             Confirm
@@ -415,13 +536,13 @@ const AccountPage = observer(() => {
         <DialogActions>
           <Button
             onClick={() => setIsConfirmationDialogOpen(false)}
-            color="primary"
+            style={{color: theme.palette.text.secondary}}
           >
             Cancel
           </Button>
           <Button
             onClick={handleConfirmPasswordChange}
-            color="primary"
+            style={{backgroundColor: '#0033ff', color: 'white'}}
             variant="contained"
           >
             Confirm

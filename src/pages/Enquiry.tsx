@@ -18,7 +18,7 @@ const Enquiry = observer(() => {
 
   return (
     <div className="enquiry-container">
-      <h5 className="enquiry-title">Help and Support </h5>
+      <h5 className="enquiry-title" style={{borderBottom: '1px solid #888'}}>Help and Support </h5>
       <div>
         <div className="form-container">
           <form onSubmit={handleSubmit}>
@@ -30,7 +30,7 @@ const Enquiry = observer(() => {
                   type="email"
                   fullWidth
                   style={{
-                    width: "400px",
+                    width: "30vw",
                     height: "97px",
                     borderRadius: "20px",
                     marginTop: "10px",
@@ -49,7 +49,7 @@ const Enquiry = observer(() => {
                   multiline
                   rows={7}
                   style={{
-                    width: "840px",
+                    width: "60vw",
                     height: "217px",
                     marginLeft: "15px",
                     borderRadius: "20px",
@@ -64,9 +64,10 @@ const Enquiry = observer(() => {
                   size="large"
                   style={{
                     backgroundColor: "#0033ff",
-                    width: "100px",
+                    width: "22vw",
                     height: "40px",
-                    marginLeft: "60px",
+                    transform: 'translateX(39vw)',
+                    // marginLeft: "50vw",
                   }}
                   type="submit"
                 >
