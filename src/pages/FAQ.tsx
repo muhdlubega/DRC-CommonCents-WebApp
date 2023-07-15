@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const FAQ = () => {
   return (
     <div className="faq-title">
-      <h5 className="title2">Frequently Asked Questions</h5>
+      <h5 className="title2"  style={{borderBottom: '1px solid #888'}}>Frequently Asked Questions</h5>
       <div className="faq-container">
         {FAQArray.map((faqItem, index) => (
           <div className={`faq-card ${index === 2 ? 'large-card' : ''}`}key={index}>

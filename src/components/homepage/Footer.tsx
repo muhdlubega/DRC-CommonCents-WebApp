@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography, useMediaQuery } from "@mui/material";
 import "../../styles/main.scss";
 import Image1 from "../../assets/images/playstore.svg";
 import SocialMedia1 from "../../assets/images/facebook.png";
@@ -11,6 +11,8 @@ const Footer: React.FC = () => {
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const isSmallScreen = useMediaQuery('(max-width: 767px)');
 
   return (
     <Box className="footer">
@@ -34,10 +36,10 @@ const Footer: React.FC = () => {
             color: "white",
             transform: "translateY(-100%)",
             zIndex: 2,
-          }}
+          }} className="back-top-btn"
           onClick={handleScrollToTop}
         >
-          <ArrowCircleUp size={60} />
+          <ArrowCircleUp size={isSmallScreen ? 40 : 60} />
         </Button>
       </Box>
       <Box className="footer-container">

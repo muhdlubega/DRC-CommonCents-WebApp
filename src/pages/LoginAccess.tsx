@@ -12,12 +12,12 @@ const LoginAccess = observer(() => {
   }, [animationControls]);
 
   return (
-    <Box style={{height: '800px', margin:'50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
+    <Box className="error-container" style={{height: '800px', margin:'50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
     <img className="watermark" src={watermark}></img>
-    <Typography variant="h3" style={{width: '750px', fontWeight: 700, marginBottom:'20px'}}>Hmm...your profile seems to be out of shape.</Typography>
-    <Typography variant="h5">Try logging in</Typography>
+    <Typography className="error-title" variant="h3" style={{width: '750px', fontWeight: 700, marginBottom:'20px'}}>Hmm...your profile seems to be out of shape.</Typography>
+    <Typography className="error-subtitle" variant="h5">Try logging into your account or create an account now!</Typography>
     <motion.button
-        className="banner-btn"
+        className="error-btn"
         // onClick={null}
       >
         Log In

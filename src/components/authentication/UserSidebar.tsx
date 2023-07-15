@@ -340,12 +340,12 @@ const UserSidebar = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={toggleResetConfirmation} color="primary">
+          <Button onClick={toggleResetConfirmation}  style={{color: theme.palette.text.secondary}}>
             Cancel
           </Button>
           <Button
             onClick={confirmResetBalance}
-            color="primary"
+            style={{backgroundColor:"#0033ff", color: 'white'}}
             variant="contained"
           >
             Confirm

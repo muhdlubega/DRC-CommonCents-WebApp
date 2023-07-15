@@ -149,7 +149,7 @@ const NewsTopic = observer(() => {
       onClick={() => setIsSearchFocused(true)}
       style={{ marginLeft: "1vw", visibility: isSearchFocused ? "hidden" : "visible" }}
     >
-      <SearchNormal1 />
+      <SearchNormal1 size={40}/>
     </IconButton>
   </Box>
       {/* <Box

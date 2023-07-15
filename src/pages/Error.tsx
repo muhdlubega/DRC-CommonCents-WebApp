@@ -14,12 +14,12 @@ const Error = observer(() => {
   }, [animationControls]);
 
   return (
-    <Box style={{height: '800px', margin:'50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
+    <Box className="error-container" style={{height: '800px', margin:'50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
     <img className="watermark" src={watermark}></img>
-    <Typography variant="h3" style={{width: '750px', fontWeight: 700, marginBottom:'20px'}}>Sorry! We’ve looked everywhere but we can’t seem to find the page you are looking for.</Typography>
-    <Typography variant="h5">Don’t worry, CommonCents will chain you back to safety.</Typography>
+    <Typography className="error-title" variant="h4" style={{width: '750px', fontWeight: 700, marginBottom:'20px'}}>Sorry! We’ve looked everywhere but we can’t seem to find the page you are looking for.</Typography>
+    <Typography className="error-subtitle" variant="h5">Don’t worry, CommonCents will chain you back to safety.</Typography>
     <motion.button
-        className="banner-btn"
+        className="error-btn"
         onClick={() => navigate("/")}
       >
         Return to Homepage

@@ -101,7 +101,7 @@ const FavoritesPage = observer(() => {
         ))
       ) : (
         <Box style={{height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '60px'}}>
-        <Clock size={300}/>
+        <Clock size={280} color="gray"/>
         <Typography variant="h6" style={{margin: '15px'}}>No favourite posts yet. Check out our forum page</Typography>
         </Box>
       )}

@@ -508,7 +508,7 @@ const Proposal = observer(() => {
               color: theme.palette.text.secondary,
               boxShadow: 24,
               p: '20px', display: 'flex', alignItems: 'center'
-            }}>
+            }}  className="quote-price-modal">
               <img style={{height: '80px', margin: '16px'}}
           src={MarketSymbols[id!]}
           alt={id!}
@@ -558,7 +558,7 @@ const Proposal = observer(() => {
               color: theme.palette.text.secondary,
               boxShadow: 24,
               p: '20px', display: 'flex', alignItems: 'center'
-            }}>
+            }}  className="quote-price-modal">
               <img style={{height: '80px', margin: '16px'}}
           src={MarketSymbols[id!]}
           alt={id!}
@@ -724,7 +724,7 @@ const Proposal = observer(() => {
                 color: theme.palette.text.secondary,
                 boxShadow: 24,
                 p: '20px', display: 'flex', alignItems: 'center'
-              }}>
+              }}  className="quote-price-modal">
                 <img style={{height: '80px', margin: '16px'}}
             src={MarketSymbols[id!]}
             alt={id!}
@@ -774,7 +774,7 @@ const Proposal = observer(() => {
                 color: theme.palette.text.secondary,
                 boxShadow: 24,
                 p: '20px', display: 'flex', alignItems: 'center'
-              }}>
+              }}  className="quote-price-modal">
                 <img style={{height: '80px', margin: '16px'}}
             src={MarketSymbols[id!]}
             alt={id!}
