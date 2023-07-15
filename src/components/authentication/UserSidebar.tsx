@@ -243,7 +243,7 @@ const UserSidebar = () => {
                 ))}
             </ol>
           </Box>
-        <div style={{display: 'flex', justifyContent: 'flex-end', color: '#0033ff', margin: '5px'}}>
+        <div style={{display: 'flex', justifyContent: 'flex-end', color: '#0033ff', margin: '0 0 10px'}}>
         <Typography onClick={() => navigate('/leaderboard')} style={{fontSize: '14px', cursor: 'pointer'}}>See full leaderboard {">"}</Typography></div>
           
           <Typography
@@ -255,7 +255,7 @@ const UserSidebar = () => {
             Trade History
           </Typography>
           {latestTrades.length > 0 ? (
-            <div>
+            <Box>
               {/* <Typography variant="h6" sx={{ margin: "1rem 0" }}>
                 Latest Trades:
               </Typography> */}
@@ -268,23 +268,23 @@ const UserSidebar = () => {
                        ? trade.additionalAmount
                        : `-${trade.askPrice}`}{" "}
                      USD */}
-                  <Card onClick={() => navigate('/trade-history')} style={{cursor: 'pointer', height: '80px', width: '100%', margin: '10px 0', padding: '0 auto', border: '1px solid #000000', borderRadius: '10px', backgroundColor: theme.palette.mode === "dark"  ? '#C6C6C6' : '#FFFFFF'}}>
+                  <Card onClick={() => navigate('/trade-history')} style={{display: 'flex', justifyContent: 'center', alignItems:'center', cursor: 'pointer', height: '80px', width: '100%', margin: '10px 0', padding: '0 auto', border: '1px solid #000000', borderRadius: '10px', backgroundColor: theme.palette.background.paper}}>
             <CardContent style={{padding: '8px'}}>
-            <span style={{display: 'flex', justifyContent: 'center'}}><img
+            <span style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><img
           src={MarketSymbols[trade.marketType]}
           alt={trade.marketType}
           style={{ width: '50px', height: '50px', margin: '0 10px' }}
         />
-        <div style={{margin: '0 10px'}}>
-              <Typography variant="body1" sx={{color: trade.status === "Won" ? "green" : "red"}}>{trade.status === "Won" ? `+${trade.additionalAmount}` : `-${trade.askPrice}`} USD</Typography>
-              <Typography variant="body1">{MarketName[trade.marketType]}</Typography>
-              <Typography style={{fontSize: '10px'}}>{formatTimestamp(trade.timestamp)}</Typography></div>
+        <Box style={{margin: '0 10px'}}>
+              <Typography variant="body1" style={{fontSize: '14px'}} sx={{color: trade.status === "Won" ? "green" : "red"}}>{trade.status === "Won" ? `+${trade.additionalAmount}` : `-${trade.askPrice}`} USD</Typography>
+              <Typography variant="body1" style={{fontSize: '14px'}}>{MarketName[trade.marketType]}</Typography>
+              <Typography style={{fontSize: '9px'}}>{formatTimestamp(trade.timestamp)}</Typography></Box>
               </span>
             </CardContent>
           </Card>
                   </div>
                 ))}
-            </div>
+            </Box>
           ): <Card onClick={() => navigate('/trade-history')} style={{cursor: 'pointer', height: '85px', width: '100%', margin: '10px 0', padding: '0 auto', border: '1px solid #000000', borderRadius: '10px', backgroundColor: theme.palette.background.default, color: theme.palette.text.primary}}>
           <CardContent style={{padding: '5px 10px'}}>
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
@@ -293,8 +293,9 @@ const UserSidebar = () => {
             </div>
           </CardContent>
         </Card>}
-        <div style={{display: 'flex', justifyContent: 'flex-end', color: '#0033ff', margin: '5px'}}>
-        <Typography onClick={() => navigate('/trade-history')} style={{fontSize: '14px', cursor: 'pointer'}}>See full trade history {">"}</Typography></div>
+        <Box style={{display: 'flex', justifyContent: 'flex-end', color: '#0033ff', margin: '0 0 10px'}}>
+        <Typography onClick={() => navigate('/trade-history')} style={{fontSize: '14px', cursor: 'pointer'}}>See full trade history {">"}</Typography>
+        </Box>
           <Box sx={{ flex: 1 }}></Box>
           <Box sx={{ flex: 1 }}>
             <Button

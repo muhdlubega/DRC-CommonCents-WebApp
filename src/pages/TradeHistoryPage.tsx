@@ -114,10 +114,7 @@ const TradeHistoryPage = observer(() => {
     fetchTradeData();
 
     authStore.getUserNetWorth();
-  }, []);
-
-  console.log(tradeData);
-  
+  }, []);  
 
   return (
     <Box>
@@ -130,30 +127,29 @@ const TradeHistoryPage = observer(() => {
     <Grid container spacing={2}>
       {tradeData.filter((trade) => trade.status !== undefined).sort((a, b) => b.timestamp - a.timestamp).map((trade, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
-          <Card onClick={() => handleCardClick(trade)} sx={{cursor: 'pointer', height: '180px', margin: '10px', border: '1px solid #000000', borderRadius: '10px'}}>
+          <Card onClick={() => handleCardClick(trade)} sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', height: '180px', border: '1px solid #000000', borderRadius: '10px'}}>
             <CardContent>
-            <span style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
+            <Box component="span" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <img
           src={MarketSymbols[trade.marketType]}
           alt={trade.marketType}
-          style={{ width: '80px', height: '80px', margin: '10px' }}
-        /><div style={{margin: '10px'}}>
-              <Typography variant="h5">{MarketName[trade.marketType]}</Typography>
-              <Typography variant="h6" sx={{color: trade.status === "Won" ? "green" : "red"}}>Profit/Loss: {trade.status === "Won" ? trade.additionalAmount : `-${trade.askPrice}`} USD</Typography>
-              <Typography>{formatTimestamp(trade.timestamp)}</Typography></div></span>
+          style={{ width: '75px', height: '75px', margin: '10px' }}
+        />
+        <Box style={{margin: '0 10px'}}>
+              <Typography variant="h5" style={{fontSize: '20px'}}>{MarketName[trade.marketType]}</Typography>
+              <Typography variant="h6" sx={{color: trade.status === "Won" ? "green" : "red", fontSize: '16px'}}>Profit/Loss: {trade.status === "Won" ? trade.additionalAmount : `-${trade.askPrice}`} USD</Typography>
+              <Typography style={{fontSize: '12px'}}>{formatTimestamp(trade.timestamp)}</Typography></Box>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
       ))}
     </Grid>
 
-    <Typography variant="h5" style={{fontFamily: 'Roboto', padding:'20px', display:'flex', flexDirection: 'column', justifyContent:'flex-end', alignItems: 'flex-end', borderTop: '1px solid #888', margin: '20px'}}>
+    <Typography variant="h6" style={{fontFamily: 'Roboto', padding:'20px', display:'flex', flexDirection: 'column', justifyContent:'flex-end', alignItems: 'flex-end', borderTop: '1px solid #888', margin: '20px'}}>
           <span>Total Profit: {authStore.totalAmountWon.toFixed(2)} USD</span>
-          {/* <span style={{flex: 1}}></span> */}
-          {/* <br /> */}
           <span>Total Loss: {authStore.totalAmountLost.toFixed(2)} USD</span>
-          {/* <span style={{flex: 3}}></span> */}
-          {/* <br /> */}
-          <span style={{color: 'gold', fontSize: '120%'}}>Net Worth: {authStore.userNetWorth.toFixed(2)} USD</span>
+          <span style={{color: '#0033ff'}}>Net Worth: {authStore.userNetWorth.toFixed(2)} USD</span>
         </Typography>
     <Modal
       open={selectedTrade !== null}
@@ -167,10 +163,10 @@ const TradeHistoryPage = observer(() => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "30%",
+          width: "400px",
           borderRadius: '10px',
           border: 'none'
-        }}
+        }} className="trade-history-card"
       >
         {selectedTrade && (
             <CardContent>
@@ -191,7 +187,7 @@ const TradeHistoryPage = observer(() => {
               <Typography variant="body1"><strong>Strategy:</strong> {selectedTrade.strategy}</Typography>
               <Typography variant="body1"><strong>Basis:</strong> {selectedTrade.basis}</Typography>
               <Typography variant="body1"><strong>Duration:</strong> {selectedTrade.tickDuration} Ticks</Typography>
-              <Typography variant="body1">{formatTimestamp(selectedTrade.timestamp)}</Typography>
+              <Typography variant="body1" style={{fontSize: '12px'}}>{formatTimestamp(selectedTrade.timestamp)}</Typography>
             </CardContent>
         )}
       </Card>

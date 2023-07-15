@@ -828,7 +828,7 @@ const Proposal = observer(() => {
             height: '500px'
           }}
         >
-          <Typography variant="body1">Login to start trading</Typography>
+          <Typography variant="body1"><a style={{cursor: 'pointer', color: '#0033ff'}} onClick={authStore.handleOpen}>Login</a> to start trading</Typography>
         </Box>
       )}
     </Box>
