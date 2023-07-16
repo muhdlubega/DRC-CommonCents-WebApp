@@ -283,7 +283,6 @@ class ApiStore {
         false
       );
     } else if (data.msg_type === "history") {
-      // console.log(data.history)
       const historyTicks = data.history.prices.map(
         (price: number, index: number) => ({
           epoch: data.history.times[index],
@@ -317,7 +316,6 @@ class ApiStore {
       };
 
       this.setProposalTicks([...this.proposalTicks, newTick]);
-      // console.log(this.proposalTicks);
 
       let currentTime = 0;
       if (this.granularity === 60) {

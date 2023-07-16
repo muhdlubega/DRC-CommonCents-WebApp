@@ -5,7 +5,6 @@ import {
   doc,
   getDocs,
   setDoc,
-  // updateDoc,
 } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
 import { auth, db } from "../firebase";
@@ -20,7 +19,7 @@ export interface Post {
   timestamp: number;
   isFavorite?: boolean;
   comments?: Comment[];
-  commentCount?: number; 
+  commentCount?: number;
 }
 
 export interface Comment {
@@ -40,9 +39,7 @@ class ForumStore {
   posts: Post[] = [];
   comments: Comment[] = [];
   userFavourites: Post[] = [];
-  // maxLength: number = 3000;
   maxTitle: number = 80;
-  // errorMessage: string = "";
   errorTitle: string = "";
 
   constructor() {
@@ -51,20 +48,15 @@ class ForumStore {
       details: observable,
       posts: observable,
       comments: observable,
-      // maxLength: observable,
       maxTitle: observable,
-      // errorMessage: observable,
       errorTitle: observable,
       userFavourites: observable,
       setTitle: action.bound,
       setDetails: action.bound,
       setPosts: action.bound,
-      // setErrorMessage: action.bound,
       setErrorTitle: action.bound,
       initializePosts: action.bound,
       setContent: action.bound,
-      // setComments: action.bound,
-      // initializeComments: action.bound,
       markAsFavorite: action.bound,
       unmarkAsFavorite: action.bound,
       setUserFavourites: action.bound,
@@ -72,7 +64,7 @@ class ForumStore {
       handleFavorite: action,
       handleDelete: action,
       handleSubmitComment: action,
-      handleDeleteComment: action
+      handleDeleteComment: action,
     });
 
     this.initializePosts();
@@ -89,16 +81,7 @@ class ForumStore {
 
   setDetails(details: string) {
     this.details = details;
-    // if (details.length > this.maxLength) {
-    //   this.setErrorMessage("Character count limit reached");
-    // } else {
-    //   this.setErrorMessage("");
-    // }
   }
-
-  // setErrorMessage(errorMessage: string) {
-  //   this.errorMessage = errorMessage;
-  // }
 
   setErrorTitle(errorTitle: string) {
     this.errorTitle = errorTitle;
@@ -112,7 +95,7 @@ class ForumStore {
     const querySnapshot = await getDocs(collection(db, "posts"));
     const updatedPosts: Post[] = [];
     this.getUserFavourites();
-  
+
     for (const doc of querySnapshot.docs) {
       const postData = doc.data();
       const post: Post = {
@@ -124,27 +107,30 @@ class ForumStore {
         timestamp: postData.timestamp,
         comments: [],
       };
-  
-      const commentsQuerySnapshot = await getDocs(collection(db, "posts", doc.id, "comments"));
-      const comments: Comment[] = commentsQuerySnapshot.docs.map((commentDoc) => {
-        const commentData = commentDoc.data();
-        return {
-          id: commentDoc.id,
-          postId: doc.id,
-          content: commentData.content,
-          author: commentData.author,
-          authorImage: commentData.authorImage,
-          timestamp: commentData.timestamp,
-        };
-      });
-  
+
+      const commentsQuerySnapshot = await getDocs(
+        collection(db, "posts", doc.id, "comments")
+      );
+      const comments: Comment[] = commentsQuerySnapshot.docs.map(
+        (commentDoc) => {
+          const commentData = commentDoc.data();
+          return {
+            id: commentDoc.id,
+            postId: doc.id,
+            content: commentData.content,
+            author: commentData.author,
+            authorImage: commentData.authorImage,
+            timestamp: commentData.timestamp,
+          };
+        }
+      );
+
       post.comments = comments;
-      post.commentCount = comments.length; 
+      post.commentCount = comments.length;
       updatedPosts.push(post);
       console.log(post.comments);
     }
-    
-  
+
     updatedPosts.forEach((element) => {
       for (let i = 0; i < this.userFavourites.length; i++) {
         if (this.userFavourites[i].id === element.id) {
@@ -152,49 +138,18 @@ class ForumStore {
         }
       }
     });
-  
+
     this.setPosts(updatedPosts);
   }
-  
 
   setContent(content: string) {
     this.content = content;
-    // if (content.length === this.maxLength) {
-    //   this.setErrorMessage("Character count limit reached");
-    // } else {
-    //   this.setErrorMessage("");
-    // }
   }
-
-  // setComments(comments: Comment[]) {
-  //   this.comments = comments;
-  // }
-
-  // async initializeComments(postId: string) {
-  //   const querySnapshot = await getDocs(collection(db, "posts", postId, "comments"));
-  //   const updatedComments: Comment[] = [];
-  //   querySnapshot.forEach((doc) => {
-  //     const { postId, content, author, authorImage, timestamp } = doc.data();
-  //     const comments: Comment = {
-  //       id: doc.id,
-  //       postId: postId,
-  //       content,
-  //       author,
-  //       authorImage,
-  //       timestamp
-  //     };
-  //     updatedComments.push(comments);
-  //   });
-
-  //   this.setComments(updatedComments);
-  // }
 
   handleDelete = async (postId: string) => {
     try {
       await deleteDoc(doc(db, "posts", postId));
-      const updatedPosts = this.posts.filter(
-        (post) => post.id !== postId
-      );
+      const updatedPosts = this.posts.filter((post) => post.id !== postId);
       this.setPosts(updatedPosts);
     } catch (error) {
       authStore.setAlert({
@@ -356,19 +311,23 @@ class ForumStore {
           });
 
           post.isFavorite = true;
-          
+
           if (auth.currentUser != null) {
             let currentUser = auth.currentUser.uid;
-            await setDoc(
-              doc(db, "users", currentUser, "favorites", postId),
-              {'id': post.id, 'title': post.title, 'details': post.details, 'author': post.author, 'authorImage': post.authorImage,
-                'timestamp': post.timestamp, 'favourite':post.isFavorite}
-            );
+            await setDoc(doc(db, "users", currentUser, "favorites", postId), {
+              id: post.id,
+              title: post.title,
+              details: post.details,
+              author: post.author,
+              authorImage: post.authorImage,
+              timestamp: post.timestamp,
+              favourite: post.isFavorite,
+            });
             this.markAsFavorite(postId);
           }
         } catch (error) {
           console.log(error);
-          
+
           authStore.setAlert({
             open: true,
             message: "Unable to add to favorites. Try again later",

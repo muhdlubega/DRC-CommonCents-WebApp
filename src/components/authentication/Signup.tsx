@@ -10,7 +10,6 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
 import authStore from "../../store/AuthStore";
 import { useState } from "react";
-import "../../styles/components.scss";
 
 interface SignupProps {
   handleClose: () => void;

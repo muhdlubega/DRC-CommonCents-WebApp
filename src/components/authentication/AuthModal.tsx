@@ -8,7 +8,6 @@ import GoogleButton from "react-google-button";
 import { observer } from "mobx-react-lite";
 import authStore from "../../store/AuthStore";
 import { LoginCurve } from "iconsax-react";
-import '../../styles/components.scss';
 
 const AuthModal = observer(() => {
 

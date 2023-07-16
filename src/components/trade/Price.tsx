@@ -1,7 +1,6 @@
 import { Box, Card } from '@mui/material'
 import apiStore from '../../store/ApiStore'
 import { observer } from 'mobx-react-lite';
-import '../../styles/tradepage.scss'
 
 const Price = () => {
   if (!apiStore.isTicks && apiStore.ticks.length > 0){

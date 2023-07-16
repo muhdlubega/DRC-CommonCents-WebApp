@@ -4,14 +4,10 @@ import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import newsStore, { NewsItem, topics_array } from "../../store/NewsStore";
-import "../../styles/main.scss";
 import placeholder from '../../assets/images/placeholder.png'
-// import AliceCarousel from "react-alice-carousel";
 import { SearchNormal1 } from "iconsax-react";
 
 const NewsTopic = observer(() => {
-  // const [news, setNews] = useState<NewsItem[]>([]);
-  // const [selectedTopic, setSelectedTopic] = useState<string>(topics_array[0]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const articlesPerPage = 40;
@@ -20,15 +16,10 @@ const NewsTopic = observer(() => {
   const theme = useTheme();
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setIsSearchFocused(true);
     const { value } = event.target;
     const filteredValue = value.replace(/[^\w\s]/gi, "")
     setSearchTerm(filteredValue);
   };
-
-  // const toggleSearchbar = () => {
-  //   setIsSearchFocused((prevState) => !prevState);
-  // };
 
   const filteredNews = newsStore.news.filter((article) => {
     const { topics, summary, authors, title, source } = article;
@@ -73,10 +64,6 @@ const NewsTopic = observer(() => {
     fetchNews(newsStore.selectedTopic);
   }, []);
 
-  // const handleTopicChange = (topic: string) => {
-  //   newsStore.setSelectedTopic(topic);
-  // };
-
   const handleTopicChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     const selectedTopic = topics_array[newValue];
     newsStore.setSelectedTopic(selectedTopic);
@@ -95,46 +82,6 @@ const NewsTopic = observer(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // const items = topics_array.map((topic, index) => (
-  //   <Button
-  //     key={index}
-  //     variant={topic === newsStore.selectedTopic ? "contained" : "outlined"}
-  //     onClick={() => handleTopicChange(topic)}
-  //     sx={{
-  //       mx: 1,
-  //       paddingY: "1vw",
-  //       border: "0.2vw solid #3366ff",
-  //       borderRadius: "1vw",
-  //       width: "17vw",
-  //       backgroundColor:
-  //         topic === newsStore.selectedTopic ? "#3366ff" : "#ffffff",
-  //     }}
-  //   >
-  //     {topic.replace(/_/g, " ")}
-  //   </Button>
-  // ));
-
-  // const responsive = {
-  //   0: {
-  //     items: 2,
-  //   },
-  //   1024: {
-  //     items: 5,
-  //   },
-  // };
-
-  // const renderPrevButton = () => (
-  //   <button className="carousel-button prev-button">
-  //     <ArrowLeft2 color="#3366ff" />
-  //   </button>
-  // );
-
-  // const renderNextButton = () => (
-  //   <button className="carousel-button next-button">
-  //     <ArrowRight2 color="#3366ff" />
-  //   </button>
-  // );
-
   return (
     <Box>
       <Box className={`news-search ${isSearchFocused ? "focused" : ""}`}>
@@ -148,41 +95,13 @@ const NewsTopic = observer(() => {
     />
     <IconButton
       onClick={() => setIsSearchFocused(true)}
-      style={{ marginLeft: "1vw", color: '#0033ff', visibility: isSearchFocused ? "hidden" : "visible", display: isSmallScreen ? "none" : "" }}
+      className="news-searchbar-icon"
+      style={{ visibility: isSearchFocused ? "hidden" : "visible", display: isSmallScreen ? "none" : "" }}
     >
       <SearchNormal1 size={40}/>
     </IconButton>
   </Box>
-      {/* <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mb: 2,
-          mt: 5,
-          mx: 5,
-          alignItems: "center",
-        }}
-      >
-        <AliceCarousel
-          mouseTracking
-          infinite
-          // disableDotsControls
-          // disableButtonsControls
-          responsive={responsive}
-          items={items}
-          renderPrevButton={renderPrevButton}
-          renderNextButton={renderNextButton}
-        />
-      </Box> */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mb: 2,
-          mt: 5,
-          mx: 5,
-          alignItems: "center",
-        }}
+      <Box className="news-searchgenre"
       >
         <Tabs
           value={topics_array.indexOf(newsStore.selectedTopic)}
@@ -197,20 +116,16 @@ const NewsTopic = observer(() => {
               label={topic.replace(/_/g, " ")}
               sx={{
                 mx: 1,
-                paddingY: "1vw",
-                // border: "0.2vw solid #3366ff",
-                // borderRadius: "1vw",
-                // backgroundColor:
-                // topic === newsStore.selectedTopic ? "#3366ff" : "#ffffff",
+                paddingY: "1vw"
               }}
             />
           ))}
         </Tabs>
       </Box>
       {filteredNews.length === 0 ? (
-        <Box style={{height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '60px'}}>
+        <Box className="news-search-empty">
         <SearchNormal1 size={280} color="gray"/>
-        <Typography variant="h6" style={{margin: '15px'}}>Sorry, no search results found</Typography>
+        <Typography variant="h6" className="news-empty-txt">Sorry, no search results found</Typography>
         </Box>
     ) : (<Box className="news-card-row">
         {paginate(filteredNews, currentPage, articlesPerPage).map(
@@ -282,10 +197,11 @@ const NewsTopic = observer(() => {
           }
         )}
       </Box>)}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", margin: "5vw" }}>
+      <Box className="newspaginate-btngroup">
         <Button
           onClick={goToPreviousPage}
           disabled={currentPage === 1 || filteredNews.length === 0 }
+          className="newspaginate-btn"
           sx={{
             margin: "10px",
             padding: "10px 20px",
@@ -302,6 +218,7 @@ const NewsTopic = observer(() => {
           onClick={goToNextPage}
           disabled={newsStore.news.length < articlesPerPage ||
             paginate(filteredNews, currentPage, articlesPerPage).length === 0 || filteredNews.length === 0 }
+          className="newspaginate-btn"
           sx={{
             margin: "10px",
             padding: "10px 20px",

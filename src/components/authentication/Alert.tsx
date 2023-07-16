@@ -3,7 +3,6 @@ import MuiAlert, { AlertColor } from "@mui/material/Alert";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { SyntheticEvent } from "react";
-import "../../styles/components.scss";
 
 const Alert = observer(() => {
   const handleCloseAlert = (

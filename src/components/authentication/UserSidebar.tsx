@@ -16,14 +16,14 @@ import {
 } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
-import "../../styles/main.scss";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { Clock, EmptyWallet } from "iconsax-react";
 import { LogoutCurve, ArrowRight2 } from "iconsax-react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
-import { MarketName, MarketSymbols, Trade } from "../../pages/TradeHistoryPage";
+import { Trade } from "../../pages/TradeHistoryPage";
+import { MarketName, MarketSymbols } from "../../arrays/MarketArray";
 
 const UserSidebar = () => {
   const navigate = useNavigate();

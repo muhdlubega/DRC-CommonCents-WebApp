@@ -1,6 +1,4 @@
 import { Box, Button, Grid, Typography, useMediaQuery } from "@mui/material";
-import "../../styles/main.scss";
-import "../../styles/components.scss";
 import Image1 from "../../assets/images/playstore.svg";
 import SocialMedia1 from "../../assets/images/facebook.png";
 import SocialMedia2 from "../../assets/images/ig.png";

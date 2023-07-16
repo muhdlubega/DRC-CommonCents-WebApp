@@ -162,3 +162,63 @@
 // .register-button:hover {
 //   background-color: #a90e0e;
 // }
+
+// .carousel-button {
+//   position: absolute;
+//   top: 50%;
+//   transform: translateY(-175%);
+//   background: transparent;
+//   border: none;
+//   font-size: 24px;
+//   cursor: pointer;
+// }
+
+// .prev-button {
+//   left: -2vw;
+// }
+
+// .next-button {
+//   right: -2vw;
+// }
+
+// .backgroundCircleTopLeft {
+//     position: absolute;
+//     top: -39%;
+//     left: -10%;
+//     width: 900px;
+//     height: 900px;
+//     border-radius: 450px;
+//     background: hsla(220, 57%, 70%, 0.6);
+//     z-index: -1;
+//   }
+
+// .modal {
+//     position: fixed;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+//     background-color: rgba(0, 0, 0, 0.5);
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     z-index: 999;
+//   }
+  
+//   .modal-content {
+//     width: 400px;
+//     background-color: #fff;
+//     border: 2px solid #000;
+//     padding: 16px;
+//     text-align: center;
+//     z-index: 999;
+//   }
+  
+//   .modal-content h2 {
+//     margin-top: 0;
+//   }
+  
+//   .modal-content p {
+//     margin-top: 16px;
+//   }
+  

@@ -6,9 +6,10 @@ import Navbar from "./components/navbar/Navbar";
 import "./styles/main.scss";
 import { observer } from "mobx-react-lite";
 import authStore from "./store/AuthStore";
-import loading from "./assets/images/loading.gif";
+import loading from "./assets/images/commoncents.svg";
 import { lightTheme, darkTheme, themes } from "./store/ThemeStore";
 import { ThemeProvider } from "@mui/material/styles";
+import { Box } from "@mui/material";
 
 const LazyHomePage = lazy(() => import("./pages/HomePage"));
 const LazyTradePage = lazy(() => import("./pages/TradePage"));
@@ -42,18 +43,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "50%", width: "50%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyHomePage />
@@ -65,18 +57,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "20%", width: "20%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyTradePage />
@@ -88,18 +71,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "20%", width: "20%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyNewsPage />
@@ -111,18 +85,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "20%", width: "20%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyForumPage />
@@ -134,18 +99,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "20%", width: "20%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyAboutPage />
@@ -157,18 +113,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "20%", width: "20%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyEnquiryPage />
@@ -180,18 +127,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "20%", width: "20%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyFAQPage />
@@ -204,18 +142,9 @@ function App({ themeStore }: AppProps) {
               authStore.user ? (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyAccountPage />
@@ -223,18 +152,9 @@ function App({ themeStore }: AppProps) {
               ) : (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyLoginAccessPage />
@@ -248,18 +168,9 @@ function App({ themeStore }: AppProps) {
               authStore.user ? (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyFavouritesPage />
@@ -267,18 +178,9 @@ function App({ themeStore }: AppProps) {
               ) : (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyLoginAccessPage />
@@ -292,18 +194,9 @@ function App({ themeStore }: AppProps) {
               authStore.user ? (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyLeaderboardPage />
@@ -311,18 +204,9 @@ function App({ themeStore }: AppProps) {
               ) : (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyLoginAccessPage />
@@ -336,18 +220,9 @@ function App({ themeStore }: AppProps) {
               authStore.user ? (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyTradeHistoryPage />
@@ -355,18 +230,9 @@ function App({ themeStore }: AppProps) {
               ) : (
                 <Suspense
                   fallback={
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={loading}
-                        style={{ height: "20%", width: "20%" }}
-                      ></img>
-                    </div>
+                    <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                   }
                 >
                   <LazyLoginAccessPage />
@@ -379,18 +245,9 @@ function App({ themeStore }: AppProps) {
             element={
               <Suspense
                 fallback={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <img
-                      src={loading}
-                      style={{ height: "20%", width: "20%" }}
-                    ></img>
-                  </div>
+                  <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
                 }
               >
                 <LazyErrorPage />

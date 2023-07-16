@@ -11,7 +11,7 @@ export const FAQArray = [
     },
     {
      title: "What trading market is CommonCents focused on?",
-     Description : 'CommonCents only focuses on synthetic trading as it is one of the markets that people are afraid of getting into due to the risks. CommonCents exists to educate the concepts of those who have the desire to leap into synthetic trading',
+     Description : 'CommonCents mainly focuses on synthetic trading as it is one of the markets that people are afraid of getting into due to the risks. CommonCents exists to educate the concepts of those who have the desire to leap into synthetic trading',
      icon: <i className="fa-solid fa-arrow-pointer"></i>
     },
     {
@@ -20,7 +20,7 @@ export const FAQArray = [
      icon: <i className="fa-solid fa-user-secret"></i>
     },
     {
-     title: "I’m not familiar with trading, how can I get started with commoncents?",
+     title: "I’m not familiar with trading, can I start learning with CommonCents?",
      Description : "Definitely! CommonCents was designed to cater for absolute beginners.",
      icon: <i className="fa-sharp fa-solid fa-question"></i>
     } 

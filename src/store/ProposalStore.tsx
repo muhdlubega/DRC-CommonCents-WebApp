@@ -87,7 +87,6 @@ class ProposalStore {
     } else if (data.msg_type === "proposal") {
       action(() => {
         this.proposalData.push(data.proposal);
-        // console.log(this.proposalData);
       })();
     }
   };
@@ -105,8 +104,6 @@ class ProposalStore {
       symbol: id,
     };
 
-    // console.log(proposal_request);
-
     this.unsubscribeProposal();
     this.connectWebSocket();
     this.connection?.addEventListener("message", this.proposalResponse);
@@ -119,7 +116,6 @@ class ProposalStore {
       this.proposalResponse,
       false
     );
-    // this.proposalData = [];
     this.api.disconnect();
     this.disconnectWebSocket();
   };

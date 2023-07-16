@@ -17,7 +17,6 @@ import { styled } from "@mui/system";
 import { ArrowRight2, HambergerMenu } from "iconsax-react";
 import { useState } from "react";
 import themeStore, { themes } from "../../store/ThemeStore";
-import "../../styles/components.scss";
 
 const Header = observer(() => {
   const navigate = useNavigate();

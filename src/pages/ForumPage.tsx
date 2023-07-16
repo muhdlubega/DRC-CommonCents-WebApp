@@ -17,7 +17,6 @@ import { useEffect } from "react";
 import { auth, db } from "../firebase";
 import authStore from "../store/AuthStore";
 import { useNavigate } from "react-router";
-import "../styles/main.scss";
 
 const ForumPage = observer(() => {
   const theme = useTheme();
@@ -69,18 +68,24 @@ const ForumPage = observer(() => {
     }
   };
 
-    const formatTimestamp = (timestamp: number) => {
+  const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - timestamp;
 
     if (timeDiff < 60000) {
       return `Less than 1 minute ago`;
     } else if (timeDiff < 3600000) {
-      return `${Math.floor(timeDiff / 60000)} minute${Math.floor(timeDiff / 60000) !== 1 ? 's' : ''} ago`;
+      return `${Math.floor(timeDiff / 60000)} minute${
+        Math.floor(timeDiff / 60000) !== 1 ? "s" : ""
+      } ago`;
     } else if (timeDiff < 86400000) {
-      return `${Math.floor(timeDiff / 3600000)} hour${Math.floor(timeDiff / 3600000) !== 1 ? 's' : ''} ago`;
+      return `${Math.floor(timeDiff / 3600000)} hour${
+        Math.floor(timeDiff / 3600000) !== 1 ? "s" : ""
+      } ago`;
     } else {
-      return `${Math.floor(timeDiff / 86400000)} day${Math.floor(timeDiff / 86400000) !== 1 ? 's' : ''} ago`;
+      return `${Math.floor(timeDiff / 86400000)} day${
+        Math.floor(timeDiff / 86400000) !== 1 ? "s" : ""
+      } ago`;
     }
   };
 
@@ -89,45 +94,19 @@ const ForumPage = observer(() => {
     .sort((a, b) => b.timestamp - a.timestamp);
 
   return (
-    <div style={{ display: "flex", flexDirection: 'row' }} className="forum-main">
+    <div className="forum-main">
       {authStore.user && (
         <Box style={{ flex: 1 }}>
-          <Card className="forum-left-card"
-            style={{
-              margin: "2vw 0 1vw 2vw",
-              border: "0.1vw solid black",
-              borderRadius: "10px",
-            }}
-          >
+          <Card className="forum-left-card">
             <CardContent>
-              <Box
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  width: "100%",
-                  // fontSize: "1.2vw",
-                  textAlign: "center",
-                  fontFamily: "Roboto",
-                  // wordWrap: "break-word",
-                  margin: "10px",
-                }}
-              >
+              <Box className="forum-left-box">
                 <Avatar
                   className="account-picture"
                   src={auth.currentUser?.photoURL || ""}
                   alt={auth.currentUser?.displayName || ""}
                   sx={{ width: "60px", height: "60px" }}
                 />
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-start",
-                    alignItems: "flex-start",
-                    marginLeft: "10px",
-                  }}
-                >
+                <Box className="forum-left-user">
                   <Typography
                     variant="h6"
                     style={{
@@ -136,7 +115,6 @@ const ForumPage = observer(() => {
                   >
                     {auth.currentUser?.displayName}
                   </Typography>
-                 
                 </Box>
               </Box>
               <form onSubmit={handleSubmit}>
@@ -147,7 +125,7 @@ const ForumPage = observer(() => {
                   label="Title"
                   value={forumStore.title}
                   onChange={(e) => forumStore.setTitle(e.target.value)}
-                  sx={{ my: "10px", width: "100%" }}
+                  className="forum-left-title"
                 />
                 {forumStore.errorTitle && (
                   <Typography style={{ color: "red" }}>
@@ -162,12 +140,7 @@ const ForumPage = observer(() => {
                   variant="filled"
                   value={forumStore.details}
                   onChange={(e) => forumStore.setDetails(e.target.value)}
-                  sx={{
-                    my: "10px",
-                    width: "100%",
-                    maxHeight: "8em",
-                    overflowY: "auto",
-                  }}
+                  className="forum-details"
                 />
                 <Typography
                   style={{
@@ -180,34 +153,30 @@ const ForumPage = observer(() => {
                 >
                   {forumStore.details.length}/3000
                 </Typography>
-                <Box style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Box className="forum-left-post">
                   <Button
                     type="submit"
                     sx={{
                       backgroundColor: "#3366ff",
                       color: "white",
-                      px: "3vw", height: '50px'
+                      px: "3vw",
+                      height: "50px",
                     }}
                   >
                     Post
                   </Button>
-                  
                 </Box>
                 <Typography
-                    variant="body1"
-                    style={{
-                      cursor: "pointer",
-                      marginTop: '20px',
-                      paddingTop: '10px',
-                      color: theme.palette.text.secondary,
-                      borderTop: '1px solid grey'
-                      // fontSize: '20px'
-                    }}
-                    onClick={() => navigate("/favourites")}
-                  >
-                    
-                    <Heart size={20} style={{ margin: "0 5px" }} />Check Favourites
-                  </Typography>
+                  variant="body1"
+                  className="forum-left-fave"
+                  style={{
+                    color: theme.palette.text.secondary,
+                  }}
+                  onClick={() => navigate("/favourites")}
+                >
+                  <Heart size={20} className="forum-left-icon" />
+                  Check Favourites
+                </Typography>
               </form>
             </CardContent>
           </Card>
@@ -216,32 +185,12 @@ const ForumPage = observer(() => {
 
       <Box style={{ flex: 3 }}>
         {sortedPosts.map((post) => (
-          <Card
-            key={post.timestamp}
-            style={{
-              margin: "2vw",
-              border: "0.1vw solid black",
-              borderRadius: "10px",
-              // display: 'flex', flexWrap: 'wrap'
-            }}
-          >
+          <Card key={post.timestamp} className="forum-right">
             <CardContent>
-              <Box style={{ flexDirection: "row", display: "flex" }} className="forum-right-card">
-                <Box
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    flexDirection: "column",
-                    margin: "20px",
-                  }}
-                >
+              <Box className="forum-right-card">
+                <Box className="forum-right-box">
                   <Avatar
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      marginBottom: "10px",
-                    }}
-                    className="sidebar-picture"
+                    className="forum-right-picture"
                     src={post.authorImage!}
                     alt={post.author!}
                   />
@@ -249,13 +198,7 @@ const ForumPage = observer(() => {
                     {post.author}
                   </Typography>
                 </Box>
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
+                <Box className="forum-right-textbox">
                   <Typography variant="h6" component="h3">
                     {post.title}
                   </Typography>
@@ -266,17 +209,19 @@ const ForumPage = observer(() => {
                   >
                     {post.details}
                   </Typography>
-                  <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
+                  <Typography
+                    variant="body2"
+                    component="p"
+                    style={{ fontSize: "12px" }}
+                  >
                     {formatTimestamp(post.timestamp)}
                   </Typography>
-                  <Box
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-end",
-                    }}
-                  >
-                    <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
+                  <Box className="forum-right-faveicon">
+                    <Typography
+                      variant="body2"
+                      component="p"
+                      style={{ fontSize: "12px" }}
+                    >
                       {post.commentCount} comment
                       {post.commentCount !== 1 ? "s" : ""}
                       <IconButton
@@ -289,35 +234,39 @@ const ForumPage = observer(() => {
                       </IconButton>
                     </Typography>
                     {post.author === auth.currentUser?.displayName && (
-                        <IconButton onClick={() => forumStore.handleDelete(post.id!)}>
-                          <Trash color="gray" />
-                        </IconButton>
-                      )}
+                      <IconButton
+                        onClick={() => forumStore.handleDelete(post.id!)}
+                      >
+                        <Trash color="gray" />
+                      </IconButton>
+                    )}
                   </Box>
                 </Box>
               </Box>
               {authStore.user && (
                 <Box>
-                  <form style={{display: 'flex'}} onSubmit={(e) => forumStore.handleSubmitComment(e, post.id!)}>
+                  <form
+                    style={{ display: "flex" }}
+                    onSubmit={(e) =>
+                      forumStore.handleSubmitComment(e, post.id!)
+                    }
+                  >
                     <TextField
                       multiline
                       inputProps={{ maxLength: 3000 }}
                       label="Share your thoughts.."
                       onChange={(e) => forumStore.setContent(e.target.value)}
-                  variant="filled"
-                  sx={{
-                    my: "10px",
-                    width: "100%",
-                    maxHeight: "8em",
-                    overflowY: "auto",
-                  }}
+                      variant="filled"
+                      className="forum-details"
                     />
                     <Button
                       type="submit"
                       sx={{
                         backgroundColor: "#3366ff",
                         color: "white",
-                        px: "30px", height: '56px', margin: '10px'
+                        px: "30px",
+                        height: "56px",
+                        margin: "10px",
                       }}
                     >
                       Comment
@@ -329,63 +278,52 @@ const ForumPage = observer(() => {
                 ?.slice()
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .map((comment) => (
-                <Card style={{ display: "flex", margin: '10px 0' }}>
-                <Box
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: 'center',
-                    flexDirection: "column",
-                    margin: "20px",
-                  }}
-                >
-                  <Avatar
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      marginBottom: "10px",
-                    }}
-                    className="sidebar-picture"
-                    src={comment.authorImage!}
-                    alt={comment.author!}
-                  />
-                  <Typography variant="body1" component="p" style={{fontSize: '12px'}}>
-                    {comment.author}
-                  </Typography>
-                </Box>
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                    marginTop: '20px'
-                  }}
-                >
-                  <Typography
-                    style={{ width: "100%", wordBreak: "break-word" }}
-                    variant="body1"
-                    component="p"
-                  >
-                    {comment.content}
-                  </Typography>
-                  <Typography variant="body2" component="p" style={{fontSize: '12px'}}>
-                    {formatTimestamp(comment.timestamp)}
-                  </Typography>
-                  <Box
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      alignItems: "flex-end",
-                    }}
-                  >
-                    {comment.author === auth.currentUser?.displayName && (
-                        <IconButton onClick={() => forumStore.handleDeleteComment(post.id!, comment.id!)}>
-                          <Trash color="gray" />
-                        </IconButton>
-                      )}
-                  </Box>
-                </Box>
-              </Card>
+                  <Card className="forum-comments-card">
+                    <Box className="forum-comments-box">
+                      <Avatar
+                        className="forum-comments-picture"
+                        src={comment.authorImage!}
+                        alt={comment.author!}
+                      />
+                      <Typography
+                        variant="body1"
+                        component="p"
+                        style={{ fontSize: "12px" }}
+                      >
+                        {comment.author}
+                      </Typography>
+                    </Box>
+                    <Box className="forum-comments-txt">
+                      <Typography
+                        style={{ width: "100%", wordBreak: "break-word" }}
+                        variant="body1"
+                        component="p"
+                      >
+                        {comment.content}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        component="p"
+                        style={{ fontSize: "12px" }}
+                      >
+                        {formatTimestamp(comment.timestamp)}
+                      </Typography>
+                      <Box className="forum-comments-delete">
+                        {comment.author === auth.currentUser?.displayName && (
+                          <IconButton
+                            onClick={() =>
+                              forumStore.handleDeleteComment(
+                                post.id!,
+                                comment.id!
+                              )
+                            }
+                          >
+                            <Trash color="gray" />
+                          </IconButton>
+                        )}
+                      </Box>
+                    </Box>
+                  </Card>
                 ))}
             </CardContent>
           </Card>

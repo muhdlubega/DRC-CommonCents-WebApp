@@ -1,6 +1,5 @@
 import AliceCarousel from "react-alice-carousel";
-import "../../styles/homepage.scss";
-import { TradeType } from "./TradeTypeArray";
+import { TradeType } from "../../arrays/TradeTypeArray";
 import { Box, Typography, useTheme } from "@mui/material";
 
 const TradingType = () => {

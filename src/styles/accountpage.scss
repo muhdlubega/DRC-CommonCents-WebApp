@@ -1,0 +1,421 @@
+// account page styling
+
+.account {
+    &-container {
+        width: 420px;
+        padding: 0 25px;
+        height: 625px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        font-family: monospace;
+    }
+
+    &-profile {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    &-logout {
+        height: 3vw;
+        width: 100%;
+        background-color: #0033ff;
+        margin-top: 20px;
+    }
+
+    &-title {
+        border-bottom: 1px solid #888;
+        margin: 20px !important;
+    }
+
+    &-picture {
+        margin-right: 0.4vw;
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    &-userbox {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+        width: 100%;
+        word-wrap: break-word;
+        margin: 10px;
+    }
+
+    &-user-txtfield {
+        margin: 30px 0 10px !important;
+        border-radius: 20px;
+    }
+
+    &-save-btn {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &-emailbox {
+        margin-top: 30px;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    &-email {
+        width: 100%;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 0;
+    }
+}
+
+.change-pwd-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400;
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    box-shadow: 24;
+    padding-bottom: 20px;
+}
+
+.change-pwd-modal-header {
+    margin-bottom: 30px;
+    align-self: center;
+    background-color: #0033ff;
+    width: 100%;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding: 20px 30px;
+    font-weight: 700;
+    color: white;
+}
+
+.change-pwd-modal-box {
+    margin: 0 20px;
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+}
+
+.change-pwd-modal-txtfield {
+    margin: 20px 0 0 !important;
+}
+
+
+@media (max-width: 425px) {
+    .account-container {
+        transform: scale(0.65) translate(-110px, -120px);
+        height: 400px !important;
+    }
+
+    .change-pwd-modal {
+        transform: scale(0.6) translate(-335px, -600px) !important;
+    }
+}
+
+
+
+// faq page styling
+
+.faq-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1600px;
+    width: 100%;
+}
+
+.faq-title h5 {
+    font-size: 20px;
+    font-weight: 400;
+    padding-left: 50px;
+    padding-top: 20px;
+}
+
+.faq-title2 {
+    border-bottom: 1px solid #888;
+}
+
+.faq-card {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    width: 684px;
+    height: 130px;
+    top: 315px;
+    left: 69px;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 30px 50px 0 50px;
+    border: 1px solid #000;
+    display: flex;
+}
+
+.faq-card.large-card {
+    width: 684px;
+    height: 170px;
+}
+
+.faq-card .faq-icon {
+    margin-right: 30px;
+    margin-left: 20px;
+    font-size: 45px;
+}
+
+.faq-card h3 {
+    font-size: 18px;
+}
+
+.faq-card p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.contact-text {
+    padding: 40px 60px 60px 60px;
+    justify-content: center;
+}
+
+
+@media (max-width: 600px) {
+    .faq-card {
+        padding: 12px;
+    }
+
+    .faq-card .faq-icon {
+        margin-right: 10px;
+        margin-left: unset;
+        font-size: 20px;
+    }
+
+    .faq-card h3 {
+        font-size: 10px;
+    }
+
+    .faq-card p {
+        font-size: 10px;
+        line-height: 1.2;
+    }
+
+    .contact-text {
+        font-size: 12px;
+    }
+}
+
+
+
+// enquiry page styling
+
+.enquiry-container {
+    height: 600px;
+}
+
+.enquiry-container h5 {
+    padding-left: 40px;
+    font-size: 18px;
+    font-weight: 400;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+.form-container {
+    max-width: 900px;
+    width: 100%;
+    padding-left: 40px;
+    margin-bottom: 10%;
+}
+
+.form-field1 {
+    border-radius: 40px;
+}
+
+.form-field2 {
+    border-radius: 40px;
+}
+
+.enquiry-title {
+    font-size: 20px;
+    font-weight: 400;
+    padding-left: 50px;
+    padding-top: 20px;
+}
+
+.enquiry-email {
+    width: 30vw;
+    height: 97px;
+    border-radius: 20px;
+    margin: 10px 0 0 15px !important;
+}
+
+.enquiry-txtfield {
+    width: 60vw;
+    height: 217px;
+    margin-left: 15px !important;
+    border-radius: 20px;
+}
+
+
+
+// trade history page styling
+
+.trade-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 30vw;
+    height: 350px;
+    border-radius: 30px;
+    margin-bottom: 10px;
+    box-shadow: 0 5px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-left: 80%;
+}
+
+.trade-main-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 180px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.trade-main-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trade-main-img {
+    width: 75px;
+    height: 75px;
+    margin: 10px;
+}
+
+.trade-main-txt {
+    margin: 0 10px;
+}
+
+.trade-summary {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    border-top: 1px solid #888;
+    margin: 20px;
+}
+
+.trade-history-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    border-radius: 10px;
+    border: none;
+}
+
+.trade-history-box {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+}
+
+.trade-history-empty {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 60px;
+}
+
+
+@media (max-width: 425px) {
+    .trade-history-card {
+        width: 275px !important;
+    }
+}
+
+
+
+// leaderboard styling
+
+.leaderboard-main {
+    margin: 3vw;
+}
+
+.leaderboard-list {
+    transform: translate(0, -15vw);
+
+    &-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    &-box {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    &-picture {
+        margin-right: 0.4vw;
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.leaderboard-tthree {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-list {
+        list-style-type: none;
+        padding-inline-start: 0;
+    }
+
+    &-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    &-picture {
+        width: 11vw !important;
+        height: 11vw !important;
+    }
+}
+
+.leaderboard-award {
+    right: 27.1vw;
+    bottom: 0;
+    top: 22vh;
+    height: 30vw;
+    width: 45vw;
+    position: absolute
+}
+
+.background-circle {
+    position: absolute;
+    bottom: -85%;
+    right: -10%;
+    width: 75vw;
+    height: 75vw;
+    border-radius: 50%;
+    background: #6699ff;
+    z-index: 0;
+}

@@ -17,23 +17,13 @@ const LeaderboardPage = observer(() => {
 
   return (
     <Box className="leaderboard-main">
-      <Box className="backgroundCircleBottomRight"></Box>
+      <Box className="background-circle"></Box>
       <img className="leaderboard-award" src={award}></img>
-      <Typography
-        variant="h6"
-        sx={{
-          fontFamily: "Roboto",
-          borderBottom: "1px solid #888",
-          margin: "20px",
-        }}
-      >
+      <Typography variant="h6" className="account-title">
         Leaderboard
       </Typography>
-      <Box
-        className="leaderboard-tthree"
-        style={{ padding: "1vw", margin: "1vw" }}
-      >
-        <ol style={{ listStyleType: "none", paddingInlineStart: "0" }}>
+      <Box className="leaderboard-tthree">
+        <ol className="leaderboard-tthree-list">
           {topThreeUsers
             .filter((user) => user.netWorth !== 0)
             .map((user, index) => (
@@ -49,22 +39,21 @@ const LeaderboardPage = observer(() => {
                 }}
               >
                 <Box
+                  className="leaderboard-tthree-box"
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    color: theme.palette.text.primary
+                    color: theme.palette.text.primary,
                   }}
                 >
-                  <Typography style={{fontWeight:700}}>{user.displayName || user.email}</Typography>
+                  <Typography style={{ fontWeight: 700 }}>
+                    {user.displayName || user.email}
+                  </Typography>
                   <Typography style={{ marginBottom: "1vw" }}>
                     {user?.netWorth?.toFixed(2)} USD
                   </Typography>
                   <Avatar
                     src={user?.photoURL || ""}
                     alt={user?.displayName || user?.email || ""}
-                    sx={{ width: "11vw", height: "11vw" }}
+                    className="leaderboard-tthree-picture"
                   />
                 </Box>
               </li>
@@ -78,25 +67,14 @@ const LeaderboardPage = observer(() => {
             .slice(3)
             .map((user, index) => (
               <li key={index}>
-                <Card
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent:'space-between',
-                    padding: "10px",
-                    margin: "10px",
-                  }}
-                ><Box style={{
-                  display: "flex",
-                  flexDirection: 'row',
-                  alignItems: "center",
-                }}>
-                  <Avatar
-                    src={user?.photoURL || ""}
-                    alt={user?.displayName || user?.email || ""}
-                    sx={{ marginRight: "0.4vw", width: "30px", height: "30px" }}
-                  />
-                  {user.displayName || user.email}
+                <Card className="leaderboard-list-card">
+                  <Box className="leaderboard-list-box">
+                    <Avatar
+                      src={user?.photoURL || ""}
+                      alt={user?.displayName || user?.email || ""}
+                      className="leaderboard-list-picture"
+                    />
+                    {user.displayName || user.email}
                   </Box>
                   {user?.netWorth?.toFixed(2)} USD
                 </Card>

@@ -6,7 +6,7 @@ import {
   MenuItem,
   Select,
   Skeleton,
-  Typography,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -16,7 +16,6 @@ import AccessibilityModule from "highcharts/modules/accessibility";
 import { Chart1, Candle, VideoPlay } from "iconsax-react";
 import onboarding from "../../assets/images/onboarding.png";
 import apiStore from "../../store/ApiStore";
-import "../../styles/tradepage.scss";
 
 const Chart = observer(() => {
   const { id } = useParams();
@@ -217,7 +216,7 @@ const Chart = observer(() => {
             value="candlestick"
             onClick={() => handleChartTypeChange("candlestick")}
           >
-            <Candle color="#0033ff" variant="Bulk" size={24} /> Candle
+            <Candle color="#0033ff" variant="Bulk" size={24} />{apiStore.isTicks ? "Candle (N/A for ticks)" : "Candle"}
           </MenuItem>
         </Select>
         <Select
@@ -249,18 +248,18 @@ const Chart = observer(() => {
             Days
           </MenuItem>
         </Select>
+        
         <Box
           component="span"
           className="chart-onboarding"
           onClick={() => apiStore.setShowOnboarding(true)}
-        >
+        ><Tooltip title="Show Onboarding" disableFocusListener disableTouchListener arrow>
           <VideoPlay
-            color="#0033ff"
-            size={36}
+            style={{color: theme.palette.text.primary}}
+            size={40}
             className="chart-onboarding-icon"
           />
-          <Typography className="chart-onboarding-txt">Show</Typography>
-          <Typography className="chart-onboarding-txt">Onboarding</Typography>
+          </Tooltip>
         </Box>
       </Box>
       <Box className="chart-area">
