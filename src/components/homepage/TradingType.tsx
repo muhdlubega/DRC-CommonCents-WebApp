@@ -1,5 +1,5 @@
 import AliceCarousel from "react-alice-carousel";
-import "../../styles/main.scss";
+import "../../styles/homepage.scss";
 import { TradeType } from "./TradeTypeArray";
 import { Box, Typography, useTheme } from "@mui/material";
 
@@ -10,21 +10,45 @@ const TradingType = () => {
       items: 1,
     },
     425: {
-      items: 2
+      items: 2,
     },
     768: {
-      items: 3
-    }
+      items: 3,
+    },
   };
 
   const items = TradeType.map((tradeType, index) => (
-    <Box style={{ border: `1px solid ${theme.palette.text.primary}` }} className="trade-card" key={index}>
+    <Box
+      style={{ border: `1px solid ${theme.palette.text.primary}` }}
+      className="trade-card"
+      key={index}
+    >
       <Box className="title-icon-tradetype">
-        <img style={{ filter: theme.palette.mode === "dark" ? 'invert(1)' : 'invert(0)' }} src={tradeType.image} alt={tradeType.title} />
-        <Typography className="card-title" variant="h3" style={{ color: theme.palette.text.primary }}>{tradeType.title}</Typography>
+        <img
+          style={{
+            filter: theme.palette.mode === "dark" ? "invert(1)" : "invert(0)",
+          }}
+          src={tradeType.image}
+          alt={tradeType.title}
+        />
+        <Typography
+          className="card-title"
+          variant="h3"
+          style={{ color: theme.palette.text.primary }}
+        >
+          {tradeType.title}
+        </Typography>
       </Box>
-      <Box style={{ color: theme.palette.text.primary }} className="card-content">
-        <Typography variant="body1" style={{ color: theme.palette.text.secondary }}>{tradeType.Description}</Typography>
+      <Box
+        style={{ color: theme.palette.text.primary }}
+        className="card-content"
+      >
+        <Typography
+          variant="body1"
+          style={{ color: theme.palette.text.secondary }}
+        >
+          {tradeType.Description}
+        </Typography>
       </Box>
     </Box>
   ));
@@ -49,4 +73,3 @@ const TradingType = () => {
 };
 
 export default TradingType;
-

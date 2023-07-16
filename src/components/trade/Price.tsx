@@ -1,6 +1,7 @@
 import { Box, Card } from '@mui/material'
 import apiStore from '../../store/ApiStore'
 import { observer } from 'mobx-react-lite';
+import '../../styles/tradepage.scss'
 
 const Price = () => {
   if (!apiStore.isTicks && apiStore.ticks.length > 0){
@@ -16,29 +17,27 @@ const Price = () => {
     var low = Number(apiStore.ticks[apiStore.ticks.length - 1].low);
     var prevLow = Number(apiStore.ticks[apiStore.ticks.length - 2].low);
     var lowIsHigher = low > prevLow;
-    // console.log(high, close, open, low)
 
   return (
-    <div>
+    <Box>
       <Box className="pricecandle-container">
         <Card className="price-card">Close:&ensp; <Box sx={{color: closeIsHigher ? 'green' : 'red'}}>{close.toFixed(4)}</Box></Card>
         <Card className="price-card">High:&ensp; <Box sx={{color: highIsHigher ? 'green' : 'red'}}>{high.toFixed(4)}</Box></Card>
         <Card className="price-card">Open:&ensp; <Box sx={{color: openIsHigher ? 'green' : 'red'}}>{open.toFixed(4)}</Box></Card>
         <Card className="price-card">Low:&ensp; <Box sx={{color: lowIsHigher ? 'green' : 'red'}}>{low.toFixed(4)}</Box></Card>
       </Box>
-    </div>
+    </Box>
   )} else if (apiStore.isTicks && apiStore.ticks.length > 0){
     var spot = Number(apiStore.ticks[apiStore.ticks.length - 1].quote);
     var prevSpot = Number(apiStore.ticks[apiStore.ticks.length - 2].quote);
     var spotIsHigher = spot > prevSpot;
-    // console.log(spot)
 
   return (
-    <div>
+    <Box>
       <Box className="pricetick-container">
         <Card className="price-card">Spot Price:&ensp; <Box sx={{color: spotIsHigher ? 'green' : 'red'}}>{spot.toFixed(4)}</Box></Card>
       </Box>
-    </div>
+    </Box>
   )
   }
 }

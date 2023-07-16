@@ -32,7 +32,6 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();
-  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
     useState(false);
@@ -50,16 +49,9 @@ const AccountPage = observer(() => {
     resetConfirmationOpen: false,
   });
 
-  // const toggleDropdown = () => {
-  //   setIsDropdownOpen((prevState) => !prevState);
-  // };
-
   const toggleSecondDropdown = () => {
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
-
-  // var userDisplayName = updatedName;
-  // var userEmail = auth.currentUser?.email;
 
   const getUserBalance = async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -70,36 +62,6 @@ const AccountPage = observer(() => {
       }
     });
   };
-
-
-  // var userPhotoURL = auth.currentUser?.photoURL;
-  // var balance = 100000;
-
-  // if (auth.currentUser !== null) {
-  //   console.log(auth.currentUser.displayName);
-  //   console.log(auth.currentUser.email);
-  //   userDisplayName = auth.currentUser.displayName || "";
-  //   userEmail = auth.currentUser.displayName || auth.currentUser.email || "";
-  //   userPhotoURL = auth.currentUser.photoURL || ""; String
-  //   balance = Number(authStore.user!.balance?.toFixed(2)) || 100000;
-  // }
-
-  // const querySnapshot = await getDocs(collection(db, "users"));
-  //     const leaderboardData: User[] = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const { balance, displayName, email } = doc.data();
-  //       leaderboardData.push({ displayName, email, balance });
-  //       if (auth.currentUser && auth.currentUser.uid === doc.id) {
-  //         this.user!.balance = balance || null;
-  //       }
-  //     });
-  // if (authStore.user !== null) {
-  //   console.log(authStore.user.displayName);
-  //   userDisplayName = authStore.user?.displayName || "";
-  //   userEmail = authStore.user?.displayName || authStore.user?.email || "";
-  //   userPhotoURL = authStore.user?.photoURL || "";
-  //   balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
-  // }
 
   const logOut = () => {
     signOut(auth);
@@ -128,7 +90,6 @@ const AccountPage = observer(() => {
 
   const handleUpdateName = () => {
     authStore.setUpdateName(updatedName);
-    // toggleDropdown();
     authStore.setAlert({
       open: true,
       message:
@@ -263,37 +224,6 @@ const AccountPage = observer(() => {
           Reset Balance
         </Button>
       </Box>
-      {/* <div className="sidebar-leaderboard">
-        <h6 onClick={toggleDropdown}>
-          Change Username
-          {isDropdownOpen ? (
-            <ArrowUp2 size={16} style={{ marginLeft: "0.5vw" }} />
-          ) : (
-            <ArrowRight2 size={16} style={{ marginLeft: "0.5vw" }} />
-          )}
-        </h6>
-        <Modal open={isDropdownOpen} onClose={toggleDropdown}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 4,
-            }}
-          >
-            <input
-              type="text"
-              value={updatedName}
-              onChange={(event) => setUpdatedName(event.target.value)}
-            ></input>
-            <Button onClick={handleUpdateName}>Submit</Button>
-          </Box>
-        </Modal>
-      </div> */}
       <TextField
                   variant="outlined"
                   label="Username"
@@ -302,8 +232,6 @@ const AccountPage = observer(() => {
               onChange={(event) => setUpdatedName(event.target.value)}
                   fullWidth
                   style={{
-                    // width: "30vw",
-                    // height: "97px",
                     margin: '30px 0 10px',
                     borderRadius: "20px",
                   }}
@@ -364,24 +292,6 @@ const AccountPage = observer(() => {
               paddingBottom: '20px',
             }}
           >
-            {/* <input
-              type="password"
-              value={oldPassword}
-              onChange={(event) => setOldPassword(event.target.value)}
-              placeholder="Old Password"
-            />
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(event) => setNewPassword(event.target.value)}
-              placeholder="New Password"
-            />
-            <input
-              type="password"
-              value={confirmNewPassword}
-              onChange={(event) => setConfirmNewPassword(event.target.value)}
-              placeholder="Confirm New Password"
-            /> */}
             <Typography style={{marginBottom: '30px', alignSelf: 'center', backgroundColor: '#0033ff', width: '100%', borderTopRightRadius: '10px', borderTopLeftRadius: '10px',
           padding: '15px 20px', fontWeight: 700, color: 'white'}}>Enter your current password to continue</Typography>
           <Box style={{margin: '0 20px', alignItems: 'flex-end',
@@ -463,19 +373,6 @@ const AccountPage = observer(() => {
         </Modal>
       </Box>
       <Box sx={{ flex: 1 }}>
-        {/* <Button
-          variant="contained"
-          className="sidebar-reset-balance"
-          onClick={() => navigate("/")}
-          style={{
-            backgroundColor: "#9F9F9F",
-            borderRadius: "0.5vw",
-            marginBottom: "1vw",
-            width: "100%",
-          }}
-        >
-          Return to Homepage
-        </Button> */}
         <Button
           variant="contained"
           className="sidebar-logout"
@@ -501,8 +398,7 @@ const AccountPage = observer(() => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="reset-confirmation-dialog-description">
-            Are you sure you want to reset your balance? This action cannot be
-            undone.
+          Resetting your balance will clear all your trade activities and history. Are you sure you would like to continue? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

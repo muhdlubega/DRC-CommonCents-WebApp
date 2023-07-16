@@ -4,13 +4,11 @@ import { Button, Tab, Tabs, AppBar, Box, Typography, useTheme } from "@mui/mater
 import Signup from "./Signup";
 import Login from "./Login";
 import { useState } from "react";
-// import { auth } from "../../firebase";
 import GoogleButton from "react-google-button";
-// import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-// import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import authStore from "../../store/AuthStore";
 import { LoginCurve } from "iconsax-react";
+import '../../styles/components.scss';
 
 const AuthModal = observer(() => {
 
@@ -26,7 +24,6 @@ const AuthModal = observer(() => {
       <Button
         variant="contained"
         style={{
-          // width: 85,
           borderRadius: '10px',
           height: '40px',
           margin: '10px',
@@ -35,9 +32,9 @@ const AuthModal = observer(() => {
         }}
         onClick={authStore.handleOpen}
       >
-        <LoginCurve size={26} color="white" style={{ marginRight: "5px" }} />
+        <LoginCurve size={26} color="white" className="auth-modal-login"/>
         <Typography 
-        className="navbar-login-btn" style={{textTransform: 'capitalize'}}>Login</Typography>
+        className="navbar-login-btn">Login</Typography>
       </Button>
       <Modal
         aria-labelledby="transition-modal-title"
@@ -48,13 +45,10 @@ const AuthModal = observer(() => {
         closeAfterTransition
       >
         <Fade in={authStore.open}>
-          <div className="auth-modal-paper">
+          <div className="auth-modal-box">
             <AppBar
               position="static"
-              style={{
-                backgroundColor: "transparent",
-                color: "white",
-              }}
+              className="auth-modal-appbar"
             >
               <Tabs
                 value={value}
@@ -74,6 +68,7 @@ const AuthModal = observer(() => {
               <span
         style={{color: theme.palette.text.secondary}}>OR</span>
               <GoogleButton
+              className="auth-modal-googlebtn"
                 style={{ width: "100%", outline: "none" }}
                 onClick={authStore.signInWithGoogle}
               />

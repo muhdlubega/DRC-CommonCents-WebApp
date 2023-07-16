@@ -16,16 +16,14 @@ import AccessibilityModule from "highcharts/modules/accessibility";
 import { Chart1, Candle, VideoPlay } from "iconsax-react";
 import onboarding from "../../assets/images/onboarding.png";
 import apiStore from "../../store/ApiStore";
-// import themeStore from "../../store/ThemeStore";
+import "../../styles/tradepage.scss";
 
 const Chart = observer(() => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery("(max-width: 767px)");
   const [isLoading, setIsLoading] = useState(false);
-
   const theme = useTheme();
-
   AccessibilityModule(Highcharts);
 
   const latestQuote = apiStore.ticks[apiStore.ticks.length - 1]
@@ -164,9 +162,7 @@ const Chart = observer(() => {
     if (id) {
       apiStore.setSelectedSymbol(id);
     }
-
     fetchData();
-
     return () => {
       apiStore.unsubscribeTicks();
     };
@@ -183,12 +179,7 @@ const Chart = observer(() => {
           <button onClick={() => apiStore.setShowOnboarding(false)}>X</button>
         </Box>
       )}
-      <Box
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-        }}
-      >
+      <Box className="chart-main">
         <Select
           className="symbols-dropdown"
           value={apiStore.selectedSymbol || ""}
@@ -243,7 +234,7 @@ const Chart = observer(() => {
             value={1}
             onClick={() => handleGranularityChange(1)}
           >
-            Ticks
+            {apiStore.chartType === "line" ? "Ticks" : "Ticks (N/A for candle chart)"}
           </MenuItem>
           <MenuItem value={60} onClick={() => handleGranularityChange(60)}>
             Minutes
@@ -260,33 +251,23 @@ const Chart = observer(() => {
         </Select>
         <Box
           component="span"
-          style={{
-            margin: "10px 30px 0 30px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            cursor: "pointer",
-          }}
+          className="chart-onboarding"
           onClick={() => apiStore.setShowOnboarding(true)}
         >
-          <VideoPlay color="#0033ff" size={36} style={{ marginLeft: "8px" }} />
-          <Typography
-            style={{ fontSize: "10px", color: "#0033ff", marginLeft: "12px" }}
-          >
-            Show
-          </Typography>
-          <Typography style={{ fontSize: "10px", color: "#0033ff" }}>
-            Onboarding
-          </Typography>
-          {/* <Typography  style={{color:"#0033ff", marginLeft: '5px', fontFamily: 'Roboto', fontWeight: 500}}>Check Onboarding</Typography> */}
+          <VideoPlay
+            color="#0033ff"
+            size={36}
+            className="chart-onboarding-icon"
+          />
+          <Typography className="chart-onboarding-txt">Show</Typography>
+          <Typography className="chart-onboarding-txt">Onboarding</Typography>
         </Box>
       </Box>
-      <Box className="charts-area">
+      <Box className="chart-area">
         {isLoading ? (
           <Box>
-          <Skeleton variant="rectangular" width="100%" height={400} />
-          Loading..
+            <Skeleton variant="rectangular" width="100%" height={400} />
+            Loading..
           </Box>
         ) : (
           <HighchartsReact

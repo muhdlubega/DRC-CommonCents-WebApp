@@ -6,6 +6,7 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import "react-alice-carousel/lib/alice-carousel.css";
+import "../../styles/homepage.scss";
 import chartsStore from "../../store/ChartsStore";
 import { MarketName } from "../../pages/TradeHistoryPage";
 
@@ -34,7 +35,7 @@ const LiveData = observer(() => {
 
     return {
       chart: {
-        backgroundColor: 'transparent',
+        backgroundColor: "transparent",
         style: {
           fontFamily: theme.typography.fontFamily,
         },
@@ -46,7 +47,9 @@ const LiveData = observer(() => {
             .slice(-10)
             .map((tick) => [tick.epoch * 1000, tick.quote]),
           type: "line",
-          color: isHigher ? theme.palette.success.main : theme.palette.error.main,
+          color: isHigher
+            ? theme.palette.success.main
+            : theme.palette.error.main,
           lineWidth: 5,
         },
       ],
@@ -90,7 +93,7 @@ const LiveData = observer(() => {
       },
       legend: {
         itemStyle: {
-          color: theme.palette.text.secondary
+          color: theme.palette.text.secondary,
         },
       },
       latestQuote,
@@ -101,103 +104,92 @@ const LiveData = observer(() => {
   return (
     <Box>
       <Box className="live-data-title">Synthetic Indices</Box>
-      <Box className="live-data-btngroup" style={{ display: "grid", gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',gridGap: '20px'}}>
+      <Box className="live-data-btngroup">
         <Button
+          className="live-data-btn"
           variant={
             chartsStore.marketType === "volatility1s" ? "contained" : "outlined"
           }
           onClick={() => chartsStore.setMarketType("volatility1s")}
           sx={{
-            mx: '10px',
-            paddingY: "16px",
-            borderRadius: "10px",
-            height: "75px",
             backgroundColor:
-              chartsStore.marketType === "volatility1s" ? "#3366ff" : theme.palette.background.default,
+              chartsStore.marketType === "volatility1s"
+                ? "#3366ff"
+                : theme.palette.background.default,
           }}
         >
           Volatility Index (1s)
         </Button>
         <Button
+          className="live-data-btn"
           variant={
             chartsStore.marketType === "volatility" ? "contained" : "outlined"
           }
           onClick={() => chartsStore.setMarketType("volatility")}
           sx={{
-            mx: '10px',
-            paddingY: "16px",
-            borderRadius: "10px",
-            height: "75px",
             backgroundColor:
-              chartsStore.marketType === "volatility" ? "#3366ff" : theme.palette.background.default,
+              chartsStore.marketType === "volatility"
+                ? "#3366ff"
+                : theme.palette.background.default,
           }}
         >
           Volatility Index
         </Button>
         <Button
-          variant={
-            chartsStore.marketType === "jump" ? "contained" : "outlined"
-          }
+          className="live-data-btn"
+          variant={chartsStore.marketType === "jump" ? "contained" : "outlined"}
           onClick={() => chartsStore.setMarketType("jump")}
           sx={{
-            mx: '10px',
-            paddingY: "16px",
-            borderRadius: "10px",
-            height: "75px",
             backgroundColor:
-              chartsStore.marketType === "jump" ? "#3366ff" : theme.palette.background.default,
+              chartsStore.marketType === "jump"
+                ? "#3366ff"
+                : theme.palette.background.default,
           }}
         >
           Jump Index
         </Button>
         <Button
+          className="live-data-btn"
           variant={
             chartsStore.marketType === "bear_bull" ? "contained" : "outlined"
           }
           onClick={() => chartsStore.setMarketType("bear_bull")}
           sx={{
-            mx: '10px',
-            paddingY: "16px",
-            borderRadius: "10px",
-            height: "75px",
             backgroundColor:
-              chartsStore.marketType === "bear_bull" ? "#3366ff" : theme.palette.background.default,
+              chartsStore.marketType === "bear_bull"
+                ? "#3366ff"
+                : theme.palette.background.default,
           }}
         >
           Bear/Bull Market
         </Button>
       </Box>
-      <Box style={{ display: "grid", gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))'}}>
+      <Box className="live-data-grid">
         {chartData.map((data, index) => (
-          <Box style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '10px'}}>
-          <Link
-            style={{ transform: "scale(0.8)", width: "240px" }} className="livedata-link"
-            to={`/trade/${data.series[0].name}`}
-            key={index}
-          >
-            <Box> 
-              <HighchartsReact highcharts={Highcharts} options={data}/>
-            </Box>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                color: data.latestQuote > data.previousQuote ? theme.palette.success.main : theme.palette.error.main,
-                padding: "1vw",
-                fontWeight: "bold",
-                fontSize: "2vw",
-                borderRadius: "1vw",
-                
-              }}
+          <Box className="live-data-chart">
+            <Link
+              className="live-data-link"
+              to={`/trade/${data.series[0].name}`}
+              key={index}
             >
-              {data.latestQuote}
-            </Box>
-          </Link>
+              <Box>
+                <HighchartsReact highcharts={Highcharts} options={data} />
+              </Box>
+              <Box
+                className="live-data-price"
+                sx={{
+                  color:
+                    data.latestQuote > data.previousQuote
+                      ? theme.palette.success.main
+                      : theme.palette.error.main,
+                }}
+              >
+                {data.latestQuote}
+              </Box>
+            </Link>
           </Box>
         ))}
       </Box>
-      {/* <hr className="chart-divider" /> */}
     </Box>
   );
 });

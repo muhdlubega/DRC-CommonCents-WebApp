@@ -1,29 +1,28 @@
-import { Box, Button, TextField, Dialog,
+import {
+  Box,
+  Button,
+  TextField,
+  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   useTheme,
   InputAdornment,
-  IconButton, } from "@mui/material";
-// import { useState } from "react";
-// import { useGlobalState } from "../../store/Context";
-// import { auth } from "../../firebase";
-// import { signInWithEmailAndPassword } from "firebase/auth";
-// import authStore from "../../store/AuthStore";
+  IconButton,
+} from "@mui/material";
 import { observer } from "mobx-react-lite";
 import authStore from "../../store/AuthStore";
 import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import "../../styles/components.scss";
 
 interface LoginProps {
   handleClose: () => void;
 }
 
-const Login = observer(({handleClose }: LoginProps) => {
-  // const [email, setEmail] = useState<string>("");
-  // const [password, setPassword] = useState<string>("");
+const Login = observer(({ handleClose }: LoginProps) => {
   const [openForgotPassword, setOpenForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +42,11 @@ const Login = observer(({handleClose }: LoginProps) => {
         url: "http://localhost:5173/",
         handleCodeInApp: true,
       };
-      await sendPasswordResetEmail(auth, forgotPasswordEmail, actionCodeSettings);
+      await sendPasswordResetEmail(
+        auth,
+        forgotPasswordEmail,
+        actionCodeSettings
+      );
 
       authStore.setAlert({
         open: true,
@@ -62,11 +65,11 @@ const Login = observer(({handleClose }: LoginProps) => {
 
   return (
     <Box
+      className="login-signup-box"
       p={3}
       style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
       }}
     >
       <TextField
@@ -101,8 +104,8 @@ const Login = observer(({handleClose }: LoginProps) => {
         variant="contained"
         size="large"
         onClick={() => {
-          authStore.handleLogin(); 
-          handleClose(); 
+          authStore.handleLogin();
+          handleClose();
         }}
         style={{ backgroundColor: "#0033ff" }}
       >
@@ -127,7 +130,11 @@ const Login = observer(({handleClose }: LoginProps) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseForgotPassword}>Cancel</Button>
-          <Button onClick={handleForgotPassword} variant="contained" color="primary">
+          <Button
+            onClick={handleForgotPassword}
+            variant="contained"
+            color="primary"
+          >
             Reset Password
           </Button>
         </DialogActions>
