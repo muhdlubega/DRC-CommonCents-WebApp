@@ -7,6 +7,8 @@ import newsStore, { NewsItem } from "../../store/NewsStore";
 import { getNews } from "../../config/NewsApi";
 import { observer } from "mobx-react-lite";
 import placeholder from '../../assets/images/placeholder.png'
+import authStore from "../../store/AuthStore";
+import "../../styles/homepage.scss";
 
 const LatestNews = observer(() => {
   const fetchNews = async () => {
@@ -15,9 +17,12 @@ const LatestNews = observer(() => {
       const { data } = response;
       const feed = data?.feed || [];
       newsStore.setNews(feed);
-      console.log(feed);
     } catch (error) {
-      console.error("Error fetching news:", error);
+      authStore.setAlert({
+        open: true,
+        message: (error as { message: string }).message,
+        type: "Unable to fetch news currently. Try again in a few minutes",
+      });
     }
   };
 

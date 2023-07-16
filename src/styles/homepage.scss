@@ -1,0 +1,501 @@
+// banner styling
+
+.banner-main {
+    height: 820px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.banner-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-title {
+    font-weight: 500;
+    margin-bottom: 15px;
+    font-size: 50px;
+}
+
+.banner-tagline {
+    font-weight: 300;
+    font-size: 25px;
+    margin-bottom: 0;
+}
+
+.banner-btn {
+    border: 1px solid #0b67ed;
+    border-radius: 10px;
+    margin: 25px 0;
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #0b67ed;
+    color: white;
+    width: 300px;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+.banner-image {
+    height: 740px;
+    z-index: 3;
+    top: 0;
+    right: 0;
+    position: absolute;
+}
+
+
+@media (max-width: 1068px) {
+    .banner-image {
+        transform: scale(75%) translateX(15%) !important;
+        transition: all 0.5s ease;
+    }
+}
+
+@media (max-width: 900px) {
+    .banner-image {
+        position: unset;
+        transform: scale(65%) translate(10%, -20%) !important;
+        transition: all 0.5s ease;
+    }
+
+    .banner-text {
+        transform: translateY(15%) !important;
+    }
+}
+
+@media (max-width: 656px) {
+    .banner-image {
+        display: none;
+    }
+
+    .banner-main {
+        height: 400px !important;
+    }
+}
+
+@media (max-width: 425px) {
+    .banner-title {
+        font-size: 45px;
+    }
+
+    .banner-tagline {
+        font-size: 16px;
+    }
+
+    .banner-btn {
+        transform: scale(0.75);
+    }
+}
+
+
+
+// header styling
+
+.header-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-card {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border: 1px;
+    max-height: 900;
+    margin-bottom: 20px;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.header-card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+.header-card-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #000;
+    box-shadow: 0 5px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 8%;
+    align-items: flex-start;
+
+    &.right {
+        margin-right: 65%;
+        border-radius: 0 30px 30px 0;
+    }
+
+    &.left {
+        margin-left: 65%;
+        border-radius: 30px 0 0 30px;
+    }
+}
+
+.header-name {
+    font-weight: bold;
+    margin-bottom: 0;
+    font-size: 35px;
+}
+
+.header-content {
+    font-weight: 400;
+    font-size: 20px;
+}
+
+
+@media (max-width: 900px) {
+    .header-content {
+        font-size: 16px;
+    }
+
+    .header-name {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 656px) {
+    .header-card-content {
+        &.right {
+            margin-right: 35%;
+        }
+
+        &.left {
+            margin-left: 35%;
+        }
+    }
+
+    .header-card {
+        height: 250px;
+    }
+}
+
+
+
+// live data styling
+
+.live-data-title {
+    font-weight: 700;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    margin-top: 150px;
+    margin-bottom: 30px;
+}
+
+.live-data-btngroup {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.live-data-btn {
+    margin: 0 10px;
+    padding: 16px 0;
+    border-radius: 10px;
+    height: 75px;
+}
+
+.livedata-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: scale(0.5);
+}
+
+.live-data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.live-data-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+
+.live-data-link {
+    transform: scale(0.8);
+    width: 240px;
+}
+
+.live-data-price {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1vw;
+    font-weight: bold;
+    font-size: 2vw;
+    border-radius: 1vw;
+}
+
+
+
+// latest news styling
+
+.news-title {
+    font-weight: 700;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+
+.news-carousel {
+    div {
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+    }
+
+    img {
+        height: 180px;
+        width: 360px;
+        border-radius: 10px;
+    }
+
+    span {
+        display: flex;
+        border: 2px solid black;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-end;
+        overflow: hidden;
+        position: absolute;
+        width: 360px;
+        height: 180px;
+        border-radius: 10px;
+        color: white;
+        font-size: 16px;
+        padding: 10px;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 70%);
+    }
+
+    ul {
+        list-style-type: none;
+        display: flex;
+    }
+}
+
+
+@media (max-width: 425px) {
+    .news-carousel {
+        img {
+            height: 120px;
+            width: 240px;
+            border-radius: 5px;
+        }
+
+        span {
+            width: 240px;
+            height: 120px;
+            border-radius: 5px;
+            font-size: 12px;
+            padding: 5px;
+        }
+    }
+}
+
+
+
+// trading markets styling
+
+.trade-title {
+    font-weight: 600;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+
+.trade-carousel {
+    margin-top: 80px;
+}
+
+.title-icon-tradetype {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-left: 40px;
+}
+
+.title-icon-tradetype img {
+    width: 65px;
+    height: 65px;
+    margin-right: 20px;
+}
+
+.title-icon-tradetype h3 {
+    font-size: 25px;
+}
+
+.card-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.card-content p {
+    font-size: 22px;
+    color: #000;
+    margin-top: -40px;
+    line-height: 26.63px;
+    text-justify: inter-word;
+}
+
+
+@media (max-width: 1124px) {
+    .card-content p {
+        font-size: 16px;
+    }
+
+    .title-icon-tradetype {
+        width: 20px;
+    }
+
+    .title-icon-tradetype h3 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 890px) {
+    .card-content p {
+        font-size: 12px;
+    }
+
+    .title-icon-tradetype {
+        width: 16px;
+    }
+
+    .title-icon-tradetype h3 {
+        font-size: 16px;
+    }
+
+    .title-icon-tradetype img {
+        width: 45px;
+        height: 45px;
+        margin-right: 10px;
+    }
+}
+
+@media (max-width: 700px) {
+    .trade-card {
+        width: 200px;
+    }
+
+    .title-icon-tradetype h3 {
+        font-size: 14px;
+    }
+}
+
+
+
+// trade intro styling
+
+.trade-intro-main {
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.trade-intro-img {
+    height: 550px;
+    position: absolute;
+    transform: translateY(-300px);
+    z-index: 0;
+}
+
+.trade-intro-box {
+    z-index: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-direction: column;
+    margin: 60px;
+    width: 500px;
+}
+
+.trade-intro-btn {
+    border: none;
+    border-radius: 10px;
+    margin: 40px 60px 40px 0;
+    padding: 10px;
+    font-size: 25px;
+    cursor: pointer;
+    background-color: #0b67ed;
+    color: white;
+    width: 300px;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+
+@media (max-width: 900px) {
+    .trade-intro-img {
+        transform: scale(0.8) translate(-250px, -300px);
+        transition: all 1s ease;
+        opacity: 60%;
+    }
+}
+
+@media (max-width: 680px) {
+    .trade-intro-img {
+        transform: scale(0.4) translate(-650px, -300px);
+        transition: all 1s ease;
+    }
+
+    .trade-intro-box {
+        transform: scale(0.6) translate(-100px, -100px);
+    }
+}
+
+@media (max-width: 320px) {
+    .trade-intro-img {
+        transform: scale(0.2) translate(-1500px, -900px);
+        transition: all 1s ease;
+    }
+
+    .trade-intro-box {
+        transform: scale(0.4) translate(-200px, -100px);
+    }
+
+    .trade-intro-main {
+        height: 300px;
+    }
+}

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import "../../styles/main.scss";
+import "../../styles/homepage.scss";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid, useTheme } from "@mui/material";
 import phone from "../../assets/images/phoneplaceholder.png";
@@ -16,8 +17,8 @@ const Banner = () => {
   }, [animationControls]);
 
   return (
-    <Grid container className="banner-main" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
-      <Grid item xs={12} md={6} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+    <Grid container className="banner-main">
+      <Grid item xs={12} md={6} className="banner-grid">
         <motion.div
           className="banner-text"
           initial={{ y: -50, opacity: 0 }}
@@ -50,7 +51,11 @@ const Banner = () => {
             </motion.p>
             <motion.button
               className="banner-btn"
-              onClick={authStore.user ? () => navigate("/trade/1HZ10V") : authStore.handleOpen}
+              onClick={
+                authStore.user
+                  ? () => navigate("/trade/1HZ10V")
+                  : authStore.handleOpen
+              }
             >
               {authStore.user ? "Learn Trading Now!" : "Create an Account"}
             </motion.button>
