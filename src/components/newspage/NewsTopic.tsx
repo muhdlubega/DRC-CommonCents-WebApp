@@ -3,7 +3,8 @@ import { Box, Button, IconButton, Tab, Tabs, TextField, Typography, useMediaQuer
 import { getNewsTopics } from "../../config/NewsApi";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import newsStore, { NewsItem, topics_array } from "../../store/NewsStore";
+import newsStore, { NewsItem } from "../../store/NewsStore";
+import { topics_array } from "../../arrays/NewsTopicArray";
 import placeholder from '../../assets/images/placeholder.png'
 import { SearchNormal1 } from "iconsax-react";
 

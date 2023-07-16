@@ -7,7 +7,7 @@ import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import "react-alice-carousel/lib/alice-carousel.css";
 import chartsStore from "../../store/ChartsStore";
-import { MarketName } from "../../pages/TradeHistoryPage";
+import { MarketName } from "../../arrays/MarketArray"; 
 
 const LiveData = observer(() => {
   const theme = useTheme();
