@@ -8,7 +8,6 @@ import { getNews } from "../../config/NewsApi";
 import { observer } from "mobx-react-lite";
 import placeholder from '../../assets/images/placeholder.png'
 import authStore from "../../store/AuthStore";
-import "../../styles/homepage.scss";
 
 const LatestNews = observer(() => {
   const fetchNews = async () => {

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "../../styles/main.scss";
-import "../../styles/tradepage.scss";
 import {
   addDoc,
   collection,
@@ -17,6 +15,7 @@ import {
   Modal,
   Slider,
   TextField,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -26,13 +25,12 @@ import { observer } from "mobx-react-lite";
 import { auth, db } from "../../firebase";
 import proposalStore from "../../store/ProposalStore";
 import AuthStore from "../../store/AuthStore";
-import { MoneySend } from "iconsax-react";
-import { NorthEast, SouthEast } from "@mui/icons-material";
-import { MarketSymbols } from "../../pages/TradeHistoryPage";
+import { MoneyRecive, MoneySend } from "iconsax-react";
+import { NorthEast, SouthEast, SouthWest } from "@mui/icons-material";
+import { MarketSymbols } from "../../arrays/MarketArray";
 
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
-  // const proposalContainerRef = useRef<HTMLDivElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [isSecondQuoteModalOpen, setIsSecondQuoteModalOpen] = useState(false);
@@ -324,6 +322,7 @@ const Proposal = observer(() => {
             aria-label="drawer"
             onClick={handleFabClick}
             className="proposal-fab"
+            style={{ display: window.innerWidth < 518 ? "block" : "none" }}
             color="primary"
           >
             {isDrawerOpen ? "X" : "Buy"}
@@ -464,7 +463,7 @@ const Proposal = observer(() => {
                     Higher
                   </button>
                   <Box className="quote-price-box" onClick={openQuoteModal}>
-                    <MoneySend color="green" size={40} />
+                    <MoneySend color="green" size={32} />
                     <Typography className="quote-price-txt higher">
                       Quote Price
                     </Typography>
@@ -517,10 +516,7 @@ const Proposal = observer(() => {
                     className="quote-price-box"
                     onClick={openSecondQuoteModal}
                   >
-                    <MoneySend color="red" size={40} />
-                    <Typography className="quote-price-txt lower">
-                      Quote Price
-                    </Typography>
+                    <MoneyRecive color="red" size={32} />
                   </Box>
                 </span>
                 {isSecondQuoteModalOpen && (
@@ -561,7 +557,7 @@ const Proposal = observer(() => {
           ) : (
             <Box className="proposal-area">
               <Box className="proposal-ticks">
-                <Typography className="proposal-ticks-txt"></Typography>
+                <Typography className="proposal-ticks-txt">Ticks:</Typography>
                 <Box className="duration-change-slider">
                   <Slider
                     name="duration-change"
@@ -678,6 +674,11 @@ const Proposal = observer(() => {
                 }}
               >
                 <span className="proposal-btn-span">
+                  <Box className="quote-price-box" onClick={openQuoteModal}>
+                    <Tooltip title="Quote Price for Higher" placement="left" disableFocusListener disableTouchListener arrow>
+                    <MoneySend color="green" size={32} />
+                    </Tooltip>
+                  </Box>
                   <button
                     className={`proposal-btn-buy ${
                       isProcessing ||
@@ -695,15 +696,9 @@ const Proposal = observer(() => {
                       Number.isNaN(proposalStore.payout)
                     }
                   >
-                    <NorthEast className="proposal-btn-icon" />
                     Higher
+                    <NorthEast className="proposal-btn-icon" />
                   </button>
-                  <Box className="quote-price-box" onClick={openQuoteModal}>
-                    <MoneySend color="green" size={40} />
-                    <Typography className="quote-price-txt higher">
-                      Quote Price
-                    </Typography>
-                  </Box>
                 </span>
                 {isQuoteModalOpen && (
                   <Modal open={isQuoteModalOpen} onClose={closeQuoteModal}>
@@ -728,6 +723,14 @@ const Proposal = observer(() => {
                   </Modal>
                 )}
                 <span className="proposal-btn-span">
+                <Box
+                    className="quote-price-box"
+                    onClick={openSecondQuoteModal}
+                  >
+                    <Tooltip title="Quote Price for Lower" placement="left" disableFocusListener disableTouchListener arrow>
+                    <MoneyRecive color="red" size={32} />
+                    </Tooltip>
+                  </Box>
                   <button
                     className={`proposal-btn-buy ${
                       isProcessing ||
@@ -745,18 +748,9 @@ const Proposal = observer(() => {
                       Number.isNaN(proposalStore.payout)
                     }
                   >
-                    <SouthEast className="proposal-btn-icon" />
                     Lower
+                    <SouthWest className="proposal-btn-icon" />
                   </button>
-                  <Box
-                    className="quote-price-box"
-                    onClick={openSecondQuoteModal}
-                  >
-                    <MoneySend color="red" size={40} />
-                    <Typography className="quote-price-txt lower">
-                      Quote Price
-                    </Typography>
-                  </Box>
                 </span>
                 {isSecondQuoteModalOpen && (
                   <Modal

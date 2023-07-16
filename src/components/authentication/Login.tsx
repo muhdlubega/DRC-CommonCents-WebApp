@@ -16,7 +16,6 @@ import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import "../../styles/components.scss";
 
 interface LoginProps {
   handleClose: () => void;

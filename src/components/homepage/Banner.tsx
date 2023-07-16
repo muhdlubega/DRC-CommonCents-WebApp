@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
-import "../../styles/main.scss";
-import "../../styles/homepage.scss";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid, useTheme } from "@mui/material";
 import phone from "../../assets/images/phoneplaceholder.png";

@@ -1,4 +1,5 @@
 import { action, makeObservable, observable } from "mobx";
+import { topics_array } from "../arrays/NewsTopicArray";
 
 export interface NewsItem {
   title: string;
@@ -15,24 +16,6 @@ export interface NewsItem {
     }
   ];
 }
-
-export const topics_array = [
-  "all",
-  "blockchain",
-  "earnings",
-  "mergers_and_acquisitions",
-  "financial_markets",
-  "economy_fiscal",
-  "economy_monetary",
-  "economy_macro",
-  "energy_transportation",
-  "finance",
-  "life_sciences",
-  "manufacturing",
-  "real_estate",
-  "retail_wholesale",
-  "technology",
-];
 
 class NewsStore {
   news: NewsItem[] = [];

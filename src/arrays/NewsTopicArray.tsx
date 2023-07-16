@@ -1,0 +1,17 @@
+export const topics_array = [
+    "all",
+    "blockchain",
+    "earnings",
+    "mergers_and_acquisitions",
+    "financial_markets",
+    "economy_fiscal",
+    "economy_monetary",
+    "economy_macro",
+    "energy_transportation",
+    "finance",
+    "life_sciences",
+    "manufacturing",
+    "real_estate",
+    "retail_wholesale",
+    "technology",
+];

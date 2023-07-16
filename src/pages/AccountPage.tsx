@@ -42,8 +42,7 @@ const AccountPage = observer(() => {
   const [showPassword, setShowPassword] = useState(false);
   const [userBalance, setUserBalance] = useState(100000);
   const [userName, setUserName] = useState("");
-  const theme = useTheme()
-
+  const theme = useTheme();
 
   const [state, setState] = useState({
     resetConfirmationOpen: false,
@@ -65,7 +64,7 @@ const AccountPage = observer(() => {
 
   const logOut = () => {
     signOut(auth);
-    navigate('/');
+    navigate("/");
     authStore.setAlert({
       open: true,
       type: "success",
@@ -92,8 +91,7 @@ const AccountPage = observer(() => {
     authStore.setUpdateName(updatedName);
     authStore.setAlert({
       open: true,
-      message:
-        "Display name updated!",
+      message: "Display name updated!",
       type: "success",
     });
   };
@@ -154,8 +152,7 @@ const AccountPage = observer(() => {
       await updatePassword(auth.currentUser!, newPassword);
       authStore.setAlert({
         open: true,
-        message:
-          "Password successfully updated!",
+        message: "Password successfully updated!",
         type: "success",
       });
       setIsConfirmationDialogOpen(false);
@@ -171,221 +168,213 @@ const AccountPage = observer(() => {
   useEffect(() => {
     getUserBalance();
     getUserName();
-  }, [authStore.user])
+  }, [authStore.user]);
 
   return (
     <Box>
       <img className="watermark" src={watermark}></img>
-      <Typography variant="h6" sx={{fontFamily: 'Roboto', 
-    borderBottom: '1px solid #888', margin: '20px'}}>
+      <Typography variant="h6" className="account-title">
         Account Details
       </Typography>
-      <Box  className="account-container">
-      <Box className="account-profile">
-        <Avatar
+      <Box className="account-container">
+        <Box className="account-profile">
+          <Avatar
             className="account-picture"
             src={auth.currentUser?.photoURL || ""}
             alt={userName || ""}
-            sx={{ marginRight: "0.4vw", width: '60px', height:'60px' }}
           />
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            flexDirection: 'column',
-            width: "100%",
-            fontFamily: "Roboto",
-            wordWrap: "break-word",
-            margin: '10px',
-          }}
-        >
-          <Typography>{userName}</Typography>
-          <Typography component="span"
-          style={{
-            fontSize: "12px"
-          }}
-        >
-          <EmptyWallet variant="Bold" size={16} style={{ marginRight: "0.5vw" }} />
-          {userBalance.toFixed(2)} USD
-        </Typography>
-        </Box>
-        <Button
-          variant="contained"
-          className="account-reset-balance"
-          onClick={handleResetBalance}
-          style={{
-            backgroundColor: "#6699ff",
-            borderRadius: "10px",
-            width: '190px',
-            fontSize: '9px', color: 'white'
-          }}
-        >
-          Reset Balance
-        </Button>
-      </Box>
-      <TextField
-                  variant="outlined"
-                  label="Username"
-                  type="text"
-                  value={updatedName}
-              onChange={(event) => setUpdatedName(event.target.value)}
-                  fullWidth
-                  style={{
-                    margin: '30px 0 10px',
-                    borderRadius: "20px",
-                  }}
-                  required
-                  id="username"
-                  inputProps={{
-                    maxLength: 50,
-                  }}
-                />
-                <Box style={{display: 'flex', justifyContent: 'flex-end'}}>
-      <Button style={{
-            backgroundColor: "#6699ff",
-            borderRadius: "10px",
-            marginBottom: "1vw",
-            width: '100px',
-            fontSize: '9px', color: 'white'
-          }} onClick={handleUpdateName}>Save</Button>
-          </Box>
-          <Box style={{marginTop: '30px', display: 'flex', justifyContent: 'flex-start'}}>
-            <Typography variant="body2">
-              This is the email associated with CommonCents
+          <Box className="account-userbox">
+            <Typography>{userName}</Typography>
+            <Typography
+              component="span"
+              style={{
+                fontSize: "12px",
+              }}
+            >
+              <EmptyWallet variant="Bold" size={16} />
+              {userBalance.toFixed(2)} USD
             </Typography>
           </Box>
-      <Typography component="span"
-          style={{
-            width: "100%",
-            fontSize: "12px", fontWeight: 500,
-            fontFamily: "Roboto",
-            margin: 0,
-          }}
-        >
-          {auth.currentUser?.email}
-        </Typography>
-      <Box className="sidebar-leaderboard">
-        <Button style={{
-            backgroundColor: "#0033ff",
-            borderRadius: "10px",
-            marginTop: "20px",
-            width: '180px',
-            fontSize: '12px', color: 'white'
-          }} onClick={toggleSecondDropdown}>
-          Change Password
-        </Button>
-        <Modal open={isSecondDropdownOpen} onClose={toggleSecondDropdown}>
-          <Box  className="change-pwd-modal"
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "background.paper",
-              alignItems: 'flex-end',
-              display: 'flex',
-              flexDirection: 'column',
-              borderRadius: '10px',
-              boxShadow: 24,
-              paddingBottom: '20px',
+          <Button
+            variant="contained"
+            className="account-reset-balance"
+            onClick={handleResetBalance}
+            style={{
+              backgroundColor: "#6699ff",
+              borderRadius: "10px",
+              width: "190px",
+              fontSize: "9px",
+              color: "white",
             }}
           >
-            <Typography style={{marginBottom: '30px', alignSelf: 'center', backgroundColor: '#0033ff', width: '100%', borderTopRightRadius: '10px', borderTopLeftRadius: '10px',
-          padding: '15px 20px', fontWeight: 700, color: 'white'}}>Enter your current password to continue</Typography>
-          <Box style={{margin: '0 20px', alignItems: 'flex-end',
-              display: 'flex',
-              flexDirection: 'column', width: '90%'}}>
-            <TextField
-        variant="outlined"
-        style={{margin: '10px 0'}}
-        label="Enter Your Current Password"
-        type={showPassword ? "text" : "password"}
-        value={oldPassword}
-        onChange={(e) => setOldPassword(e.target.value)}
-        fullWidth
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => setShowPassword(!showPassword)}
-                edge="end"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-            <TextField
-        variant="outlined"
-        style={{margin: '10px 0'}}
-        label="Enter Your New Password"
-        type={showPassword ? "text" : "password"}
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-        fullWidth
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => setShowPassword(!showPassword)}
-                edge="end"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-      <TextField
-        variant="outlined"
-        style={{margin: '10px 0'}}
-        label="Confirm Your New Password"
-        type={showPassword ? "text" : "password"}
-        value={confirmNewPassword}
-        onChange={(e) => setConfirmNewPassword(e.target.value)}
-        fullWidth
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => setShowPassword(!showPassword)}
-                edge="end"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-            <Button style={{
-            backgroundColor: "#0033ff",
-            borderRadius: "10px",
-            marginTop: "20px",
-            width: '180px',
-            padding: '10px 0', 
-            alignItems: 'flex-end',
-            fontSize: '12px', color: 'white'
-          }}  onClick={handleChangePassword}>Continue</Button></Box>
-          </Box>
-        </Modal>
-      </Box>
-      <Box sx={{ flex: 1 }}>
-        <Button
-          variant="contained"
-          className="sidebar-logout"
-          onClick={logOut}
-          style={{ backgroundColor: "#0033ff",
-          borderRadius: "10px",
-          width: '120px',
-          fontSize: '12px', color: 'white'}}
-        >
-          <LogoutCurve size={20} color="white" style={{ marginRight: "5px" }} />
-          Log Out
-        </Button>
-      </Box>
+            Reset Balance
+          </Button>
+        </Box>
+        <TextField
+          variant="outlined"
+          label="Username"
+          type="text"
+          value={updatedName}
+          onChange={(event) => setUpdatedName(event.target.value)}
+          fullWidth
+          className="account-user-txtfield"
+          required
+          id="username"
+          inputProps={{
+            maxLength: 50,
+          }}
+        />
+        <Box className="account-save-btn">
+          <Button
+            style={{
+              backgroundColor: "#6699ff",
+              borderRadius: "10px",
+              marginBottom: "1vw",
+              width: "100px",
+              fontSize: "9px",
+              color: "white",
+            }}
+            onClick={handleUpdateName}
+          >
+            Save
+          </Button>
+        </Box>
+        <Box className="account-emailbox">
+          <Typography variant="body2">
+            This is the email associated with CommonCents
+          </Typography>
+        </Box>
+        <Typography component="span" className="account-email">
+          {auth.currentUser?.email}
+        </Typography>
+        <Box className="sidebar-leaderboard">
+          <Button
+            style={{
+              backgroundColor: "#0033ff",
+              borderRadius: "10px",
+              marginTop: "20px",
+              width: "180px",
+              fontSize: "12px",
+              color: "white",
+            }}
+            onClick={toggleSecondDropdown}
+          >
+            Change Password
+          </Button>
+          <Modal open={isSecondDropdownOpen} onClose={toggleSecondDropdown}>
+            <Box
+              className="change-pwd-modal"
+              sx={{
+                bgcolor: theme.palette.background.paper,
+              }}
+            >
+              <Typography className="change-pwd-modal-header">
+                Enter your current password to continue
+              </Typography>
+              <Box className="change-pwd-modal-box">
+                <TextField
+                  variant="outlined"
+                  className="change-pwd-modal-txtfield"
+                  label="Enter Your Current Password"
+                  type={showPassword ? "text" : "password"}
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  variant="outlined"
+                  className="change-pwd-modal-txtfield"
+                  label="Enter Your New Password"
+                  type={showPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  variant="outlined"
+                  className="change-pwd-modal-txtfield"
+                  label="Confirm Your New Password"
+                  type={showPassword ? "text" : "password"}
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Button
+                  style={{
+                    backgroundColor: "#0033ff",
+                    borderRadius: "10px",
+                    marginTop: "20px",
+                    width: "180px",
+                    padding: "10px 0",
+                    alignItems: "flex-end",
+                    fontSize: "12px",
+                    color: "white",
+                  }}
+                  onClick={handleChangePassword}
+                >
+                  Continue
+                </Button>
+              </Box>
+            </Box>
+          </Modal>
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <Button
+            variant="contained"
+            className="sidebar-logout"
+            onClick={logOut}
+            style={{
+              backgroundColor: "#0033ff",
+              borderRadius: "10px",
+              width: "120px",
+              fontSize: "12px",
+              color: "white",
+            }}
+          >
+            <LogoutCurve
+              size={20}
+              color="white"
+              style={{ marginRight: "5px" }}
+            />
+            Log Out
+          </Button>
+        </Box>
       </Box>
       <Dialog
         open={state.resetConfirmationOpen}
@@ -398,16 +387,21 @@ const AccountPage = observer(() => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="reset-confirmation-dialog-description">
-          Resetting your balance will clear all your trade activities and history. Are you sure you would like to continue? This action cannot be undone.
+            Resetting your balance will clear all your trade activities and
+            history. Are you sure you would like to continue? This action cannot
+            be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={toggleResetConfirmation} style={{color: theme.palette.text.secondary}}>
+          <Button
+            onClick={toggleResetConfirmation}
+            style={{ color: theme.palette.text.secondary }}
+          >
             Cancel
           </Button>
           <Button
             onClick={confirmResetBalance}
-            style={{backgroundColor: '#0033ff', color: 'white'}}
+            style={{ backgroundColor: "#0033ff", color: "white" }}
             variant="contained"
           >
             Confirm
@@ -432,13 +426,13 @@ const AccountPage = observer(() => {
         <DialogActions>
           <Button
             onClick={() => setIsConfirmationDialogOpen(false)}
-            style={{color: theme.palette.text.secondary}}
+            style={{ color: theme.palette.text.secondary }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleConfirmPasswordChange}
-            style={{backgroundColor: '#0033ff', color: 'white'}}
+            style={{ backgroundColor: "#0033ff", color: "white" }}
             variant="contained"
           >
             Confirm

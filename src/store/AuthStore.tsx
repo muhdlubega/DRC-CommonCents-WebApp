@@ -19,14 +19,7 @@ import {
 } from "firebase/firestore";
 import { action, makeObservable, observable } from "mobx";
 import { auth, db } from "../firebase";
-// import '../assets/images/market'
-
 const googleProvider = new GoogleAuthProvider();
-
-// const MarketSymbols = [
-// {'1HZ10V':'../assets/images/market/1HZ10V'},
-// {'1HZ25V':'../assets/images/market/1HZ25V'},
-// {'1HZ50V':'../assets/images/market/1HZ50V'}]
 
 export interface Alert {
   open: boolean;
@@ -132,7 +125,6 @@ class AuthStore {
     }
 
     const lengthTest = /^.{8,}$/;
-
     if (!lengthTest.test(authStore.password)) {
       authStore.setAlert({
         open: true,
@@ -143,7 +135,6 @@ class AuthStore {
     }
 
     const caseTest = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.!@#$%^&*]).{8,}$/;
-
     if (!caseTest.test(authStore.password)) {
       authStore.setAlert({
         open: true,
@@ -300,24 +291,6 @@ class AuthStore {
     this.open = open;
   }
 
-  // async initializeLeaderboard() {
-  //   const querySnapshot = await getDocs(collection(db, "users"));
-  //     const leaderboardData: User[] = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const { balance, displayName, email } = doc.data();
-  //       leaderboardData.push({ displayName, email, balance });
-  //       if (auth.currentUser && auth.currentUser.uid === doc.id) {
-  //         this.user!.balance = balance || null;
-  //       }
-  //     });
-
-  //     action(() => {
-  //     this.leaderboard = leaderboardData.sort(
-  //       (a, b) => (b.balance as number) - (a.balance as number)
-  //     );
-  //     })();
-  // }
-
   async initializeLeaderboard() {
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
@@ -401,7 +374,7 @@ class AuthStore {
     );
     const tradeHistoryQuery = query(tradeHistoryRef);
     const tradeHistorySnapshot = await getDocs(tradeHistoryQuery);
-  
+
     tradeHistorySnapshot.forEach(async (doc) => {
       await deleteDoc(doc.ref);
     });
@@ -412,15 +385,6 @@ class AuthStore {
   }
 
   async setUpdateName(updatedName: string) {
-    // if (updatedName.trim() === "") {
-    //   authStore.setAlert({
-    //     open: true,
-    //     message: "Pas",
-    //     type: "error",
-    //   });
-    //   return;
-    // }
-
     if (updatedName.length < 3 || updatedName.length > 15) {
       authStore.setAlert({
         open: true,

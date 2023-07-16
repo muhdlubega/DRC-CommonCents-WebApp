@@ -1,5 +1,4 @@
 import { Button, Grid, TextField } from "@mui/material";
-// import themeStore from "../store/ThemeStore";
 import { observer } from "mobx-react-lite";
 
 const Enquiry = observer(() => {
@@ -29,13 +28,7 @@ const Enquiry = observer(() => {
                   label="Email"
                   type="email"
                   fullWidth
-                  style={{
-                    width: "30vw",
-                    height: "97px",
-                    borderRadius: "20px",
-                    marginTop: "10px",
-                    marginLeft: "15px",
-                  }}
+                  className="enquiry-email"
                   required
                   id="email"
                 />
@@ -48,12 +41,7 @@ const Enquiry = observer(() => {
                   fullWidth
                   multiline
                   rows={7}
-                  style={{
-                    width: "60vw",
-                    height: "217px",
-                    marginLeft: "15px",
-                    borderRadius: "20px",
-                  }}
+                  className="enquiry-txtfield"
                   required
                   id="enquiry"
                 />
@@ -65,9 +53,8 @@ const Enquiry = observer(() => {
                   style={{
                     backgroundColor: "#0033ff",
                     width: "22vw",
-                    height: "40px",
-                    transform: 'translateX(39vw)',
-                    // marginLeft: "50vw",
+                    height: "50px",
+                    marginLeft: '16px'
                   }}
                   type="submit"
                 >

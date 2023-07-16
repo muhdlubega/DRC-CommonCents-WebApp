@@ -1,9 +1,9 @@
- import photo1 from "../../assets/images/market_type/market 1.svg"
- import photo2 from "../../assets/images/market_type/trading 1.svg"
- import photo3 from "../../assets/images/market_type/commodity 1.svg"
- import photo4 from "../../assets/images/market_type/bull 1.svg"
- import photo5 from "../../assets/images/market_type/cryptocurrency 1.svg"
- import photo6 from "../../assets/images/market_type/stock 1.svg"
+ import photo1 from "../assets/images/market_type/market 1.svg"
+ import photo2 from "../assets/images/market_type/trading 1.svg"
+ import photo3 from "../assets/images/market_type/commodity 1.svg"
+ import photo4 from "../assets/images/market_type/bull 1.svg"
+ import photo5 from "../assets/images/market_type/cryptocurrency 1.svg"
+ import photo6 from "../assets/images/market_type/stock 1.svg"
 
 export const TradeType = [
    {
