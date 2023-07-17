@@ -23,7 +23,7 @@ import {
   EmailAuthProvider,
 } from "firebase/auth";
 import { auth, db } from "../firebase";
-import watermark from "../assets/images/watermark.png";
+import watermark from "../assets/images/watermark 2.svg";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { collection, getDocs } from "firebase/firestore";
