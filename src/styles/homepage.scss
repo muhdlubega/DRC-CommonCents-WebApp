@@ -316,6 +316,7 @@
         height: 180px;
         width: 360px;
         border-radius: 10px;
+        object-fit: contain;
     }
 
     span {
@@ -478,7 +479,6 @@
     position: absolute;
     transform: translateY(-300px);
     z-index: 0;
-    filter: hue-rotate(220deg);
 }
 
 .trade-intro-box {

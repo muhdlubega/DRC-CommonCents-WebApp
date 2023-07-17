@@ -1,7 +1,7 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import image1 from "../../assets/images/16367269_rm373batch4-07.jpg";
-import image2 from "../../assets/images/digital-world-map-hologram-blue-background.jpg";
-import image3 from "../../assets/images/business-people-casual-meeting.jpg";
+import image1 from "../../assets/images/live-trading-homepage.svg";
+import image2 from "../../assets/images/breaking-news-about.svg";
+import image3 from "../../assets/images/forum-homepage.svg";
 
 const Header = () => {
   const theme = useTheme();
