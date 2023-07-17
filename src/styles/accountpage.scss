@@ -41,8 +41,9 @@
         align-items: flex-start;
         flex-direction: column;
         width: 100%;
-        word-wrap: break-word;
         margin: 10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     &-user-txtfield {
@@ -351,10 +352,11 @@
 
 .leaderboard-main {
     margin: 3vw;
+    min-height: 1000px;
 }
 
 .leaderboard-list {
-    transform: translate(0, -15vw);
+    transform: translate(0, -40vw);
 
     &-card {
         display: flex;
@@ -368,6 +370,8 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     &-picture {
@@ -395,18 +399,23 @@
     }
 
     &-picture {
+        position: absolute !important;
         width: 11vw !important;
         height: 11vw !important;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -75%);
+        z-index: 2;
+    }
+
+    &-imgbox{
+        position: relative;
     }
 }
 
 .leaderboard-award {
-    right: 27.1vw;
-    bottom: 0;
-    top: 22vh;
-    height: 30vw;
-    width: 45vw;
-    position: absolute
+    height: 22vw;
+    width: 22vw;
 }
 
 .background-circle {

@@ -2,7 +2,8 @@ import { Avatar, Box, Card, Typography, useTheme } from "@mui/material";
 import authStore from "../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import award from "../assets/images/leaderboard.png";
+import { MedalStar } from "iconsax-react";
+// import award from "../assets/images/leaderboard.png";
 
 const LeaderboardPage = observer(() => {
   const theme = useTheme();
@@ -17,8 +18,8 @@ const LeaderboardPage = observer(() => {
 
   return (
     <Box className="leaderboard-main">
-      <Box className="background-circle"></Box>
-      <img className="leaderboard-award" src={award}></img>
+      {/* <Box className="background-circle"></Box> */}
+      {/* <img className="leaderboard-award" src={award}></img> */}
       <Typography variant="h6" className="account-title">
         Leaderboard
       </Typography>
@@ -32,9 +33,9 @@ const LeaderboardPage = observer(() => {
                 style={{
                   transform:
                     index === 1
-                      ? "translate(-13.9vw, -9.3vw)"
+                      ? "translate(-20vw, -50%)"
                       : index === 2
-                      ? "translate(13.9vw, -23.9vw)"
+                      ? "translate(20vw, -150%)"
                       : "0",
                 }}
               >
@@ -44,23 +45,33 @@ const LeaderboardPage = observer(() => {
                     color: theme.palette.text.primary,
                   }}
                 >
-                  <Typography style={{ fontWeight: 700 }}>
+                  <Typography style={{ fontWeight: 700, fontSize: '3vw' }}>
                     {user.displayName || user.email}
                   </Typography>
-                  <Typography style={{ marginBottom: "1vw" }}>
+                  <Typography style={{fontSize: '2vw'}}>
                     {user?.netWorth?.toFixed(2)} USD
                   </Typography>
+                  <Box className="leaderboard-tthree-imgbox">
                   <Avatar
                     src={user?.photoURL || ""}
                     alt={user?.displayName || user?.email || ""}
                     className="leaderboard-tthree-picture"
                   />
+                  <MedalStar variant="Bold" style={{
+                  color:
+                    index === 1
+                      ? "#C0C0C0"
+                      : index === 2
+                      ? "#CD7F32"
+                      : "#FFD700",
+                }} className="leaderboard-award"/>
+                </Box>
                 </Box>
               </li>
             ))}
         </ol>
       </Box>
-      <Box className="leaderboard-list">
+      <Box className="leaderboard-list bottom">
         <ol start={4}>
           {sortedLeaderboard
             .filter((user) => user.netWorth !== 0)

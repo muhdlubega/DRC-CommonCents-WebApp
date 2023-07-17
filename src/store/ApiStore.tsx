@@ -31,7 +31,7 @@ class ApiStore {
   ticks_history_request: Record<string, number | string> = {
     ticks_history: this.selectedSymbol,
     adjust_start_time: 1,
-    count: 1000,
+    count: 500,
     granularity: this.granularity,
     end: "latest",
     start: 1680040550,
@@ -184,7 +184,7 @@ class ApiStore {
       ? {
           ticks_history: this.selectedSymbol,
           adjust_start_time: 1,
-          count: 1000,
+          count: 500,
           end: "latest",
           start: 1680040550,
           style: "ticks",
@@ -192,7 +192,7 @@ class ApiStore {
       : {
           ticks_history: this.selectedSymbol,
           adjust_start_time: 1,
-          count: 1000,
+          count: 500,
           granularity: this.granularity,
           end: "latest",
           start: 1680040550,
@@ -209,6 +209,8 @@ class ApiStore {
 
   unsubscribeTicks = () => {
     this.connection?.removeEventListener("message", this.tickResponse, false);
+    this.ticks = [];
+    this.proposalTicks = [];
     this.tickSubscriber().unsubscribe();
     this.disconnectWebSocket();
   };

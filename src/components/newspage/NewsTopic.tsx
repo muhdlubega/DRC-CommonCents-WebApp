@@ -7,6 +7,8 @@ import newsStore, { NewsItem } from "../../store/NewsStore";
 import { topics_array } from "../../arrays/NewsTopicArray";
 import placeholder from '../../assets/images/placeholder.png'
 import { SearchNormal1 } from "iconsax-react";
+import authStore from "../../store/AuthStore";
+import loading from "../../assets/images/commoncents.svg";
 
 const NewsTopic = observer(() => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -49,9 +51,12 @@ const NewsTopic = observer(() => {
       const { data } = response;
       const feed = data?.feed || [];
       newsStore.setNews(feed);
-      console.log(response);
     } catch (error) {
-      console.error("Error fetching news:", error);
+      authStore.setAlert({
+        open: true,
+        message: "Unable to fetch news currently. Try again later",
+        type: "error",
+      });
     }
   };
 
@@ -68,7 +73,6 @@ const NewsTopic = observer(() => {
   const handleTopicChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     const selectedTopic = topics_array[newValue];
     newsStore.setSelectedTopic(selectedTopic);
-    console.log(selectedTopic);
     fetchNews(selectedTopic);
   };
   
@@ -84,7 +88,7 @@ const NewsTopic = observer(() => {
   };
 
   return (
-    <Box>
+    <Box className="newspage-main">
       <Box className={`news-search ${isSearchFocused ? "focused" : ""}`}>
     <TextField
       type="text"
@@ -99,7 +103,7 @@ const NewsTopic = observer(() => {
       className="news-searchbar-icon"
       style={{ visibility: isSearchFocused ? "hidden" : "visible", display: isSmallScreen ? "none" : "" }}
     >
-      <SearchNormal1 size={40}/>
+      <SearchNormal1 size={36}/>
     </IconButton>
   </Box>
       <Box className="news-searchgenre"
@@ -124,10 +128,13 @@ const NewsTopic = observer(() => {
         </Tabs>
       </Box>
       {filteredNews.length === 0 ? (
-        <Box className="news-search-empty">
-        <SearchNormal1 size={280} color="gray"/>
-        <Typography variant="h6" className="news-empty-txt">Sorry, no search results found</Typography>
-        </Box>
+        // <Box className="news-search-empty">
+        // <SearchNormal1 size={200} color="gray"/>
+        // <Typography variant="h6" className="news-empty-txt">Sorry, no search results found</Typography>
+        // </Box>
+        <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
     ) : (<Box className="news-card-row">
         {paginate(filteredNews, currentPage, articlesPerPage).map(
           (article: NewsItem | null, index) => {

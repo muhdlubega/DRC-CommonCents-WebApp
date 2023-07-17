@@ -62,6 +62,7 @@
 .symbols-dropdown {
     border: 1px solid black;
     border-radius: 10px;
+    width: 90%;
     margin: 1.5vw 0 1vw 3vw;
     padding-left: 20px;
     padding-right: 20px;
@@ -69,9 +70,13 @@
     cursor: pointer;
 }
 
+.symbols-last-item{
+    display: flex;
+    flex-direction: row;
+}
+
 .chart-onboarding {
-    margin: 10px 40px 0 40px;
-    width: 50px;
+    margin: 10px 0 0 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -80,11 +85,47 @@
 }
 
 .chart-onboarding-icon {
-    margin-left: 8px;
+    margin-right: 2px;
 }
+
+.onboarding-modal-img{
+    height: 150%;
+    width: 150%;
+    cursor: pointer;
+}
+
+.onboarding-modal-imgbox{
+    position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-75%, -50%);
+          box-shadow: 24;
+}
+
+  .slideshow-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    outline: none;
+  }
+  
+  .slideshow-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }  
 
 .chart-area {
     margin: 0 1vw 5vw 1vw;
+}
+
+
+@media (max-width: 700px) {
+    .onboarding-modal-imgbox {
+        top: 35% !important;
+    }
 }
 
 
@@ -93,7 +134,7 @@
 
 .pricecandle-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     justify-content: center;
     align-items: center;
     margin: 30px 10px 10px 10px;
@@ -116,11 +157,9 @@
 // proposal styling
 
 .proposal-fab {
-    position: fixed;
-    top: 140px;
-    right: 20px;
-    // display: none;
-    color: white;
+    position: absolute;
+    top: -720px;
+    right: 0px !important;
 }
 
 .proposal-area {
@@ -164,6 +203,34 @@
     width: 100%;
 }
 
+.proposal-btn-fab {
+    border-radius: 6px;
+    margin: 10px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    width: 80vw;
+
+    &.higher {
+        border: 1px solid green;
+        background-color: green;
+
+        &:hover {
+            background-color: rgb(1, 94, 1);
+        }
+    }
+
+    &.lower {
+        border: 1px solid red;
+        background-color: red;
+
+        &:hover {
+            background-color: rgb(189, 1, 1);
+        }
+    }
+}
+
 .proposal-btn-choices-fab {
     display: flex;
     flex-direction: column;
@@ -176,6 +243,11 @@
     align-items: center;
 }
 
+.processing {
+    background-color: gray !important;
+    border: 1px solid gray !important;
+}
+
 .proposal-btn-buy {
     border-radius: 6px;
     margin: 10px;
@@ -183,7 +255,7 @@
     font-size: 16px;
     cursor: pointer;
     color: white;
-    width: 260px;
+    width: 16vw;
 
     &.higher {
         border: 1px solid green;
@@ -191,11 +263,6 @@
 
         &:hover {
             background-color: rgb(1, 94, 1);
-        }
-
-        &.processing {
-            background-color: gray;
-            border: gray;
         }
     }
 
@@ -205,11 +272,6 @@
 
         &:hover {
             background-color: rgb(189, 1, 1);
-        }
-
-        &.processing {
-            background-color: gray;
-            border: gray;
         }
     }
 }
