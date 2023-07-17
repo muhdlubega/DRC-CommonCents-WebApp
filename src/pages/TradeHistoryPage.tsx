@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "./../firebase";
-import { Box, Card, CardContent, Grid, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Modal,
+  Typography,
+} from "@mui/material";
 import authStore from "../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { Clock } from "iconsax-react";
 import { MarketName, MarketSymbols } from "../arrays/MarketArray";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export interface Trade {
+  id: string;
   strategy: string;
   status: string;
   marketType: string;
@@ -24,9 +35,15 @@ export interface Trade {
 const TradeHistoryPage = observer(() => {
   const [tradeData, setTradeData] = useState<Trade[]>([]);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const handleCardClick = (trade: Trade) => {
     setSelectedTrade(trade);
+  };
+
+  const handleSortClick = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
   const handleCloseModal = () => {
@@ -38,6 +55,10 @@ const TradeHistoryPage = observer(() => {
     return date.toLocaleString();
   };
 
+  const handleDateSelect = (date: Date | null) => {
+    setSelectedDate(date);
+  };  
+
   useEffect(() => {
     const fetchTradeData = async () => {
       try {
@@ -48,7 +69,11 @@ const TradeHistoryPage = observer(() => {
           "tradeHistory"
         );
         const snapshot = await getDocs(tradeHistoryRef);
-        const data = snapshot.docs.map((doc) => doc.data() as Trade);
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Trade[];
+        
         setTradeData(data);
       } catch (error) {
         authStore.setAlert({
@@ -64,16 +89,29 @@ const TradeHistoryPage = observer(() => {
   }, []);
 
   return (
-    <Box>
-      <Typography variant="h6" className="account-title">
+    <Box className="trade-history-main">
+      <Typography variant="h6" className="account-title trade-history-title">
         Trade History
+        <Box className="trade-filter">
+        <Button style={{ color: "#0033ff" }} onClick={handleSortClick}>
+          Sort {sortOrder === "asc" ? "Newest to Oldest" : "Oldest to Newest"}
+        </Button>
+        <ReactDatePicker isClearable className="trade-date-picker" dateFormat="dd/MM/yyyy" todayButton="Today" placeholderText="FILTER FROM DATE" selected={selectedDate} onChange={handleDateSelect} />
+        </Box>
       </Typography>
-      {tradeData.filter((trade) => trade.status !== undefined).length > 0 ? (
+      {tradeData.filter((trade) =>
+        selectedDate ? new Date(trade.timestamp).toDateString() === selectedDate.toDateString() : true
+      ).filter((trade) => trade.status !== undefined).length > 0 ? (
         <Box>
           <Grid container spacing={2}>
-            {tradeData
-              .filter((trade) => trade.status !== undefined)
-              .sort((a, b) => b.timestamp - a.timestamp)
+            {tradeData.filter((trade) =>
+        selectedDate ? new Date(trade.timestamp).toDateString() === selectedDate.toDateString() : true
+      ).filter((trade) => trade.status !== undefined)
+              .sort((a, b) =>
+                sortOrder === "asc"
+                  ? a.timestamp - b.timestamp
+                  : b.timestamp - a.timestamp
+              )
               .map((trade, index) => (
                 <Grid item xs={12} sm={6} md={3} key={index}>
                   <Card
@@ -165,6 +203,9 @@ const TradeHistoryPage = observer(() => {
                     USD
                   </Typography>
                   <Typography variant="body1">
+  <strong>Ref. ID:</strong> {selectedTrade.id}
+</Typography>
+                  <Typography variant="body1">
                     <strong>Market Type:</strong> {selectedTrade.marketType} -{" "}
                     {MarketName[selectedTrade.marketType]}
                   </Typography>
@@ -192,7 +233,7 @@ const TradeHistoryPage = observer(() => {
                     Ticks
                   </Typography>
                   <Typography variant="body1" style={{ fontSize: "12px" }}>
-                    {formatTimestamp(selectedTrade.timestamp)}
+                    <strong>Buy Time:</strong> {formatTimestamp(selectedTrade.timestamp)}
                   </Typography>
                 </CardContent>
               )}

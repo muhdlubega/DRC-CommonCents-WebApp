@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import champion from "../../assets/images/champion3.svg";
+import champion from "../../assets/images/champion3-1 1.svg";
 import { useNavigate } from "react-router-dom";
 
 const TradeIntro = () => {

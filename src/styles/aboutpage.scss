@@ -16,13 +16,10 @@
   
   .about-us {
     font-weight: 400;
-    // margin: 5vw;
-    // padding-top: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #292D32;
   }
 
   .contacts {
@@ -133,13 +130,15 @@
   }
 
   .commoncents-logo {
-    // position: absolute;
-    // margin-left: 900px;
-    // margin-top: -1200px;
     top: 0%;
       height: 40vw;
       width: 40vw;
       animation: rotation 8s infinite linear;
+  }
+
+  .about-us-teamtxt{
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .why-choose-us {
@@ -180,11 +179,23 @@
     }
 }
 
+.aboutus-feature-img{
+  position: relative;
+  margin: 5vh 0;
+  width: 100vw !important;
+  object-fit: cover;
+}
+
+.aboutus-feature-imgbox{
+  width: 100%;
+  display: flex;
+  background-size: cover;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
   .feature-about-us {
-    margin-top: 100px;
-    width: 1920px;
-    height: 730px;
-    flex-shrink: 0;
 
     .feature-pic {
       height: 730px;

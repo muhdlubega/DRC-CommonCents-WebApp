@@ -1,8 +1,8 @@
 import { Box, Button, Grid, Typography, useMediaQuery } from "@mui/material";
 import Image1 from "../../assets/images/playstore.svg";
-import SocialMedia1 from "../../assets/images/facebook.png";
-import SocialMedia2 from "../../assets/images/ig.png";
-import SocialMedia3 from "../../assets/images/twitter.png";
+import SocialMedia1 from "../../assets/images/fb.svg";
+import SocialMedia2 from "../../assets/images/ig-icon.svg";
+import SocialMedia3 from "../../assets/images/twitter.svg";
 import { ArrowCircleUp } from "iconsax-react";
 
 const Footer = () => {

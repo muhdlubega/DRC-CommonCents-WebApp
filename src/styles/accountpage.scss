@@ -263,6 +263,25 @@
 
 // trade history page styling
 
+.trade-history-main{
+    min-height: 600px; 
+}
+
+.trade-date-picker{
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    border: none;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    width: 240px;
+    font-size: 14px;
+}
+
+.trade-history-title{
+    display: flex;
+    justify-content: space-between;
+}
+
 .trade-card {
     display: flex;
     flex-direction: column;
@@ -330,6 +349,11 @@
     padding: 16px;
 }
 
+.react-datepicker__close-icon{
+    height: 37px !important;
+    filter: grayscale(100%) !important;
+}
+
 .trade-history-empty {
     height: 500px;
     display: flex;
@@ -345,6 +369,19 @@
         width: 275px !important;
     }
 }
+
+@media (max-width: 600px) {
+    .trade-history-title {
+        flex-direction: column;
+    }
+
+    .trade-filter{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+}
+
 
 
 

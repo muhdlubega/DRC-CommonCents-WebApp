@@ -1,20 +1,13 @@
-import { Card, Typography, useTheme } from "@mui/material";
+import { Card, Grid, Typography, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import { motion, useAnimation } from "framer-motion";
-import member1 from "../assets/images/bega.jpeg";
-import member2 from "../assets/images/cass.jpeg";
-import member3 from "../assets/images/vino2.jpeg";
-import member4 from "../assets/images/bentley.jpeg";
-// import watermark from "../assets/images/watermark.png"
-import simulation from "../assets/images/live-trading-onboarding.jpg";
-import news from "../assets/images/breaking-news-onboarding.jpg";
-import forum from "../assets/images/forums-onboarding.jpeg";
-import tradingLaptop from "../assets/images/trading-laptop.svg";
-import logo from "../assets/images/commoncents.svg";
-import newsLaptop from "../assets/images/news-laptop.svg";
-import forumLaptop from "../assets/images/forum-laptop.svg";
-import gps from "../assets/images/gps-removebg-preview 1.svg";
-import contact from "../assets/images/contact.svg";
+import member1 from "../assets/images/team1.svg";
+import member2 from "../assets/images/team2.svg";
+import member3 from "../assets/images/team3.svg";
+import member4 from "../assets/images/team4.svg";
+import feature1 from '../assets/images/feature1.svg';
+import feature2 from '../assets/images/feature2.svg';
+import feature3 from '../assets/images/feature3.svg';
 import commoncents from "../assets/images/commoncents.svg";
 import { useEffect } from "react";
 
@@ -35,7 +28,7 @@ const AboutPage = () => {
           animate={animationControls} className="aboutus-header">
             <Box className="aboutus-txtbox">
           <Typography variant="h6" style={{ marginTop: '40px', color: theme.palette.text.primary}}>Why choose us?</Typography>
-          <p style={{marginTop: "50px", color: theme.palette.text.secondary}}>CommonCents serves as a platform for aspiring traders. We offer live trading simulation on synthetic markets with no real money involved. </p>
+          <p style={{marginTop: "50px", color: theme.palette.text.secondary}}>CommonCents serves as a platform for aspiring traders. We offer live trading simulation for options trading on synthetic markets with no real money involved. </p>
           <p style={{color: theme.palette.text.secondary}}>Our main goal is to provide a central hub for beginners to learn basic trading concepts anytime, anywhere. </p>
           </Box>
           <Box className="aboutus-logo">
@@ -46,103 +39,59 @@ const AboutPage = () => {
         </motion.div>
       </Box>
       <Box className="feature-about-us">
-        <Card className="feature-text-box">
-          <Box className="title-box">
-            <img className="logo" src={logo}></img>
-            <Typography className="text-box-title">LIVE TRADING SIMULATION</Typography>
-          </Box>
-          <Typography className="text-box-content">Gain real-time trading experience for free.</Typography>
-        </Card>
-        <Typography className="trading-text" variant="h6">Does trading seem scary to you?</Typography>
-        <img className="laptop" src={tradingLaptop}></img>
-        <img className="feature-pic" src={simulation}></img>
-      </Box>
-      <Box className="feature-about-us">
-        <Card className="feature-text-box" style={{marginLeft: "200px"}}>
-          <Box className="title-box">
-            <img className="logo" src={logo}></img>
-            <Typography className="text-box-title">EXPLORE TRENDING NEWS</Typography>
-          </Box>
-          <Typography className="text-box-content">Discover the latest discoveries on trading anytime, anywhere.</Typography>
-        </Card>
-        <Typography className="trading-text" variant="h6" style={{marginLeft: "225px"}}>Fear of missing out?</Typography>
-        <img className="laptop" src={newsLaptop} style={{marginLeft: "115px"}}></img>
-        <img className="feature-pic" src={news} style={{marginLeft: "703px"}}></img>
-      </Box>
-      <Box className="feature-about-us">
-        <Card className="feature-text-box">
-          <Box className="title-box">
-            <img className="logo" style={{marginLeft: "115px"}} src={logo}></img>
-            <Typography className="text-box-title">OPEN DISCUSSIONS</Typography>
-          </Box>
-          <Typography className="text-box-content">Connect and trade knowledge with real users globally.</Typography>
-        </Card>
-        <Typography className="trading-text" variant="h6">Discussions about trading strategies?</Typography>
-        <img className="laptop" src={forumLaptop}></img>
-        <img className="feature-pic" src={forum}></img>
-      </Box>
-      <Box className="contacts">
-        <img className="locate-logo" src={gps} style={{maxHeight: "80px"}}></img>
-        <Box className="locate-text">
-          <Typography variant="h6">Locate Us</Typography>
-          <p>3500, Jalan Teknokrat 3, Cyber 4, 63000 Cyberjaya, Selangor</p>
-        </Box>
-        <img className="contact-logo" src={contact} style={{maxHeight: "80px"}}></img>
-        <Box className="contact-text">
-          <Typography variant="h6">Contact Us</Typography>
-          <p style={{marginBottom: "0px"}}>0112345678</p>
-          <p>officialcommoncents@gmail.com</p>
+        <Box className="aboutus-feature-imgbox">
+        <img src={feature1} className="aboutus-feature-img"></img>
+        <img src={feature2} className="aboutus-feature-img"></img>
+        <img src={feature3} className="aboutus-feature-img"></img>
         </Box>
       </Box>
-        <Box className="about-us">
-          <Typography variant="h4" style={{color: "white"}}>Meet our Team</Typography>
-          <Box className="row">
-            <Box className="column">
-              <Card className="card" style={{borderRadius: '25px'}}>
-                <img src={member1} alt="Bega" />
-                <Box className="container">
-                  <Typography variant="h2">Muhammad Lubega</Typography>
-                  <Typography className="title">Front-End Developer</Typography>
-                  <Typography> "if(brain!=empty){"{keepCoding();}"}else{"{drinkCoffee();}"}"</Typography>
-                </Box>
-              </Card>
-            </Box>
-            <Box className="column">
-              <Card className="card" style={{borderRadius: '25px'}}>
-                <img src={member2} alt="CassJ" />
-                <Box className="container">
-                  <Typography variant="h2">Cassandra Jacklya</Typography>
-                  <Typography className="title">Product Designer</Typography>
-                  <Typography> "Quotes"</Typography>
-                </Box>
-              </Card>
-            </Box>
-            <Box className="column">
-              <Card className="card" style={{borderRadius: '25px'}}>
-                <img
-                  src={member3}
-                  alt="Vino"
-                  style={{ width: "100%", height: "220px" }}
-                />
-                <Box className="container">
-                  <Typography variant="h2">Vinothinni Kannan</Typography>
-                  <Typography className="title">Quality Assurance</Typography>
-                  <Typography> "Quotes"</Typography>
-                </Box>
-              </Card>
-            </Box>
-            <Box className="column">
-              <Card className="card" style={{borderRadius: '25px'}}>
-                <img src={member4} alt="Bentley" />
-                <Box className="container">
-                  <Typography variant="h2">Bentley Teh</Typography>
-                  <Typography className="title">Mobile Developer</Typography>
-                  <Typography> "Quotes"</Typography>
-                </Box>
-              </Card>
-            </Box>
-          </Box>
+      <Box className="about-us" sx={{
+        backgroundImage:"linear-gradient(to bottom, #0000 20%, #000000 100%)"
+      }}>
+  <Typography variant="h4" style={{ color: theme.palette.text.primary, margin: "50px 0" }}>Meet our Team</Typography>
+  <Grid container spacing={2}>
+    <Grid item xs={12} sm={6} md={3}>
+      <Card style={{ borderRadius: '25px', margin: '30px' }}>
+        <img src={member1} alt="Bega" style={{ width: "100%", height: "30vw", overflow: "hidden", objectFit: "cover" }} />
+        <Box className="container">
+          <Typography variant="h2">Muhammad Lubega</Typography>
+          <Typography className="title">Front-End Developer</Typography>
+          <Typography className="about-us-teamtxt">if(brain!==empty){"{keepCoding();}"}else{"{drinkCoffee();}"}</Typography>
         </Box>
+      </Card>
+    </Grid>
+    <Grid item xs={12} sm={6} md={3}>
+      <Card style={{ borderRadius: '25px', margin: '30px' }}>
+        <img src={member2} alt="CassJ" style={{ width: "100%", height: "30vw", overflow: "hidden", objectFit: "cover" }} />
+        <Box className="container">
+          <Typography variant="h2">Cassandra Jacklya</Typography>
+          <Typography className="title">Product Designer</Typography>
+          <Typography className="about-us-teamtxt">Design is how it works, not just what it looks like like</Typography>
+        </Box>
+      </Card>
+    </Grid>
+    <Grid item xs={12} sm={6} md={3}>
+      <Card style={{ borderRadius: '25px', margin: '30px' }}>
+        <img src={member3} alt="Vino" style={{ width: "100%", height: "30vw", overflow: "hidden", objectFit: "cover" }} />
+        <Box className="container">
+          <Typography variant="h2">Vinothinni Kannan</Typography>
+          <Typography className="title">Quality Assurance</Typography>
+          <Typography className="about-us-teamtxt">Testing is a sport like hunting, it's bughunting.</Typography>
+        </Box>
+      </Card>
+    </Grid>
+    <Grid item xs={12} sm={6} md={3}>
+      <Card style={{ borderRadius: '25px', margin: '30px' }}>
+        <img src={member4} style={{ width: "100%", height: "30vw", overflow: "hidden", objectFit: "cover"}} alt="Bentley" />
+        <Box className="container">
+          <Typography variant="h2">Bentley Teh</Typography>
+          <Typography className="title">Mobile Developer</Typography>
+          <Typography className="about-us-teamtxt">If your plans don't include mobile, it is not finished.</Typography>
+        </Box>
+      </Card>
+    </Grid>
+  </Grid>
+</Box>
       </Box>
     </Box>
   );

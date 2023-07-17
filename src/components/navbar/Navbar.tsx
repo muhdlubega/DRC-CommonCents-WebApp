@@ -11,7 +11,7 @@ import AuthModal from "../authentication/AuthModal";
 import UserSidebar from "../authentication/UserSidebar";
 import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
-import logo from "../../assets/images/commoncents-logo.png";
+import logo from "../../assets/images/commoncents.svg";
 import { Switch } from "@mui/material";
 import { styled } from "@mui/system";
 import { ArrowRight2, HambergerMenu } from "iconsax-react";
