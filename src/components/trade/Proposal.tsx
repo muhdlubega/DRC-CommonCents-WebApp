@@ -41,6 +41,7 @@ const Proposal = observer(() => {
   };
   const theme = useTheme();
   const navigate = useNavigate();
+  
   const openQuoteModal = () => {
     proposalStore.setContractType("CALL");
     setIsQuoteModalOpen(true);
@@ -322,8 +323,7 @@ const Proposal = observer(() => {
             aria-label="drawer"
             onClick={handleFabClick}
             className="proposal-fab"
-            style={{ display: window.innerWidth < 518 ? "block" : "none" }}
-            color="primary"
+            style={{ backgroundColor:"#0033ff", color: "white", display: window.innerWidth < 518 ? "block" : "none" }}   
           >
             {isDrawerOpen ? "X" : "Buy"}
           </Fab>
@@ -338,6 +338,7 @@ const Proposal = observer(() => {
                   <Slider
                     name="duration-change"
                     value={proposalStore.duration}
+                    disabled={isProcessing}
                     onChange={handleDurationChange}
                     defaultValue={5}
                     marks
@@ -352,7 +353,7 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "3px solid white"
-                            : "3px solid blue",
+                            : isProcessing ? "gray" : "3px solid blue",
                         marginTop: -6,
                         marginLeft: -8,
                         transform: "translate(210%,140%)",
@@ -369,7 +370,7 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "none"
-                            : "1px solid blue",
+                            : isProcessing ? "gray" : "1px solid blue",
                         backgroundColor:
                           theme.palette.mode === "dark" ? "white" : "white",
                       },
@@ -382,12 +383,13 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "payout"
-                        ? "blue"
+                        ? isProcessing ? "gray" : "blue"
                         : theme.palette.background.default,
-                    color: proposalStore.basis === "payout" ? "white" : "blue",
+                    color: proposalStore.basis === "payout" ? "white" : isProcessing ? "gray" : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("payout")}
+                  disabled={isProcessing}
                 >
                   Payout
                 </Button>
@@ -395,12 +397,13 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "stake"
-                        ? "blue"
+                        ? isProcessing ? "gray" : "blue"
                         : theme.palette.background.default,
-                    color: proposalStore.basis === "stake" ? "white" : "blue",
+                    color: proposalStore.basis === "stake" ? "white" : isProcessing ? "gray" : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("stake")}
+                  disabled={isProcessing}
                 >
                   Stake
                 </Button>
@@ -410,7 +413,7 @@ const Proposal = observer(() => {
                   variant="outlined"
                   className="proposal-input-btn left"
                   onClick={decrementPayout}
-                  disabled={proposalStore.payout <= 0.99}
+                  disabled={isProcessing || proposalStore.payout <= 0.99}
                 >
                   -
                 </Button>
@@ -423,14 +426,14 @@ const Proposal = observer(() => {
                     max: "500.00",
                     step: "0.01",
                   }}
-                  disabled={apiStore.ticks.length < 0}
+                  disabled={isProcessing || apiStore.ticks.length < 0}
                   className="proposal-input-field"
                 />
                 <Button
                   variant="outlined"
                   className="proposal-input-btn right"
                   onClick={incrementPayout}
-                  disabled={proposalStore.payout >= 500.01}
+                  disabled={isProcessing || proposalStore.payout >= 500.01}
                 >
                   +
                 </Button>
@@ -443,7 +446,7 @@ const Proposal = observer(() => {
               <Box className="proposal-btn-choices-fab">
                 <span className="proposal-btn-span">
                   <button
-                    className={`proposal-btn-buy ${
+                    className={`proposal-btn-fab ${
                       isProcessing ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -463,10 +466,7 @@ const Proposal = observer(() => {
                     Higher
                   </button>
                   <Box className="quote-price-box" onClick={openQuoteModal}>
-                    <MoneySend color="green" size={32} />
-                    <Typography className="quote-price-txt higher">
-                      Quote Price
-                    </Typography>
+                    <MoneySend color={isProcessing ? "gray" : "green"} size={32} />
                   </Box>
                 </span>
                 {isQuoteModalOpen && (
@@ -493,7 +493,7 @@ const Proposal = observer(() => {
                 )}
                 <span className="proposal-btn-span">
                   <button
-                    className={`proposal-btn-buy ${
+                    className={`proposal-btn-fab ${
                       isProcessing ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -516,7 +516,7 @@ const Proposal = observer(() => {
                     className="quote-price-box"
                     onClick={openSecondQuoteModal}
                   >
-                    <MoneyRecive color="red" size={32} />
+                    <MoneyRecive color={isProcessing ? "gray" : "red"} size={32} />
                   </Box>
                 </span>
                 {isSecondQuoteModalOpen && (
@@ -563,6 +563,7 @@ const Proposal = observer(() => {
                     name="duration-change"
                     value={proposalStore.duration}
                     onChange={handleDurationChange}
+                    disabled={isProcessing}
                     defaultValue={5}
                     marks
                     min={1}
@@ -576,7 +577,7 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "3px solid white"
-                            : "3px solid blue",
+                            : isProcessing ? "gray" : "3px solid blue",
                         marginTop: -6,
                         marginLeft: -8,
                         transform: "translate(210%,140%)",
@@ -593,7 +594,7 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "none"
-                            : "1px solid blue",
+                            : isProcessing ? "gray" : "1px solid blue",
                         backgroundColor:
                           theme.palette.mode === "dark" ? "white" : "white",
                       },
@@ -606,12 +607,13 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "payout"
-                        ? "blue"
+                        ? isProcessing ? "gray" : "blue"
                         : theme.palette.background.default,
-                    color: proposalStore.basis === "payout" ? "white" : "blue",
+                    color: proposalStore.basis === "payout" ? "white" : isProcessing ? "gray" : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("payout")}
+                  disabled={isProcessing}
                 >
                   Payout
                 </Button>
@@ -619,12 +621,13 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "stake"
-                        ? "blue"
+                        ? isProcessing ? "gray" : "blue"
                         : theme.palette.background.default,
-                    color: proposalStore.basis === "stake" ? "white" : "blue",
+                    color: proposalStore.basis === "stake" ? "white" : isProcessing ? "gray" : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("stake")}
+                  disabled={isProcessing}
                 >
                   Stake
                 </Button>
@@ -634,7 +637,7 @@ const Proposal = observer(() => {
                   variant="outlined"
                   className="proposal-input-btn left"
                   onClick={decrementPayout}
-                  disabled={proposalStore.payout <= 0.99}
+                  disabled={isProcessing || proposalStore.payout <= 0.99}
                 >
                   -
                 </Button>
@@ -647,14 +650,14 @@ const Proposal = observer(() => {
                     max: "500.00",
                     step: "0.01",
                   }}
-                  disabled={apiStore.ticks.length < 0}
+                  disabled={isProcessing || apiStore.ticks.length < 0}
                   className="proposal-input-field"
                 />
                 <Button
                   variant="outlined"
                   className="proposal-input-btn right"
                   onClick={incrementPayout}
-                  disabled={proposalStore.payout >= 500.01}
+                  disabled={isProcessing || proposalStore.payout >= 500.01}
                 >
                   +
                 </Button>
@@ -668,7 +671,7 @@ const Proposal = observer(() => {
                 className="proposal-btn-choices"
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
                   gridGap: "10px",
                   justifyItems: "center",
                 }}
@@ -676,7 +679,7 @@ const Proposal = observer(() => {
                 <span className="proposal-btn-span">
                   <Box className="quote-price-box" onClick={openQuoteModal}>
                     <Tooltip title="Quote Price for Higher" placement="left" disableFocusListener disableTouchListener arrow>
-                    <MoneySend color="green" size={32} />
+                    <MoneySend color={isProcessing ? "gray" : "green"} size={32} />
                     </Tooltip>
                   </Box>
                   <button
@@ -728,7 +731,7 @@ const Proposal = observer(() => {
                     onClick={openSecondQuoteModal}
                   >
                     <Tooltip title="Quote Price for Lower" placement="left" disableFocusListener disableTouchListener arrow>
-                    <MoneyRecive color="red" size={32} />
+                    <MoneyRecive color={isProcessing ? "gray" : "red"} size={32} />
                     </Tooltip>
                   </Box>
                   <button

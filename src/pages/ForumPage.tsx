@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { auth, db } from "../firebase";
 import authStore from "../store/AuthStore";
 import { useNavigate } from "react-router";
+import loading from "../assets/images/commoncents.svg";
 
 const ForumPage = observer(() => {
   const theme = useTheme();
@@ -183,7 +184,11 @@ const ForumPage = observer(() => {
         </Box>
       )}
 
-      <Box style={{ flex: 3 }}>
+      {sortedPosts.length === 0 ? 
+      <Box style={{ flex: 3 }} className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box>
+                   : (<Box style={{ flex: 3 }}>
         {sortedPosts.map((post) => (
           <Card key={post.timestamp} className="forum-right">
             <CardContent>
@@ -328,7 +333,7 @@ const ForumPage = observer(() => {
             </CardContent>
           </Card>
         ))}
-      </Box>
+      </Box>)}
     </div>
   );
 });

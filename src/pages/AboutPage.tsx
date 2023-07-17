@@ -1,10 +1,11 @@
-import { Card, Typography } from "@mui/material";
+import { Card, Typography, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
+import { motion, useAnimation } from "framer-motion";
 import member1 from "../assets/images/bega.jpeg";
 import member2 from "../assets/images/cass.jpeg";
 import member3 from "../assets/images/vino2.jpeg";
 import member4 from "../assets/images/bentley.jpeg";
-import watermark from "../assets/images/watermark.png"
+// import watermark from "../assets/images/watermark.png"
 import simulation from "../assets/images/live-trading-onboarding.jpg";
 import news from "../assets/images/breaking-news-onboarding.jpg";
 import forum from "../assets/images/forums-onboarding.jpeg";
@@ -14,19 +15,35 @@ import newsLaptop from "../assets/images/news-laptop.svg";
 import forumLaptop from "../assets/images/forum-laptop.svg";
 import gps from "../assets/images/gps-removebg-preview 1.svg";
 import contact from "../assets/images/contact.svg";
+import commoncents from "../assets/images/commoncents.svg";
+import { useEffect } from "react";
 
 const AboutPage = () => {
+  const theme = useTheme();
+  const animationControls = useAnimation();
+
+  useEffect(() => {
+    animationControls.start({ y: 0, opacity: 1, transition: { duration: 2 } });
+  }, [animationControls]);
+
   return (
     <Box className="section-aboutus">
       <Box className="background-container">
-      {/* <img className="watermark" src={watermark} style={{maxHeight: "800px", maxWidth: "800px"}}></img> */}
       <Box className="why-choose-us">
-        <img src={logo} className="commoncents-logo"></img>
-        <Box>
-          <Typography variant="h6" style={{marginLeft: "150px"}}>Why choose us?</Typography>
-          <p style={{marginTop: "50px", marginLeft: "150px"}}>CommonCents serves as a platform for aspiring traders. We offer live trading simulation on synthetic markets with no real money involved. </p>
-          <p style={{marginLeft: "150px"}}>Our main goal is to provide a central hub for beginners to learn basic trading concepts anytime, anywhere. </p>
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={animationControls} className="aboutus-header">
+            <Box className="aboutus-txtbox">
+          <Typography variant="h6" style={{ marginTop: '40px', color: theme.palette.text.primary}}>Why choose us?</Typography>
+          <p style={{marginTop: "50px", color: theme.palette.text.secondary}}>CommonCents serves as a platform for aspiring traders. We offer live trading simulation on synthetic markets with no real money involved. </p>
+          <p style={{color: theme.palette.text.secondary}}>Our main goal is to provide a central hub for beginners to learn basic trading concepts anytime, anywhere. </p>
+          </Box>
+          <Box className="aboutus-logo">
+            <Box className="commoncents-logobox">
+        <img src={commoncents} className="commoncents-logo"></img>
         </Box>
+      </Box>
+        </motion.div>
       </Box>
       <Box className="feature-about-us">
         <Card className="feature-text-box">

@@ -190,7 +190,7 @@ const UserSidebar = () => {
                 .map((user, index) => (
                   <li key={index}>
                     <span className="sidebar-leaderboard-item">
-                      <span>{user.displayName || user.email} </span>
+                      <span className="sidebar-leaderboard-person">{user.displayName || user.email} </span>
                       <span style={{ flex: 1 }}></span>
                       <span>{user?.netWorth?.toFixed(2)} USD</span>
                     </span>

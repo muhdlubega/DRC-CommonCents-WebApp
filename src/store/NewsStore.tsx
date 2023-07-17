@@ -35,6 +35,7 @@ class NewsStore {
   }
 
   setSelectedTopic(selectedTopic: string) {
+    this.news = []
     this.selectedTopic = selectedTopic;
   }
 }

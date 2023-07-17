@@ -1,16 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { Box, Button, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import "react-alice-carousel/lib/alice-carousel.css";
 import chartsStore from "../../store/ChartsStore";
-import { MarketName } from "../../arrays/MarketArray"; 
+import { MarketName } from "../../arrays/MarketArray";
+import { InfoCircle } from "iconsax-react";
+import loading from "../../assets/images/commoncents.svg";
 
 const LiveData = observer(() => {
   const theme = useTheme();
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
+  const openQuoteModal = () => {
+    setIsQuoteModalOpen(true);
+  };
+
+  const closeQuoteModal = () => {
+    setIsQuoteModalOpen(false);
+  };
 
   useEffect(() => {
     AccessibilityModule(Highcharts);
@@ -102,7 +120,42 @@ const LiveData = observer(() => {
 
   return (
     <Box>
-      <Box className="live-data-title">Synthetic Indices</Box>
+      <Box className="live-data-title">Synthetic Indices
+      <Box className="live-data-box" onClick={openQuoteModal}>
+        <Tooltip
+          title="Learn more"
+          placement="right"
+          disableFocusListener
+          disableTouchListener
+          arrow
+        >
+          <InfoCircle size={40} />
+        </Tooltip>
+      </Box></Box>
+      {isQuoteModalOpen && (
+        <Modal open={isQuoteModalOpen} onClose={closeQuoteModal}>
+          <Box className="live-data-modal"
+            sx={{
+              bgcolor: theme.palette.background.paper,
+              color: theme.palette.text.secondary,
+            }}
+          >
+            <Typography variant="h6" className="synthetic-title">What are synthetic indices?</Typography>
+            <Typography className="synthetic-text">
+              Synthetic indices in forex are financial instruments that mimic
+              the behavior of real-world indices. They are created by
+              synthesizing the price movements of various underlying assets such
+              as stocks, currencies, and commodities, using a mathematical
+              algorithm.
+            </Typography>
+            <Typography className="synthetic-text">
+              Some examples of synthetic indices include Boom and Crash, Step
+              Index, Jump Index, Volatility Indices, Daily Reset Indices and
+              Range Break.
+            </Typography>
+          </Box>
+        </Modal>
+      )}
       <Box className="live-data-btngroup">
         <Button
           className="live-data-btn"
@@ -166,7 +219,9 @@ const LiveData = observer(() => {
       <Box className="live-data-grid">
         {chartData.map((data, index) => (
           <Box className="live-data-chart">
-            <Link
+            {chartsStore.ticks.length < 5 ? <Box className="loading-box">
+                    <img src={loading} className="loading"></img>
+                  </Box> : (<Link
               className="live-data-link"
               to={`/trade/${data.series[0].name}`}
               key={index}
@@ -185,7 +240,7 @@ const LiveData = observer(() => {
               >
                 {data.latestQuote}
               </Box>
-            </Link>
+            </Link>)}
           </Box>
         ))}
       </Box>
