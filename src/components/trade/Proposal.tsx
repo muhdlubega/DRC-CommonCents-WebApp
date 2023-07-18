@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  updateDoc,
-} from "firebase/firestore";
-import {
   Box,
   Button,
   Card,
@@ -22,16 +15,15 @@ import {
 import apiStore from "../../store/ApiStore";
 import authStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
-import { auth, db } from "../../firebase";
 import proposalStore from "../../store/ProposalStore";
 import AuthStore from "../../store/AuthStore";
 import { MoneyRecive, MoneySend } from "iconsax-react";
 import { NorthEast, SouthEast, SouthWest } from "@mui/icons-material";
 import { MarketSymbols } from "../../arrays/MarketArray";
+import contractStore from "../../store/ContractStore";
 
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
-  const [isProcessing, setIsProcessing] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [isSecondQuoteModalOpen, setIsSecondQuoteModalOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -70,210 +62,7 @@ const Proposal = observer(() => {
     proposalStore.setPayout(newPayout);
   };
 
-  const tickDuration = proposalStore.duration;
-  const basis = proposalStore.basis;
-  const marketType = apiStore.selectedSymbol;
-  var timestamp = 0;
-
-  const handleBuy = async (isHigher: boolean) => {
-    setIsProcessing(true);
-    let balance = 0;
-    try {
-      const balanceSnapshot = await getDocs(collection(db, "users"));
-      balanceSnapshot.forEach((doc) => {
-        if (auth.currentUser!.uid == doc.id) {
-          balance = doc.data().balance || null;
-        }
-      });
-
-      timestamp = Date.now();
-      proposalStore.setContractType(isHigher ? "CALL" : "PUT");
-      const currentBalance = balance;
-      const payoutValue = parseFloat(proposalStore.payout.toString());
-      const askPrice =
-        proposalStore.proposalData[proposalStore.proposalData.length - 1]
-          .ask_price;
-
-      if (currentBalance < payoutValue) {
-        authStore.setAlert({
-          open: true,
-          message: "Insufficient balance",
-          type: "error",
-        });
-        return;
-      }
-
-      let newBalance = 0;
-      if (basis === "payout") {
-        newBalance = currentBalance - askPrice;
-      } else {
-        newBalance = currentBalance - payoutValue;
-      }
-      authStore.setBalance(newBalance);
-
-      setTimeout(() => handleSell(isHigher), tickDuration * 1000);
-
-      authStore.setAlert({
-        open: true,
-        message: `Option successfully bought for USD ${
-          basis === "payout" ? askPrice : payoutValue
-        }`,
-        type: "success",
-      });
-    } catch (error) {
-      authStore.setAlert({
-        open: true,
-        message: `Error ${error}. Try again later`,
-        type: "error",
-      });
-      setIsProcessing(false);
-    }
-  };
   authStore.getUserNetWorth();
-
-  const handleSell = async (isHigher: boolean) => {
-    setIsProcessing(true);
-    let balance = 0;
-    var status = null;
-    const balanceSnapshot = await getDocs(collection(db, "users"));
-    balanceSnapshot.forEach((doc) => {
-      if (auth.currentUser!.uid == doc.id) {
-        balance = doc.data().balance || null;
-      }
-    });
-
-    proposalStore.setContractType(isHigher ? "CALL" : "PUT");
-    const currentBalance = balance;
-    const payoutValue = parseFloat(proposalStore.payout.toString());
-    const askPrice =
-      proposalStore.proposalData[proposalStore.proposalData.length - 1]
-        .ask_price;
-    const previousSpot = apiStore.isTicks
-      ? apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1]
-          .quote
-      : apiStore.proposalTicks[apiStore.proposalTicks.length - tickDuration - 1]
-          .close;
-    const currentSpot = apiStore.isTicks
-      ? apiStore.proposalTicks[apiStore.proposalTicks.length - 1].quote
-      : apiStore.proposalTicks[apiStore.proposalTicks.length - 1].close;
-
-    const additionalAmount =
-      proposalStore.proposalData[proposalStore.proposalData.length - 1].payout;
-    const strategy = isHigher ? "Higher" : "Lower";
-
-    try {
-      if (previousSpot && currentSpot) {
-        const previousSpotValue = previousSpot;
-        const currentSpotValue = currentSpot;
-
-        if (isHigher) {
-          if (currentSpotValue > previousSpotValue) {
-            const updatedBalance = currentBalance + additionalAmount;
-            authStore.setBalance(updatedBalance);
-            authStore.setAlert({
-              open: true,
-              message: `Spot is higher! You won USD ${additionalAmount}!`,
-              type: "success",
-            });
-            status = "Won";
-            apiStore.setSellSuccessful(true);
-            apiStore.setAdditionalAmount(additionalAmount);
-            apiStore.setDeductedAmount(0);
-            authStore.setTotalAmountWon(
-              authStore.totalAmountWon + additionalAmount
-            );
-          } else {
-            authStore.setAlert({
-              open: true,
-              message: `Spot is not higher. You lost USD ${askPrice} :(`,
-              type: "error",
-            });
-            status = "Lost";
-            apiStore.setSellFailed(true);
-            apiStore.setDeductedAmount(askPrice);
-            apiStore.setAdditionalAmount(0);
-            authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
-          }
-        } else {
-          if (previousSpotValue > currentSpotValue) {
-            const updatedBalance = currentBalance + additionalAmount;
-            authStore.setBalance(updatedBalance);
-            authStore.setAlert({
-              open: true,
-              message: `Spot is lower! You won USD ${additionalAmount}!`,
-              type: "success",
-            });
-            status = "Won";
-            apiStore.setSellSuccessful(true);
-            apiStore.setAdditionalAmount(additionalAmount);
-            apiStore.setDeductedAmount(0);
-            authStore.setTotalAmountWon(
-              authStore.totalAmountWon + additionalAmount
-            );
-          } else {
-            authStore.setAlert({
-              open: true,
-              message: `Spot is not lower. You lost USD ${askPrice} :(`,
-              type: "error",
-            });
-            status = "Lost";
-            apiStore.setSellFailed(true);
-            apiStore.setDeductedAmount(askPrice);
-            apiStore.setAdditionalAmount(0);
-            authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
-          }
-        }
-      } else {
-        authStore.setAlert({
-          open: true,
-          message: `Error. Try again later`,
-          type: "error",
-        });
-        const updatedBalance = currentBalance + payoutValue;
-        authStore.setBalance(updatedBalance);
-      }
-      const tradeData = {
-        additionalAmount,
-        askPrice,
-        payoutValue,
-        previousSpot,
-        currentSpot,
-        tickDuration,
-        strategy,
-        status,
-        basis,
-        marketType,
-        timestamp,
-      };
-      const totalProfit = authStore.totalAmountWon;
-      const totalLoss = authStore.totalAmountLost;
-      const netWorth = totalProfit - totalLoss;
-      const tradeSummary = {
-        totalProfit,
-        totalLoss,
-        netWorth,
-        timestamp,
-      };
-      await addDoc(
-        collection(db, "users", auth.currentUser!.uid, "tradeHistory"),
-        tradeData
-      );
-      await updateDoc(
-        doc(db, "users", auth.currentUser!.uid, "tradeHistory", "tradeSummary"),
-        tradeSummary
-      );
-      setIsProcessing(false);
-    } catch (error) {
-      authStore.setAlert({
-        open: true,
-        message: `Error ${error}. Try again later`,
-        type: "error",
-      });
-      const updatedBalance = currentBalance + payoutValue;
-      authStore.setBalance(updatedBalance);
-      setIsProcessing(false);
-    }
-  };
 
   const decrementPayout = () => {
     if (proposalStore.payout > 1) {
@@ -342,7 +131,9 @@ const Proposal = observer(() => {
                   <Slider
                     name="duration-change"
                     value={proposalStore.duration}
-                    disabled={isProcessing || apiStore.ticks.length === 0}
+                    disabled={
+                      contractStore.isProcessing || apiStore.ticks.length === 0
+                    }
                     onChange={handleDurationChange}
                     defaultValue={5}
                     marks
@@ -357,7 +148,8 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "3px solid white"
-                            : apiStore.ticks.length === 0 || isProcessing
+                            : apiStore.ticks.length === 0 ||
+                              contractStore.isProcessing
                             ? "gray"
                             : "3px solid blue",
                         marginTop: -6,
@@ -376,7 +168,8 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "none"
-                            : apiStore.ticks.length === 0 || isProcessing
+                            : apiStore.ticks.length === 0 ||
+                              contractStore.isProcessing
                             ? "gray"
                             : "1px solid blue",
                         backgroundColor:
@@ -391,20 +184,24 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "payout"
-                        ? apiStore.ticks.length === 0 || isProcessing
+                        ? apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                           ? "gray"
                           : "blue"
                         : theme.palette.background.default,
                     color:
                       proposalStore.basis === "payout"
                         ? "white"
-                        : apiStore.ticks.length === 0 || isProcessing
+                        : apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                         ? "gray"
                         : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("payout")}
-                  disabled={isProcessing || apiStore.ticks.length === 0}
+                  disabled={
+                    contractStore.isProcessing || apiStore.ticks.length === 0
+                  }
                 >
                   Payout
                 </Button>
@@ -412,20 +209,24 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "stake"
-                        ? apiStore.ticks.length === 0 || isProcessing
+                        ? apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                           ? "gray"
                           : "blue"
                         : theme.palette.background.default,
                     color:
                       proposalStore.basis === "stake"
                         ? "white"
-                        : apiStore.ticks.length === 0 || isProcessing
+                        : apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                         ? "gray"
                         : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("stake")}
-                  disabled={isProcessing || apiStore.ticks.length === 0}
+                  disabled={
+                    contractStore.isProcessing || apiStore.ticks.length === 0
+                  }
                 >
                   Stake
                 </Button>
@@ -436,7 +237,7 @@ const Proposal = observer(() => {
                   className="proposal-input-btn left"
                   onClick={decrementPayout}
                   disabled={
-                    isProcessing ||
+                    contractStore.isProcessing ||
                     apiStore.ticks.length === 0 ||
                     proposalStore.payout <= 0.99
                   }
@@ -453,7 +254,7 @@ const Proposal = observer(() => {
                     step: "0.01",
                   }}
                   disabled={
-                    isProcessing ||
+                    contractStore.isProcessing ||
                     apiStore.ticks.length === 0 ||
                     apiStore.ticks.length < 0
                   }
@@ -464,7 +265,7 @@ const Proposal = observer(() => {
                   className="proposal-input-btn right"
                   onClick={incrementPayout}
                   disabled={
-                    isProcessing ||
+                    contractStore.isProcessing ||
                     apiStore.ticks.length === 0 ||
                     proposalStore.payout >= 500.01
                   }
@@ -481,7 +282,7 @@ const Proposal = observer(() => {
                 <span className="proposal-btn-span">
                   <button
                     className={`proposal-btn-fab ${
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -489,9 +290,9 @@ const Proposal = observer(() => {
                         ? "processing"
                         : ""
                     } higher `}
-                    onClick={() => handleBuy(true)}
+                    onClick={() => contractStore.handleBuy(true)}
                     disabled={
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -504,7 +305,8 @@ const Proposal = observer(() => {
                   <Box className="quote-price-box" onClick={openQuoteModal}>
                     <MoneySend
                       color={
-                        apiStore.ticks.length === 0 || isProcessing
+                        apiStore.ticks.length === 0 ||
+                        contractStore.isProcessing
                           ? "gray"
                           : "green"
                       }
@@ -537,7 +339,7 @@ const Proposal = observer(() => {
                 <span className="proposal-btn-span">
                   <button
                     className={`proposal-btn-fab ${
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -545,9 +347,9 @@ const Proposal = observer(() => {
                         ? "processing"
                         : ""
                     } lower`}
-                    onClick={() => handleBuy(false)}
+                    onClick={() => contractStore.handleBuy(false)}
                     disabled={
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -563,7 +365,8 @@ const Proposal = observer(() => {
                   >
                     <MoneyRecive
                       color={
-                        apiStore.ticks.length === 0 || isProcessing
+                        apiStore.ticks.length === 0 ||
+                        contractStore.isProcessing
                           ? "gray"
                           : "red"
                       }
@@ -615,7 +418,9 @@ const Proposal = observer(() => {
                     name="duration-change"
                     value={proposalStore.duration}
                     onChange={handleDurationChange}
-                    disabled={isProcessing || apiStore.ticks.length === 0}
+                    disabled={
+                      contractStore.isProcessing || apiStore.ticks.length === 0
+                    }
                     defaultValue={5}
                     marks
                     min={1}
@@ -629,7 +434,8 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "3px solid white"
-                            : apiStore.ticks.length === 0 || isProcessing
+                            : apiStore.ticks.length === 0 ||
+                              contractStore.isProcessing
                             ? "gray"
                             : "3px solid blue",
                         marginTop: -6,
@@ -648,7 +454,8 @@ const Proposal = observer(() => {
                         border:
                           theme.palette.mode === "dark"
                             ? "none"
-                            : apiStore.ticks.length === 0 || isProcessing
+                            : apiStore.ticks.length === 0 ||
+                              contractStore.isProcessing
                             ? "gray"
                             : "1px solid blue",
                         backgroundColor:
@@ -663,20 +470,24 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "payout"
-                        ? apiStore.ticks.length === 0 || isProcessing
+                        ? apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                           ? "gray"
                           : "blue"
                         : theme.palette.background.default,
                     color:
                       proposalStore.basis === "payout"
                         ? "white"
-                        : apiStore.ticks.length === 0 || isProcessing
+                        : apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                         ? "gray"
                         : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("payout")}
-                  disabled={isProcessing || apiStore.ticks.length === 0}
+                  disabled={
+                    contractStore.isProcessing || apiStore.ticks.length === 0
+                  }
                 >
                   Payout
                 </Button>
@@ -684,20 +495,24 @@ const Proposal = observer(() => {
                   style={{
                     backgroundColor:
                       proposalStore.basis === "stake"
-                        ? apiStore.ticks.length === 0 || isProcessing
+                        ? apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                           ? "gray"
                           : "blue"
                         : theme.palette.background.default,
                     color:
                       proposalStore.basis === "stake"
                         ? "white"
-                        : apiStore.ticks.length === 0 || isProcessing
+                        : apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                         ? "gray"
                         : "blue",
                   }}
                   className="proposal-options"
                   onClick={() => proposalStore.setBasis("stake")}
-                  disabled={isProcessing || apiStore.ticks.length === 0}
+                  disabled={
+                    contractStore.isProcessing || apiStore.ticks.length === 0
+                  }
                 >
                   Stake
                 </Button>
@@ -708,7 +523,7 @@ const Proposal = observer(() => {
                   className="proposal-input-btn left"
                   onClick={decrementPayout}
                   disabled={
-                    isProcessing ||
+                    contractStore.isProcessing ||
                     apiStore.ticks.length === 0 ||
                     proposalStore.payout <= 0.99
                   }
@@ -725,7 +540,7 @@ const Proposal = observer(() => {
                     step: "0.01",
                   }}
                   disabled={
-                    isProcessing ||
+                    contractStore.isProcessing ||
                     apiStore.ticks.length === 0 ||
                     apiStore.ticks.length < 0
                   }
@@ -736,7 +551,7 @@ const Proposal = observer(() => {
                   className="proposal-input-btn right"
                   onClick={incrementPayout}
                   disabled={
-                    isProcessing ||
+                    contractStore.isProcessing ||
                     apiStore.ticks.length === 0 ||
                     proposalStore.payout >= 500.01
                   }
@@ -769,7 +584,8 @@ const Proposal = observer(() => {
                     >
                       <MoneySend
                         color={
-                          apiStore.ticks.length === 0 || isProcessing
+                          apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                             ? "gray"
                             : "green"
                         }
@@ -779,7 +595,7 @@ const Proposal = observer(() => {
                   </Box>
                   <button
                     className={`proposal-btn-buy ${
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -787,9 +603,9 @@ const Proposal = observer(() => {
                         ? "processing"
                         : ""
                     } higher `}
-                    onClick={() => handleBuy(true)}
+                    onClick={() => contractStore.handleBuy(true)}
                     disabled={
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -836,7 +652,8 @@ const Proposal = observer(() => {
                     >
                       <MoneyRecive
                         color={
-                          apiStore.ticks.length === 0 || isProcessing
+                          apiStore.ticks.length === 0 ||
+                          contractStore.isProcessing
                             ? "gray"
                             : "red"
                         }
@@ -846,7 +663,7 @@ const Proposal = observer(() => {
                   </Box>
                   <button
                     className={`proposal-btn-buy ${
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -854,9 +671,9 @@ const Proposal = observer(() => {
                         ? "processing"
                         : ""
                     } lower`}
-                    onClick={() => handleBuy(false)}
+                    onClick={() => contractStore.handleBuy(false)}
                     disabled={
-                      isProcessing ||
+                      contractStore.isProcessing ||
                       apiStore.ticks.length === 0 ||
                       proposalStore.payout >= 500.01 ||
                       proposalStore.payout <= 0.99 ||
@@ -896,15 +713,16 @@ const Proposal = observer(() => {
               {authStore.totalAmountWon !== 0 && (
                 <Card className="proposal-summary-card">
                   <Box>
-                    {apiStore.additionalAmount !== 0 &&
-                      apiStore.deductedAmount === 0 && (
+                    {contractStore.additionalAmount !== 0 &&
+                      contractStore.deductedAmount === 0 && (
                         <Box className="proposal-summary-box">
                           <Typography style={{ color: "green" }}>
                             You Won!
                             <NorthEast />
                           </Typography>
                           <Typography>
-                            Profit: +{apiStore.additionalAmount.toFixed(2)} USD
+                            Profit: +{contractStore.additionalAmount.toFixed(2)}{" "}
+                            USD
                           </Typography>
                         </Box>
                       )}
@@ -918,15 +736,15 @@ const Proposal = observer(() => {
               {authStore.totalAmountLost !== 0 && (
                 <Card className="proposal-summary-card">
                   <div>
-                    {apiStore.deductedAmount !== 0 &&
-                      apiStore.additionalAmount === 0 && (
+                    {contractStore.deductedAmount !== 0 &&
+                      contractStore.additionalAmount === 0 && (
                         <Box className="proposal-summary-box">
                           <Typography style={{ color: "red" }}>
                             <SouthEast />
                             You Lost :(
                           </Typography>
                           <Typography>
-                            Loss: -{apiStore.deductedAmount.toFixed(2)} USD
+                            Loss: -{contractStore.deductedAmount.toFixed(2)} USD
                           </Typography>
                         </Box>
                       )}

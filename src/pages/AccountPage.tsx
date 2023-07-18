@@ -29,12 +29,12 @@ import { observer } from "mobx-react-lite";
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import LogoutConfirmationDialog from "../components/authentication/LogoutDialog";
 
 const AccountPage = observer(() => {
   const navigate = useNavigate();
   const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
-  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
-    useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [updatedName, setUpdatedName] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -43,8 +43,10 @@ const AccountPage = observer(() => {
   const [userBalance, setUserBalance] = useState(100000);
   const [userName, setUserName] = useState("");
   const theme = useTheme();
+  const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
 
   const [state, setState] = useState({
+    right: false,
     resetConfirmationOpen: false,
   });
 
@@ -59,16 +61,6 @@ const AccountPage = observer(() => {
       if (auth.currentUser && auth.currentUser.uid === doc.id) {
         setUserBalance(balance);
       }
-    });
-  };
-
-  const logOut = () => {
-    signOut(auth);
-    navigate("/");
-    authStore.setAlert({
-      open: true,
-      type: "success",
-      message: "Logout Successful!",
     });
   };
 
@@ -163,6 +155,24 @@ const AccountPage = observer(() => {
         type: "error",
       });
     }
+  };
+
+  const handleLogoutConfirmation = (confirmed: boolean) => {
+    if (confirmed) {
+      signOut(auth);
+      navigate("/");
+      authStore.setAlert({
+        open: true,
+        type: "success",
+        message: "Logout Successful!",
+      });
+    }
+    setLogoutConfirmationOpen(false);
+    toggleDrawer(false);
+  }; 
+
+  const toggleDrawer = (open: boolean) => () => {
+    setState({ ...state, right: open });
   };
 
   useEffect(() => {
@@ -358,7 +368,7 @@ const AccountPage = observer(() => {
           <Button
             variant="contained"
             className="sidebar-logout"
-            onClick={logOut}
+            onClick={() => setLogoutConfirmationOpen(true)}
             style={{
               backgroundColor: "#0033ff",
               borderRadius: "10px",
@@ -439,6 +449,10 @@ const AccountPage = observer(() => {
           </Button>
         </DialogActions>
       </Dialog>
+      <LogoutConfirmationDialog
+        open={logoutConfirmationOpen}
+        onClose={handleLogoutConfirmation}
+      />
     </Box>
   );
 });

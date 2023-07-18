@@ -44,6 +44,7 @@
         margin: 10px;
         text-overflow: ellipsis;
         overflow: hidden;
+        white-space: nowrap;
     }
 
     &-user-txtfield {
@@ -418,6 +419,19 @@
     }
 }
 
+.leaderboard-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #888;
+
+    &-icon{
+        margin-left: 10px;
+        cursor: pointer;
+    }
+}
+
 .leaderboard-tthree {
     display: flex;
     align-items: center;
@@ -453,6 +467,17 @@
 .leaderboard-award {
     height: 22vw;
     width: 22vw;
+}
+
+.leaderboard-info-title{
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid #888;
+    margin-bottom: 20px !important;
+}
+
+.leaderboard-info-text{
+    margin-bottom: 20px !important;
 }
 
 .background-circle {

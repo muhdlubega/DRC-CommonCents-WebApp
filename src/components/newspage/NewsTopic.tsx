@@ -89,7 +89,7 @@ const NewsTopic = observer(() => {
         } catch (error) {
           authStore.setAlert({
             open: true,
-            message: "Unable to fetch news currently. Try again later",
+            message: "Unable to fetch news currently. Please refresh or try again later",
             type: "error",
           });
         }

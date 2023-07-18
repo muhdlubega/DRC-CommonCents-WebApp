@@ -28,7 +28,7 @@ const AboutPage = () => {
           animate={animationControls} className="aboutus-header">
             <Box className="aboutus-txtbox">
           <Typography variant="h6" style={{ marginTop: '40px', color: theme.palette.text.primary}}>Why choose us?</Typography>
-          <p style={{marginTop: "50px", color: theme.palette.text.secondary}}>CommonCents serves as a platform for aspiring traders. We offer live trading simulation for options trading on synthetic markets with no real money involved. </p>
+          <p style={{marginTop: "50px", color: theme.palette.text.secondary}}>CommonCents serves as a platform for aspiring traders. We offer live trading simulation using a demo account for options trading on synthetic markets with no real money involved. </p>
           <p style={{color: theme.palette.text.secondary}}>Our main goal is to provide a central hub for beginners to learn basic trading concepts anytime, anywhere. </p>
           </Box>
           <Box className="aboutus-logo">

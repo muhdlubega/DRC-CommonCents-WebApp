@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -24,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { Trade } from "../../pages/TradeHistoryPage";
 import { MarketName, MarketSymbols } from "../../arrays/MarketArray";
+import LogoutConfirmationDialog from "./LogoutDialog";
 
 const UserSidebar = () => {
   const navigate = useNavigate();
@@ -34,27 +36,28 @@ const UserSidebar = () => {
   });
   const [userBalance, setUserBalance] = useState(0);
   const [latestTrades, setLatestTrades] = useState<Trade[]>([]);
+  const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
+
+  const fetchLatestTrades = async () => {
+    try {
+      const tradesQuery = query(
+        collection(db, "users", auth.currentUser!.uid, "tradeHistory"),
+        orderBy("timestamp", "desc"),
+        limit(4)
+      );
+      const snapshot = await getDocs(tradesQuery);
+      const data = snapshot.docs.map((doc) => doc.data() as Trade);
+      setLatestTrades(data);
+    } catch (error) {
+      authStore.setAlert({
+        open: true,
+        type: "error",
+        message: "Unable to fetch latest trades. Please refresh or try again later",
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchLatestTrades = async () => {
-      try {
-        const tradesQuery = query(
-          collection(db, "users", auth.currentUser!.uid, "tradeHistory"),
-          orderBy("timestamp", "desc"),
-          limit(4)
-        );
-        const snapshot = await getDocs(tradesQuery);
-        const data = snapshot.docs.map((doc) => doc.data() as Trade);
-        setLatestTrades(data);
-      } catch (error) {
-        authStore.setAlert({
-          open: true,
-          type: "error",
-          message: "Unable to fetch latest trades. Try again later",
-        });
-      }
-    };
-
     fetchLatestTrades();
   }, []);
 
@@ -69,16 +72,18 @@ const UserSidebar = () => {
     }));
   };
 
-  const logOut = () => {
-    signOut(auth);
-    authStore.setAlert({
-      open: true,
-      type: "success",
-      message: "Logout Successful!",
-    });
-
+  const handleLogoutConfirmation = (confirmed: boolean) => {
+    if (confirmed) {
+      signOut(auth);
+      authStore.setAlert({
+        open: true,
+        type: "success",
+        message: "Logout Successful!",
+      });
+    }
+    setLogoutConfirmationOpen(false);
     toggleDrawer(false);
-  };
+  };  
 
   const handleResetBalance = () => {
     toggleResetConfirmation();
@@ -120,16 +125,19 @@ const UserSidebar = () => {
 
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleString();
+    return date.toLocaleString("en-NZ");
   };
 
   return (
     <div>
       <Box className="navbar-auth" onClick={toggleDrawer(true)}>
-        <Box className="navbar-balance">
-          <EmptyWallet size={22} variant="Bold" className="sidebar-wallet" />
-          {userBalance.toFixed(2) || balance.toFixed(2)} USD
-        </Box>
+          <Box className="navbar-balance">
+            <Box>
+            <Typography style={{display: 'flex', justifyContent: 'flex-end', fontSize: '10px', color: theme.palette.text.secondary}}>Demo Funds</Typography>
+            <EmptyWallet size={22} variant="Bold" className="sidebar-wallet" />
+            {userBalance.toFixed(2) || balance.toFixed(2)} USD
+            </Box>
+          </Box>
         <Avatar
           className="sidebar-picture"
           src={userPhotoURL}
@@ -154,14 +162,17 @@ const UserSidebar = () => {
               <div className="sidebar-username">
                 {authStore.user?.displayName || authStore.user?.email}
               </div>
+              <Typography style={{display: 'flex', justifyContent: 'flex-start', fontSize: '10px', color: theme.palette.text.secondary}}>Demo Funds</Typography>
+              <Tooltip placement="left-end" title="Demo Funds" arrow>
               <div className="sidebar-usrbalance">
-                {userBalance.toFixed(2) || balance.toFixed(2)} USD
                 <EmptyWallet
                   size={20}
                   variant="Bold"
                   className="sidebar-wallet"
                 />
+                {userBalance.toFixed(2) || balance.toFixed(2)} USD
               </div>
+              </Tooltip>
             </div>
           </div>
           <Typography
@@ -190,7 +201,9 @@ const UserSidebar = () => {
                 .map((user, index) => (
                   <li key={index}>
                     <span className="sidebar-leaderboard-item">
-                      <span className="sidebar-leaderboard-person">{user.displayName || user.email} </span>
+                      <span className="sidebar-leaderboard-person">
+                        {user.displayName || user.email}
+                      </span>
                       <span style={{ flex: 1 }}></span>
                       <span>{user?.netWorth?.toFixed(2)} USD</span>
                     </span>
@@ -299,7 +312,7 @@ const UserSidebar = () => {
 
             <Button
               variant="contained"
-              onClick={logOut}
+              onClick={() => setLogoutConfirmationOpen(true)}
               style={{
                 backgroundColor: "#0033ff",
                 borderRadius: "10px",
@@ -346,6 +359,10 @@ const UserSidebar = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <LogoutConfirmationDialog
+        open={logoutConfirmationOpen}
+        onClose={handleLogoutConfirmation}
+      />
     </div>
   );
 };

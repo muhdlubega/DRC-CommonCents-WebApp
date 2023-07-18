@@ -17,6 +17,7 @@ import chartsStore from "../../store/ChartsStore";
 import { MarketName } from "../../arrays/MarketArray";
 import { InfoCircle } from "iconsax-react";
 import loading from "../../assets/images/commoncents.svg";
+import synthetics from "../../assets/images/synthetics.svg";
 
 const LiveData = observer(() => {
   const theme = useTheme();
@@ -141,6 +142,7 @@ const LiveData = observer(() => {
             }}
           >
             <Typography variant="h6" className="synthetic-title">What are synthetic indices?</Typography>
+            <img src={synthetics} alt="synthetic indices"/>
             <Typography className="synthetic-text">
               Synthetic indices in forex are financial instruments that mimic
               the behavior of real-world indices. They are created by

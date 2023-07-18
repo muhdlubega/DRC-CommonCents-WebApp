@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import {
@@ -148,16 +148,19 @@ const Chart = observer(() => {
     apiStore.setChartType(newChartType);
   };
 
-  const handleGranularityChange = async (newGranularity: number) => {
-    if (newGranularity === 1) {
-      apiStore.toggleTicks(true);
-      await apiStore.subscribeTicks();
-    } else {
-      apiStore.toggleTicks(false);
-      apiStore.setGranularity(newGranularity);
-      await apiStore.subscribeTicks();
-    }
-  };
+  const handleGranularityChange = useCallback(
+    async (newGranularity: number) => {
+      if (newGranularity === 1) {
+        apiStore.toggleTicks(true);
+        await apiStore.subscribeTicks();
+      } else {
+        apiStore.toggleTicks(false);
+        apiStore.setGranularity(newGranularity);
+        await apiStore.subscribeTicks();
+      }
+    },
+    [apiStore.granularity]
+  );
 
   const handleSelect = (symbol: string) => {
     navigate(`/trade/${symbol}`);
