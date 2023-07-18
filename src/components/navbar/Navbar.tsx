@@ -12,6 +12,7 @@ import UserSidebar from "../authentication/UserSidebar";
 import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import logo from "../../assets/images/commoncents.svg";
+import logo2 from "../../assets/images/white-blue-logo.svg"
 import { Switch } from "@mui/material";
 import { styled } from "@mui/system";
 import { ArrowRight2, HambergerMenu } from "iconsax-react";
@@ -88,11 +89,17 @@ const Header = observer(() => {
       }}
     >
       <Box className="navbar-main">
+        { theme.palette.mode === "dark" ?
+        <img
+        src={logo2}
+        className="navbar-logo"
+        onClick={() => navigate("/")}
+      ></img> :
         <img
           src={logo}
           className="navbar-logo"
           onClick={() => navigate("/")}
-        ></img>
+        ></img>}
         <Typography
           variant="h6"
           onClick={() => navigate("/")}

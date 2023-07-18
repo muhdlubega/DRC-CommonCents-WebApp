@@ -7,6 +7,7 @@ import "./styles/main.scss";
 import { observer } from "mobx-react-lite";
 import authStore from "./store/AuthStore";
 import loading from "./assets/images/commoncents.svg";
+import loading2 from "./assets/images/white-blue-logo.svg";
 import { lightTheme, darkTheme, themes } from "./store/ThemeStore";
 import { ThemeProvider } from "@mui/material/styles";
 import { Box } from "@mui/material";
@@ -44,7 +45,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
@@ -58,7 +61,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
@@ -72,7 +77,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
@@ -86,7 +93,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
@@ -100,7 +109,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
@@ -114,7 +125,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
@@ -128,7 +141,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
@@ -143,7 +158,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -153,7 +170,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -169,7 +188,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -179,7 +200,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -195,7 +218,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -205,7 +230,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -221,7 +248,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -231,7 +260,9 @@ function App({ themeStore }: AppProps) {
                 <Suspense
                   fallback={
                     <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                   }
                 >
@@ -246,7 +277,9 @@ function App({ themeStore }: AppProps) {
               <Suspense
                 fallback={
                   <Box className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    { theme.palette.mode === "dark" ?
+                    <img src={loading2} className="loading"></img> :
+                    <img src={loading} className="loading"></img> }
                   </Box>
                 }
               >
