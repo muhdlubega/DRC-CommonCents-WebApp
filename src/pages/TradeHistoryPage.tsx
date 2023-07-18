@@ -52,7 +52,7 @@ const TradeHistoryPage = observer(() => {
 
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleString();
+    return date.toLocaleString("en-NZ");
   };
 
   const handleDateSelect = (date: Date | null) => {
@@ -78,7 +78,7 @@ const TradeHistoryPage = observer(() => {
       } catch (error) {
         authStore.setAlert({
           open: true,
-          message: "Unable to fetch trade history currently. Try again later",
+          message: "Unable to fetch trade history currently. Please refresh or try again later",
           type: "error",
         });
       }

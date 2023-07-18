@@ -63,6 +63,7 @@ class ForumStore {
       getUserFavourites: action,
       handleFavorite: action,
       handleDelete: action,
+      handleSubmit: action,
       handleSubmitComment: action,
       handleDeleteComment: action,
     });
@@ -128,7 +129,6 @@ class ForumStore {
       post.comments = comments;
       post.commentCount = comments.length;
       updatedPosts.push(post);
-      console.log(post.comments);
     }
 
     updatedPosts.forEach((element) => {
@@ -154,7 +154,49 @@ class ForumStore {
     } catch (error) {
       authStore.setAlert({
         open: true,
-        message: "Unable to remove post currently. Try again later",
+        message: "Unable to remove post currently. Please refresh or try again later",
+        type: "error",
+      });
+    }
+  };
+
+  handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!this.title || !this.details) {
+      authStore.setAlert({
+        open: true,
+        message: "Please input title and details",
+        type: "error",
+      });
+      return;
+    }
+    try {
+      await addDoc(collection(db, "posts"), {
+        title: this.title,
+        details: this.details,
+        author: auth.currentUser?.displayName,
+        authorImage: auth.currentUser?.photoURL,
+        timestamp: Date.now(),
+        comments: [],
+      });
+
+      const post: Post = {
+        title: this.title,
+        details: this.details,
+        author: auth.currentUser?.displayName!,
+        authorImage: auth.currentUser?.photoURL!,
+        timestamp: Date.now(),
+        comments: [],
+      };
+      this.setPosts([...this.posts, post]);
+
+      this.setTitle("");
+      this.setDetails("");
+    } catch (error) {
+      authStore.setAlert({
+        open: true,
+        message: "Unable to create post currently. Please refresh or try again later",
         type: "error",
       });
     }
@@ -181,6 +223,7 @@ class ForumStore {
         timestamp: Date.now(),
       };
 
+      console.log(postId);
       const docRef = await addDoc(
         collection(db, "posts", postId, "comments"),
         commentData
@@ -204,9 +247,10 @@ class ForumStore {
       this.setPosts(updatedPosts);
       this.setContent("");
     } catch (error) {
+      console.log(error)
       authStore.setAlert({
         open: true,
-        message: "Unable to leave a comment currently. Try again later",
+        message: "Unable to leave a comment currently. Please refresh or try again later",
         type: "error",
       });
     }
@@ -233,7 +277,7 @@ class ForumStore {
     } catch (error) {
       authStore.setAlert({
         open: true,
-        message: "Unable to remove comment currently. Try again later",
+        message: "Unable to remove comment currently. Please refresh or try again later",
         type: "error",
       });
     }
@@ -298,7 +342,7 @@ class ForumStore {
         } catch (error) {
           authStore.setAlert({
             open: true,
-            message: "Unable to remove from favorites. Try again later",
+            message: "Unable to remove from favorites. Please refresh or try again later",
             type: "error",
           });
         }
@@ -330,7 +374,7 @@ class ForumStore {
 
           authStore.setAlert({
             open: true,
-            message: "Unable to add to favorites. Try again later",
+            message: "Unable to add to favorites. Please refresh or try again later",
             type: "error",
           });
         }

@@ -1,4 +1,3 @@
-import { collection, addDoc } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import {
   Avatar,
@@ -12,9 +11,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { Heart, Trash } from "iconsax-react";
-import forumStore, { Post } from "../store/ForumStore";
+import forumStore from "../store/ForumStore";
 import { useEffect } from "react";
-import { auth, db } from "../firebase";
+import { auth } from "../firebase";
 import authStore from "../store/AuthStore";
 import { useNavigate } from "react-router";
 import loading from "../assets/images/commoncents.svg";
@@ -26,48 +25,6 @@ const ForumPage = observer(() => {
   useEffect(() => {
     forumStore.initializePosts();
   }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!forumStore.title || !forumStore.details) {
-      authStore.setAlert({
-        open: true,
-        message: "Please input title and details",
-        type: "error",
-      });
-      return;
-    }
-    try {
-      await addDoc(collection(db, "posts"), {
-        title: forumStore.title,
-        details: forumStore.details,
-        author: auth.currentUser?.displayName,
-        authorImage: auth.currentUser?.photoURL,
-        timestamp: Date.now(),
-        comments: [],
-      });
-
-      const post: Post = {
-        title: forumStore.title,
-        details: forumStore.details,
-        author: auth.currentUser?.displayName!,
-        authorImage: auth.currentUser?.photoURL!,
-        timestamp: Date.now(),
-        comments: [],
-      };
-      forumStore.setPosts([...forumStore.posts, post]);
-
-      forumStore.setTitle("");
-      forumStore.setDetails("");
-    } catch (error) {
-      authStore.setAlert({
-        open: true,
-        message: "Unable to create post currently. Try again later",
-        type: "error",
-      });
-    }
-  };
 
   const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
@@ -118,7 +75,7 @@ const ForumPage = observer(() => {
                   </Typography>
                 </Box>
               </Box>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={forumStore.handleSubmit}>
                 <TextField
                   type="textarea"
                   variant="filled"

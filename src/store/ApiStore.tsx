@@ -3,7 +3,7 @@ import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAP
 
 const app_id = 1089;
 
-interface Tick {
+export interface Tick {
   epoch: EpochTimeStamp;
   quote?: number;
   symbol?: string;
@@ -24,10 +24,6 @@ class ApiStore {
   selectedSymbol: string = "1HZ10V";
   ticks: Tick[] = [];
   proposalTicks: Tick[] = [];
-  sellSuccessful: boolean = false;
-  additionalAmount: number = 0;
-  sellFailed: boolean = false;
-  deductedAmount: number = 0;
   ticks_history_request: Record<string, number | string> = {
     ticks_history: this.selectedSymbol,
     adjust_start_time: 1,
@@ -52,10 +48,6 @@ class ApiStore {
       selectedSymbol: observable,
       ticks: observable,
       proposalTicks: observable,
-      sellSuccessful: observable,
-      additionalAmount: observable,
-      sellFailed: observable,
-      deductedAmount: observable,
       ticks_history_request: observable,
       connectWebSocket: action.bound,
       disconnectWebSocket: action.bound,
@@ -63,10 +55,6 @@ class ApiStore {
       setActiveSymbols: action.bound,
       setIsDurationEnded: action.bound,
       setShowOnboarding: action.bound,
-      setSellSuccessful: action.bound,
-      setAdditionalAmount: action.bound,
-      setSellFailed: action.bound,
-      setDeductedAmount: action.bound,
       setGranularity: action.bound,
       toggleTicks: action.bound,
       handleActiveSymbolsResponse: action,
@@ -111,22 +99,6 @@ class ApiStore {
 
   setShowOnboarding(showOnboarding: boolean) {
     this.showOnboarding = showOnboarding;
-  }
-
-  setSellSuccessful(sellSuccessful: boolean) {
-    this.sellSuccessful = sellSuccessful;
-  }
-
-  setAdditionalAmount(additionalAmount: number) {
-    this.additionalAmount = additionalAmount;
-  }
-
-  setSellFailed(sellFailed: boolean) {
-    this.sellFailed = sellFailed;
-  }
-
-  setDeductedAmount(deductedAmount: number) {
-    this.deductedAmount = deductedAmount;
   }
 
   setGranularity(granularity: number) {
@@ -359,6 +331,8 @@ class ApiStore {
           lastTick.low = Math.min(lastTick.low as number, newTick.low);
           lastTick.close = Number(newTick.close);
         }
+        // console.log(this.proposalTicks);
+        
       }
     } else if (data.msg_type === "tick") {
       const newTick = {

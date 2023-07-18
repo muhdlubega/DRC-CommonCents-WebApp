@@ -28,7 +28,7 @@ const FavoritesPage = observer(() => {
   };
 
   return (
-    <div>
+    <div style={{minHeight: '600px'}}>
       <Typography variant="h6" className="account-title">
         Favorite Posts
       </Typography>

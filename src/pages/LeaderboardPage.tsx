@@ -1,15 +1,33 @@
-import { Avatar, Box, Card, Typography, useTheme } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Card,
+  Modal,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import authStore from "../store/AuthStore";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
-import { MedalStar } from "iconsax-react";
-// import award from "../assets/images/leaderboard.png";
+import { useEffect, useState } from "react";
+import { InfoCircle, MedalStar } from "iconsax-react";
+import leaderboard from "../assets/images/leaderboard-icon.svg";
 
 const LeaderboardPage = observer(() => {
   const theme = useTheme();
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   useEffect(() => {
     authStore.initializeLeaderboard();
   }, []);
+
+  const openQuoteModal = () => {
+    setIsQuoteModalOpen(true);
+  };
+
+  const closeQuoteModal = () => {
+    setIsQuoteModalOpen(false);
+  };
+
   const sortedLeaderboard = authStore.leaderboard
     .slice()
     .sort((a, b) => (b.netWorth as number) - (a.netWorth as number));
@@ -20,9 +38,47 @@ const LeaderboardPage = observer(() => {
     <Box className="leaderboard-main">
       {/* <Box className="background-circle"></Box> */}
       {/* <img className="leaderboard-award" src={award}></img> */}
-      <Typography variant="h6" className="account-title">
+      <Typography variant="h6" className="leaderboard-info">
         Leaderboard
+        <Box className="leaderboard-info-icon" onClick={openQuoteModal}>
+          <Tooltip
+            title="Learn more"
+            placement="right"
+            disableFocusListener
+            disableTouchListener
+            arrow
+          >
+            <InfoCircle size={40} />
+          </Tooltip>
+        </Box>
       </Typography>
+      {isQuoteModalOpen && (
+        <Modal open={isQuoteModalOpen} onClose={closeQuoteModal}>
+          <Box
+            className="live-data-modal"
+            sx={{
+              bgcolor: theme.palette.background.paper,
+              color: theme.palette.text.secondary,
+            }}
+          >
+            <Typography variant="h6" className="leaderboard-info-title">
+              Get On The Leaderboard Now!
+            </Typography>
+            <img src={leaderboard} alt="leaderboard" />
+            <Typography className="leaderboard-info-text">
+              Place yourself on the CommonCents leaderboard where we sort users according to
+              their net worth.
+            </Typography>
+            <Typography className="leaderboard-info-text">
+              Net worth is determined by the summation of
+              profit deducted by loss summarized from the trading simulation
+              with the allocated demo funds. 
+            </Typography>
+            <a href="/trade/1HZ10V">Start your trading simulation
+              now!</a>
+          </Box>
+        </Modal>
+      )}
       <Box className="leaderboard-tthree">
         <ol className="leaderboard-tthree-list">
           {topThreeUsers
@@ -45,27 +101,31 @@ const LeaderboardPage = observer(() => {
                     color: theme.palette.text.primary,
                   }}
                 >
-                  <Typography style={{ fontWeight: 700, fontSize: '3vw' }}>
+                  <Typography style={{ fontWeight: 700, fontSize: "3vw" }}>
                     {user.displayName || user.email}
                   </Typography>
-                  <Typography style={{fontSize: '2vw'}}>
+                  <Typography style={{ fontSize: "2vw" }}>
                     {user?.netWorth?.toFixed(2)} USD
                   </Typography>
                   <Box className="leaderboard-tthree-imgbox">
-                  <Avatar
-                    src={user?.photoURL || ""}
-                    alt={user?.displayName || user?.email || ""}
-                    className="leaderboard-tthree-picture"
-                  />
-                  <MedalStar variant="Bold" style={{
-                  color:
-                    index === 1
-                      ? "#C0C0C0"
-                      : index === 2
-                      ? "#CD7F32"
-                      : "#FFD700",
-                }} className="leaderboard-award"/>
-                </Box>
+                    <Avatar
+                      src={user?.photoURL || ""}
+                      alt={user?.displayName || user?.email || ""}
+                      className="leaderboard-tthree-picture"
+                    />
+                    <MedalStar
+                      variant="Bold"
+                      style={{
+                        color:
+                          index === 1
+                            ? "#C0C0C0"
+                            : index === 2
+                            ? "#CD7F32"
+                            : "#FFD700",
+                      }}
+                      className="leaderboard-award"
+                    />
+                  </Box>
                 </Box>
               </li>
             ))}

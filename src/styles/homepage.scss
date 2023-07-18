@@ -51,7 +51,7 @@
 .banner-image {
     height: 740px;
     z-index: 3;
-    top: 0;
+    top: 50px;
     right: 0;
     position: absolute;
 }
@@ -284,7 +284,7 @@
 .synthetic-title{
     width: 100%;
     padding: 10px 0;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #888;
     margin-bottom: 20px !important;
 }
 
