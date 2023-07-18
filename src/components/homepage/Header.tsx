@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import image1 from "../../assets/images/live-trading-homepage.svg";
-import image2 from "../../assets/images/breaking-news-about.svg";
+import image2 from "../../assets/images/trending.svg";
 import image3 from "../../assets/images/forum-homepage.svg";
 
 const Header = () => {

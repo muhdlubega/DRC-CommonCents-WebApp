@@ -73,7 +73,8 @@ const FavoritesPage = observer(() => {
                     <IconButton
                       onClick={() => forumStore.handleFavorite(post.id!)}
                     >
-                      <Heart variant="Bold" color="#0033ff" />
+                    {post.isFavorite} ? <Heart variant="Bold" color="#0033ff" /> 
+                    : <Heart variant="Bold"/> 
                     </IconButton>
                   </Typography>
                 </Box>
