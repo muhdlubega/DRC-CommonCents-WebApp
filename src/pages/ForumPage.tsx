@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Heart, Trash } from "iconsax-react";
 import forumStore from "../store/ForumStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import authStore from "../store/AuthStore";
 import { useNavigate } from "react-router";
@@ -21,10 +21,11 @@ import loading from "../assets/images/commoncents.svg";
 const ForumPage = observer(() => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [newPost, setNewPost] = useState(false);
 
   useEffect(() => {
     forumStore.initializePosts();
-  }, []);
+  }, [newPost]);
 
   const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
@@ -209,15 +210,20 @@ const ForumPage = observer(() => {
                 <Box>
                   <form
                     style={{ display: "flex" }}
-                    onSubmit={(e) =>
-                      forumStore.handleSubmitComment(e, post.id!)
+                    onSubmit={(e) => {
+                      // forumStore.setHasNewPost(!forumStore.hasNewPost);
+                      forumStore.handleSubmitComment(e, post.id!);
                     }
+                  }
                   >
                     <TextField
                       multiline
                       inputProps={{ maxLength: 3000 }}
                       label="Share your thoughts.."
                       onChange={(e) => forumStore.setContent(e.target.value)}
+                      onClick={(e) =>
+                        setNewPost(!newPost)
+                      }
                       variant="filled"
                       className="forum-details"
                     />

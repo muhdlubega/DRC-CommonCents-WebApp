@@ -32,6 +32,7 @@ export interface Comment {
 }
 
 class ForumStore {
+  hasNewPost: boolean = false;
   title: string = "";
   details: string = "";
   isFavourite: boolean = false;
@@ -51,6 +52,7 @@ class ForumStore {
       maxTitle: observable,
       errorTitle: observable,
       userFavourites: observable,
+      hasNewPost: observable,
       setTitle: action.bound,
       setDetails: action.bound,
       setPosts: action.bound,
@@ -90,6 +92,10 @@ class ForumStore {
 
   setPosts(posts: Post[]) {
     this.posts = posts;
+  }
+
+  setHasNewPost(hasNewPost: boolean) {
+    this.hasNewPost = hasNewPost;
   }
 
   async initializePosts() {
@@ -246,6 +252,7 @@ class ForumStore {
 
       this.setPosts(updatedPosts);
       this.setContent("");
+      this.setHasNewPost(!this.hasNewPost);
     } catch (error) {
       console.log(error)
       authStore.setAlert({
@@ -338,6 +345,11 @@ class ForumStore {
           await deleteDoc(
             doc(db, "users", auth.currentUser!.uid, "favorites", postId)
           );
+          authStore.setAlert({
+            open: true,
+            message: "Post removed from favorites",
+            type: "error",
+          });
           this.unmarkAsFavorite(postId);
         } catch (error) {
           authStore.setAlert({
