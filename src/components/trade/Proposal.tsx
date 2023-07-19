@@ -22,6 +22,19 @@ import { NorthEast, SouthEast, SouthWest } from "@mui/icons-material";
 import { MarketSymbols } from "../../arrays/MarketArray";
 import contractStore from "../../store/ContractStore";
 
+const marksArray = [
+  { value: 1, label: "1" },
+  { value: 2, label: "2" },
+  { value: 3, label: "3" },
+  { value: 4, label: "4" },
+  { value: 5, label: "5" },
+  { value: 6, label: "6" },
+  { value: 7, label: "7" },
+  { value: 8, label: "8" },
+  { value: 9, label: "9" },
+  { value: 10, label: "10" },
+];
+
 const Proposal = observer(() => {
   const { id } = useParams<{ id: string }>();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
@@ -136,7 +149,7 @@ const Proposal = observer(() => {
                     }
                     onChange={handleDurationChange}
                     defaultValue={5}
-                    marks
+                    marks={marksArray}
                     min={1}
                     max={10}
                     step={1}
@@ -422,7 +435,8 @@ const Proposal = observer(() => {
                       contractStore.isProcessing || apiStore.ticks.length === 0
                     }
                     defaultValue={5}
-                    marks
+                    marks={marksArray}
+                    // valueLabelDisplay="on" 
                     min={1}
                     max={10}
                     step={1}

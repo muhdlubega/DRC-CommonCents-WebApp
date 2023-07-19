@@ -16,6 +16,7 @@ interface SignupProps {
 }
 
 const Signup = observer(({}: SignupProps) => {
+  //signup structure for auth modal using firebase
   const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme();
 

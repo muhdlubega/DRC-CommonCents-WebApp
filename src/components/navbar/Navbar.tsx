@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
   Typography,
@@ -21,6 +21,7 @@ import themeStore, { themes } from "../../store/ThemeStore";
 
 const Header = observer(() => {
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useTheme();
   const [state, setState] = useState({
     right: false,
@@ -103,24 +104,25 @@ const Header = observer(() => {
         <Typography
           variant="h6"
           onClick={() => navigate("/")}
-          className="navbar-title"
+          className={`navbar-title ${location.pathname === "/" ? "active" : ""}`}
         >
           CommonCents
         </Typography>
         <Box sx={{ flex: 3 }}></Box>
         <Typography
           onClick={() => navigate("/trade/1HZ10V")}
-          className="navbar-item"
+          // className="navbar-item"
+          className={`navbar-item ${location.pathname === "/trade/1HZ10V" ? "active" : ""}`}
         >
           Trade
         </Typography>
-        <Typography onClick={() => navigate("/news")} className="navbar-item">
+        <Typography onClick={() => navigate("/news")} className={`navbar-item ${location.pathname === "/news" ? "active" : ""}`}>
           News
         </Typography>
-        <Typography onClick={() => navigate("/forum")} className="navbar-item">
+        <Typography onClick={() => navigate("/forum")} className={`navbar-item ${location.pathname === "/forum" ? "active" : ""}`}>
           Forum
         </Typography>
-        <Typography onClick={() => navigate("/about")} className="navbar-item">
+        <Typography onClick={() => navigate("/about")} className={`navbar-item ${location.pathname === "/about" ? "active" : ""}`}>
           About
         </Typography>
         {isSmallScreen ? null : (

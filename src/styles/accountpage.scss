@@ -394,7 +394,7 @@
 }
 
 .leaderboard-list {
-    transform: translate(0, -40vw);
+    transform: translate(0, -35vw);
 
     &-card {
         display: flex;
@@ -436,6 +436,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden !important;
 
     &-list {
         list-style-type: none;
@@ -447,12 +448,13 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
+        margin-top: 20px;
     }
 
     &-picture {
         position: absolute !important;
-        width: 11vw !important;
-        height: 11vw !important;
+        width: 8vw !important;
+        height: 8vw !important;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -75%);
@@ -465,8 +467,14 @@
 }
 
 .leaderboard-award {
-    height: 22vw;
-    width: 22vw;
+    height: 18vw;
+    width: 18vw;
+}
+
+.leaderboard-confetti{
+    width: 20%;
+    overflow: hidden;
+    position: absolute;
 }
 
 .leaderboard-info-title{

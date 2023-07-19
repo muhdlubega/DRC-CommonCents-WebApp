@@ -54,6 +54,11 @@
     top: 50px;
     right: 0;
     position: absolute;
+    overflow-x: hidden;
+}
+
+.banner-img-container{
+    overflow-x: hidden;
 }
 
 
@@ -78,15 +83,19 @@
 
 @media (max-width: 656px) {
     .banner-image {
-        display: none;
-    }
-
-    .banner-main {
-        height: 400px !important;
+        // display: none;
+        transform: scale(55%) translate(-20%, -30%) !important;
+        transition: all 0.5s ease;
     }
 }
 
 @media (max-width: 425px) {
+    .banner-image {
+        // display: none;
+        transform: scale(40%) translate(-60%, -60%) !important;
+        transition: all 0.5s ease;
+    }
+
     .banner-title {
         font-size: 45px;
     }
@@ -97,6 +106,10 @@
 
     .banner-btn {
         transform: scale(0.75);
+    }
+
+    .banner-main {
+        height: 650px !important;
     }
 }
 
@@ -304,7 +317,7 @@
 }
 
 .news-carousel {
-    overflow-x: hidden;
+    overflow-x: hidden !important;
 
     div {
         background-size: cover;
@@ -325,7 +338,7 @@
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-end;
-        overflow: hidden;
+        overflow-x: hidden !important;
         position: absolute;
         width: 360px;
         height: 180px;
@@ -375,11 +388,11 @@
 
 .trade-carousel {
     margin-top: 80px;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
 }
 
 .trade-card{
-    overflow-x: hidden;
+    overflow-x: hidden !important;
 }
 
 .title-icon-tradetype {
@@ -475,9 +488,9 @@
 }
 
 .trade-intro-img {
-    height: 750px;
+    height: 650px;
     position: absolute;
-    transform: translateY(-300px);
+    transform: translate(150px, -300px);
     z-index: 0;
 }
 

@@ -9,10 +9,13 @@ import feature1 from '../assets/images/feature1.svg';
 import feature2 from '../assets/images/feature2.svg';
 import feature3 from '../assets/images/feature3.svg';
 import commoncents from "../assets/images/commoncents.svg";
+import commoncents2 from "../assets/images/white-blue-logo.svg";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AboutPage = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const animationControls = useAnimation();
 
   useEffect(() => {
@@ -33,16 +36,16 @@ const AboutPage = () => {
           </Box>
           <Box className="aboutus-logo">
             <Box className="commoncents-logobox">
-        <img src={commoncents} className="commoncents-logo"></img>
+        <img src={theme.palette.mode === "dark" ? commoncents2 : commoncents} className="commoncents-logo"></img>
         </Box>
       </Box>
         </motion.div>
       </Box>
       <Box className="feature-about-us">
         <Box className="aboutus-feature-imgbox">
-        <img src={feature1} className="aboutus-feature-img"></img>
-        <img src={feature2} className="aboutus-feature-img"></img>
-        <img src={feature3} className="aboutus-feature-img"></img>
+        <img src={feature1} className="aboutus-feature-img" onClick={() => navigate("/trade/1HZ10V")}></img>
+        <img src={feature2} className="aboutus-feature-img" onClick={() => navigate("/news")}></img>
+        <img src={feature3} className="aboutus-feature-img"  onClick={() => navigate("/forum")}></img>
         </Box>
       </Box>
       <Box className="about-us" sx={{

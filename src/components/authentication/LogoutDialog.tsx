@@ -17,6 +17,7 @@ const LogoutConfirmationDialog = ({
   open,
   onClose,
 }: LogoutConfirmationDialogProps) => {
+  //logout confirmation dialog structure on click of logout button in accounts page and user sidebar
   const theme = useTheme();
 
   return (

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import {
@@ -17,9 +17,9 @@ import AccessibilityModule from "highcharts/modules/accessibility";
 import {
   Chart1,
   Candle,
-  VideoPlay,
   ArrowCircleLeft,
   ArrowCircleRight,
+  MessageQuestion,
 } from "iconsax-react";
 import apiStore from "../../store/ApiStore";
 import sc1 from "../../assets/images/onboarding/sc1.svg";
@@ -30,6 +30,8 @@ import sc5 from "../../assets/images/onboarding/sc5.svg";
 import sc6 from "../../assets/images/onboarding/sc6.svg";
 import sc7 from "../../assets/images/onboarding/sc7.svg";
 import loading from "../../assets/images/commoncents.svg";
+import loading2 from "../../assets/images/white-blue-logo.svg";
+import contractStore from "../../store/ContractStore";
 
 const Chart = observer(() => {
   const { id } = useParams();
@@ -63,6 +65,7 @@ const Chart = observer(() => {
       enabled: false,
     },
     xAxis: {
+      type: 'datetime',
       labels: {
         style: {
           color: theme.palette.text.secondary,
@@ -98,14 +101,14 @@ const Chart = observer(() => {
         name: apiStore.selectedSymbol,
         data:
           apiStore.chartType === "candlestick"
-            ? apiStore.ticks.slice(-500).map((tick) => ({
+            ? apiStore.ticks.slice(-100).map((tick) => ({
                 x: tick.epoch * 1000,
                 open: Number(tick.open),
                 high: Number(tick.high),
                 low: Number(tick.low),
                 close: Number(tick.close),
               }))
-            : apiStore.ticks.slice(-500).map((tick) => ({
+            : apiStore.ticks.slice(-100).map((tick) => ({
                 x: tick.epoch * 1000,
                 y: apiStore.isTicks ? tick.quote : tick.close,
                 open: Number(tick.open),
@@ -148,8 +151,7 @@ const Chart = observer(() => {
     apiStore.setChartType(newChartType);
   };
 
-  const handleGranularityChange = useCallback(
-    async (newGranularity: number) => {
+  const handleGranularityChange =  async (newGranularity: number) => {
       if (newGranularity === 1) {
         apiStore.toggleTicks(true);
         await apiStore.subscribeTicks();
@@ -158,9 +160,7 @@ const Chart = observer(() => {
         apiStore.setGranularity(newGranularity);
         await apiStore.subscribeTicks();
       }
-    },
-    [apiStore.granularity]
-  );
+    };
 
   const handleSelect = (symbol: string) => {
     navigate(`/trade/${symbol}`);
@@ -218,9 +218,10 @@ const Chart = observer(() => {
           value={apiStore.selectedSymbol || ""}
           onChange={(e) => handleSelect(e.target.value)}
           style={{
-            backgroundColor: theme.palette.background.default,
+            backgroundColor: contractStore.isProcessing ? "#888" : theme.palette.background.default,
             color: theme.palette.text.primary,
           }}
+          disabled={contractStore.isProcessing}
         >
           {apiStore.activeSymbols.map(
             (symbol) =>
@@ -238,9 +239,10 @@ const Chart = observer(() => {
           value={apiStore.chartType}
           onChange={(e) => handleChartTypeChange(e.target.value)}
           style={{
-            backgroundColor: theme.palette.background.default,
+            backgroundColor: contractStore.isProcessing ? "#888" : theme.palette.background.default,
             color: theme.palette.text.primary,
           }}
+          disabled={contractStore.isProcessing}
         >
           <MenuItem value="line" onClick={() => handleChartTypeChange("line")}>
             <Chart1 color="#0033ff" variant="Bulk" size={24} /> Line
@@ -258,11 +260,12 @@ const Chart = observer(() => {
           <Select
             className="symbols-dropdown"
             style={{
-              backgroundColor: theme.palette.background.default,
+              backgroundColor: contractStore.isProcessing ? "#888" : theme.palette.background.default,
               color: theme.palette.text.primary,
             }}
             value={apiStore.isTicks ? 1 : apiStore.granularity}
             onChange={(e) => handleGranularityChange(e.target.value as number)}
+            disabled={contractStore.isProcessing}
           >
             <MenuItem
               disabled={apiStore.chartType === "candlestick"}
@@ -301,7 +304,7 @@ const Chart = observer(() => {
               disableTouchListener
               arrow
             >
-              <VideoPlay
+              <MessageQuestion
                 style={{ color: theme.palette.text.primary }}
                 size={40}
                 className="chart-onboarding-icon"
@@ -313,7 +316,7 @@ const Chart = observer(() => {
       <Box className="chart-area">
         {apiStore.ticks.length === 0 ? (
           <Box className="loading-box">
-            <img src={loading} className="loading"></img>
+            <img src={theme.palette.mode === "dark" ? loading2 : loading} className="loading"></img>
           </Box>
         ) : (
           <HighchartsReact

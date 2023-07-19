@@ -10,7 +10,7 @@ const FavoritesPage = observer(() => {
     if (auth.currentUser) {
       forumStore.getUserFavourites();
     }
-  }, []);
+  }, [forumStore.userFavourites]);
 
   const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
@@ -73,8 +73,8 @@ const FavoritesPage = observer(() => {
                     <IconButton
                       onClick={() => forumStore.handleFavorite(post.id!)}
                     >
-                    {post.isFavorite} ? <Heart variant="Bold" color="#0033ff" /> 
-                    : <Heart variant="Bold"/> 
+                    {post.isFavorite ? <Heart variant="Bold"/> 
+                    : <Heart variant="Bold" color="#0033ff" /> }
                     </IconButton>
                   </Typography>
                 </Box>
@@ -137,7 +137,7 @@ const FavoritesPage = observer(() => {
         <Box className="forumfave-empty">
           <Clock size={280} color="gray" />
           <Typography variant="h6" style={{ margin: "15px" }}>
-            No favourite posts yet. Check out our forum page
+            No favourite posts yet. Check out our <a href="/forum">forum page</a>
           </Typography>
         </Box>
       )}

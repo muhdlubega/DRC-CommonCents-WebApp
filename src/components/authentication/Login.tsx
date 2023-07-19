@@ -22,6 +22,7 @@ interface LoginProps {
 }
 
 const Login = observer(({ handleClose }: LoginProps) => {
+  //login structure for auth modal using firebase
   const [openForgotPassword, setOpenForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +36,7 @@ const Login = observer(({ handleClose }: LoginProps) => {
     setOpenForgotPassword(false);
   };
 
+  //forgot password function sends an email for password reset to user via firebase
   const handleForgotPassword = async () => {
     try {
       const actionCodeSettings = {
