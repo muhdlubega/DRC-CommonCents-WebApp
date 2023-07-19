@@ -15,7 +15,6 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import {
-  Chart1,
   Candle,
   ArrowCircleLeft,
   ArrowCircleRight,
@@ -32,6 +31,7 @@ import sc7 from "../../assets/images/onboarding/sc7.svg";
 import loading from "../../assets/images/commoncents.svg";
 import loading2 from "../../assets/images/white-blue-logo.svg";
 import contractStore from "../../store/ContractStore";
+import { ShowChart } from "@mui/icons-material";
 
 const Chart = observer(() => {
   //chart logic for the trading simulation with market type, chart type, and duration choices using data from the Deriv API
@@ -253,7 +253,7 @@ const Chart = observer(() => {
           disabled={contractStore.isProcessing}
         >
           <MenuItem value="line" onClick={() => handleChartTypeChange("line")}>
-            <Chart1 color="#0033ff" variant="Bulk" size={24} /> Line
+            <ShowChart style={{ color: "#0033ff" }} /> Line
           </MenuItem>
           <MenuItem
             disabled={apiStore.isTicks}

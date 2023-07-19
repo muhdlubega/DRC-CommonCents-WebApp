@@ -220,9 +220,12 @@ class ApiStore {
       let currentTime: number | null = null;
       let currentCandle: Tick | null = null;
 
+      //if data.msg.type received is candles (for candlestick request) add candles into the candlesticks array
+      //candlestick request receives candles in terms of time period based off the granularity
       for (const candle of candles) {
         const epoch = candle.epoch;
 
+        //check is added to ensure push to array is done when epoch is not current time and is candlesticks from history
         if (currentTime === null || epoch * 1000 !== currentTime) {
           if (currentCandle !== null) {
             candlesticks.push(currentCandle);
@@ -237,6 +240,7 @@ class ApiStore {
           };
           currentTime = epoch * 1000;
         } else {
+          //if epoch equals to current time then data not pushed into array and values for high, low and close are retrieved from calculations
           currentCandle!.high = Math.max(currentCandle!.high!, candle.high);
           currentCandle!.low = Math.min(currentCandle!.low!, candle.low);
           currentCandle!.close = Number(candle.close);
@@ -281,6 +285,7 @@ class ApiStore {
       this.connection?.removeEventListener("message", this.tickResponse, false);
       await this.api.disconnect();
     } else if (data.msg_type === "ohlc") {
+      //if data.msg.type received is ohlc (for candlestick request) add latest subscribed ticks into the ticks array
       const newTick = {
         epoch: data.ohlc.epoch,
         close: Number(data.ohlc.close),
@@ -289,8 +294,10 @@ class ApiStore {
         low: Number(data.ohlc.low),
       };
 
+      //subscribed ticks added to a separate array for proposal to avoid conflicts
       this.setProposalTicks([...this.proposalTicks, newTick]);
 
+      //current time is declared in terms of ticks, minutes, hours and days based on granularity
       let currentTime = 0;
       if (this.granularity === 60) {
         if (this.isTicks) {
@@ -305,9 +312,10 @@ class ApiStore {
       }
 
       if (this.ticks.length === 0) {
-        // If there are no previous ticks, add the current tick
+        // current tick is added into the ticks array if there are no previous ticks
         this.setTicks([newTick]);
       } else {
+        //if previous ticks exist previous time is declared in terms of ticks, minutes, hours and days based on granularity in a similar fashion to current time
         const lastTick = this.ticks[this.ticks.length - 1];
         let lastTime = 0;
         if (this.granularity === 60) {
@@ -322,19 +330,19 @@ class ApiStore {
           lastTime = new Date(lastTick.epoch * 1000).getDay();
         }
 
+        //current time is compared to previous time
         if (currentTime !== lastTime) {
-          // If the current tick belongs to a different minute, add it to the list
+          //if current time differs from previous time based on the epoch then tick is pushed into the array as a candle
           this.setTicks([...this.ticks, newTick]);
         } else {
-          // Update the previous tick with the new values
+          //if previous time equals to current time then data not pushed into array and values for high, low and close are retrieved from calculations
           lastTick.high = Math.max(lastTick.high as number, newTick.high);
           lastTick.low = Math.min(lastTick.low as number, newTick.low);
           lastTick.close = Number(newTick.close);
-        }
-        // console.log(this.proposalTicks);
-        
+        }        
       }
     } else if (data.msg_type === "tick") {
+      //if data.msg.type received is tick (for tick request) add latest subscribed ticks into the tick array
       const newTick = {
         epoch: data.tick.epoch,
         quote: data.tick.quote,

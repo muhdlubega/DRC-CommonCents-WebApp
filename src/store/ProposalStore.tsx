@@ -86,12 +86,14 @@ class ProposalStore {
       );
       await this.api.disconnect();
     } else if (data.msg_type === "proposal") {
+      //if data.msg_type received is proposal response is pushed into the proposal data array
       action(() => {
         this.proposalData.push(data.proposal);
       })();
     }
   };
 
+  //different parameters set from the trade page are used to set the proposal request through useEffect
   getProposal = async (id: string) => {
     const proposal_request = {
       proposal: 1,
@@ -105,6 +107,7 @@ class ProposalStore {
       symbol: id,
     };
 
+    //proposal unsubscribed first before submitting new proposal request to make sure latest parameters are updated and up to date
     this.unsubscribeProposal();
     this.connectWebSocket();
     this.connection?.addEventListener("message", this.proposalResponse);

@@ -240,6 +240,7 @@ class AuthStore {
           }
         });
 
+        //initialize user with 100000USD and google credentials for google sign up
         if (!userExists) {
           this.initializeUser(
             100000,
@@ -295,6 +296,7 @@ class AuthStore {
     this.open = open;
   }
 
+  //initialize leaderboard where trade summary of users are fetched from firebase and users are sorted according to their net worth
   async initializeLeaderboard() {
     try {
       const querySnapshot = await getDocs(collection(db, "users"));

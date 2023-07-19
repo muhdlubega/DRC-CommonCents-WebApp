@@ -88,21 +88,21 @@ const Footer = () => {
                 Socials
               </Typography>
               <Box>
-                <a href="/">
+                <a href="https://www.facebook.com/BeSquareByDeriv/">
                   <img
                     src={SocialMedia1}
                     alt="Image Button"
                     className="footer-social1"
                   />
                 </a>
-                <a href="/">
+                <a href="https://www.instagram.com/besquarebyderiv/?hl=en">
                   <img
                     src={SocialMedia2}
                     alt="Image Button"
                     className="footer-social2"
                   />
                 </a>
-                <a href="/">
+                <a href="https://twitter.com/besquarebyderiv?lang=en">
                   <img
                     src={SocialMedia3}
                     alt="Image Button"
