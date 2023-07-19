@@ -130,6 +130,30 @@ class ContractStore {
     proposalStore.setContractType(isHigher ? "CALL" : "PUT");
     const currentBalance = balance;
     const payoutValue = parseFloat(proposalStore.payout.toString());
+
+    if (proposalStore.proposalData.length === 0) {
+      //handle the case when proposalData is empty
+      authStore.setAlert({
+        open: true,
+        message: "No proposal data available",
+        type: "error",
+      });
+      const updatedBalance = currentBalance + payoutValue;
+      authStore.setBalance(updatedBalance);
+    }
+  
+    //check if there are enough elements in apiStore.proposalTicks
+    if (apiStore.proposalTicks.length < proposalStore.duration + 1) {
+      //handle the case when there are not enough ticks in proposalTicks
+      authStore.setAlert({
+        open: true,
+        message: "Not enough proposal ticks available",
+        type: "error",
+      });
+      const updatedBalance = currentBalance + payoutValue;
+      authStore.setBalance(updatedBalance);
+    }
+  
     const askPrice =
       proposalStore.proposalData[proposalStore.proposalData.length - 1]
         .ask_price;
