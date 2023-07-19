@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { SyntheticEvent } from "react";
 
 const Alert = observer(() => {
+  //set alert snackbar properties and details to be used globally
   const handleCloseAlert = (
     _event: Event | SyntheticEvent<Element, Event>,
     reason?: string

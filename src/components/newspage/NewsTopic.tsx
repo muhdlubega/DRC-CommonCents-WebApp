@@ -19,6 +19,7 @@ import placeholder from "../../assets/images/placeholder.png";
 import { SearchNormal1 } from "iconsax-react";
 import authStore from "../../store/AuthStore";
 import loading from "../../assets/images/commoncents.svg";
+import loading2 from "../../assets/images/white-blue-logo.svg";
 
 interface TopicNewsCache {
   [topic: string]: NewsItem[];
@@ -174,12 +175,8 @@ const NewsTopic = observer(() => {
         </Tabs>
       </Box>
       {filteredNews.length === 0 ? (
-        // <Box className="news-search-empty">
-        // <SearchNormal1 size={200} color="gray"/>
-        // <Typography variant="h6" className="news-empty-txt">Sorry, no search results found</Typography>
-        // </Box>
         <Box className="loading-box">
-          <img src={loading} className="loading"></img>
+          <img src={theme.palette.mode === "dark" ? loading2 : loading} className="loading"></img>
         </Box>
       ) : (
         <Box className="news-card-row">

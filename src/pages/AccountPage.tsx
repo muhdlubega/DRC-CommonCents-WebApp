@@ -4,11 +4,6 @@ import {
   Avatar,
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   InputAdornment,
   Modal,
@@ -30,30 +25,48 @@ import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LogoutConfirmationDialog from "../components/authentication/LogoutDialog";
+import ResetBalanceConfirmationDialog from "../components/authentication/ResetBalanceDialog";
+import PasswordChangeConfirmationDialog from "../components/authentication/PasswordChange";
 
 const AccountPage = observer(() => {
-  const navigate = useNavigate();
-  const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
-  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  //account page structure and functions
+  const [userName, setUserName] = useState("");
+  const [userBalance, setUserBalance] = useState(100000);
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
   const [updatedName, setUpdatedName] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [userBalance, setUserBalance] = useState(100000);
-  const [userName, setUserName] = useState("");
-  const theme = useTheme();
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
-
   const [state, setState] = useState({
     right: false,
     resetConfirmationOpen: false,
   });
+  const navigate = useNavigate();
+  const theme = useTheme();
 
+  const toggleDrawer = (open: boolean) => () => {
+    setState({ ...state, right: open });
+  };
   const toggleSecondDropdown = () => {
     setIsSecondDropdownOpen((prevState) => !prevState);
   };
 
+  //get username function to retrieve user's display name from firebase
+  const getUserName = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    querySnapshot.forEach((doc) => {
+      const { displayName } = doc.data();
+      if (auth.currentUser && auth.currentUser.uid === doc.id) {
+        setUserName(displayName);
+      }
+    });
+  };
+
+  //get user balance function to retrieve user's balance from firebase
   const getUserBalance = async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
     querySnapshot.forEach((doc) => {
@@ -73,32 +86,47 @@ const AccountPage = observer(() => {
   const handleResetBalance = () => {
     toggleResetConfirmation();
   };
-
   const confirmResetBalance = () => {
     authStore.setResetBalance(100000);
     toggleResetConfirmation();
   };
 
+  const handleLogoutConfirmation = (confirmed: boolean) => {
+    if (confirmed) {
+      signOut(auth);
+      navigate("/");
+      authStore.setAlert({
+        open: true,
+        type: "success",
+        message: "Logout Successful!",
+      });
+    }
+    setLogoutConfirmationOpen(false);
+    toggleDrawer(false);
+  };
+
+  //change display name function to handle user's display name with correct length
   const handleUpdateName = () => {
-    authStore.setUpdateName(updatedName);
+    if (updatedName.length < 3 || updatedName.length > 15) {
+      authStore.setAlert({
+        open: true,
+        message: "Display name should be between 3 to 15 characters",
+        type: "error",
+      });
+      return;
+    } else {
     authStore.setAlert({
       open: true,
       message: "Display name updated!",
       type: "success",
     });
+    authStore.setUpdateName(updatedName);
+  }
   };
 
-  const getUserName = async () => {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    querySnapshot.forEach((doc) => {
-      const { displayName } = doc.data();
-      if (auth.currentUser && auth.currentUser.uid === doc.id) {
-        setUserName(displayName);
-      }
-    });
-  };
-
+  //change password function to handle user's password change
   const handleChangePassword = async () => {
+    //error check to ensure passwords match
     if (newPassword !== confirmNewPassword) {
       authStore.setAlert({
         open: true,
@@ -108,8 +136,8 @@ const AccountPage = observer(() => {
       return;
     }
 
+    //error check to ensure password is atleast 8 characters long using regexp
     const lengthTest = /^.{8,}$/;
-
     if (!lengthTest.test(newPassword)) {
       authStore.setAlert({
         open: true,
@@ -119,8 +147,8 @@ const AccountPage = observer(() => {
       return;
     }
 
+    //error check to ensure password meets criteria using regexp
     const caseTest = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.!@#$%^&*]).{8,}$/;
-
     if (!caseTest.test(newPassword)) {
       authStore.setAlert({
         open: true,
@@ -130,10 +158,10 @@ const AccountPage = observer(() => {
       });
       return;
     }
-
     setIsConfirmationDialogOpen(true);
   };
 
+  //confirm password change function which changes password when firebase credentials match
   const handleConfirmPasswordChange = async () => {
     try {
       const credential = EmailAuthProvider.credential(
@@ -157,27 +185,18 @@ const AccountPage = observer(() => {
     }
   };
 
-  const handleLogoutConfirmation = (confirmed: boolean) => {
-    if (confirmed) {
-      signOut(auth);
-      navigate("/");
-      authStore.setAlert({
-        open: true,
-        type: "success",
-        message: "Logout Successful!",
-      });
-    }
-    setLogoutConfirmationOpen(false);
-    toggleDrawer(false);
-  }; 
-
-  const toggleDrawer = (open: boolean) => () => {
-    setState({ ...state, right: open });
-  };
-
+  //useEffect automatically updates user display name and balance when user details are updated
   useEffect(() => {
     getUserBalance();
     getUserName();
+
+    //check provider, if google then set state to hide the change password button
+    if (auth.currentUser && auth.currentUser.providerData) {
+      const googleProvider = auth.currentUser.providerData.find(
+        (provider) => provider.providerId === "google.com"
+      );
+      setIsGoogleUser(!!googleProvider);
+    }
   }, [authStore.user]);
 
   return (
@@ -258,6 +277,7 @@ const AccountPage = observer(() => {
           {auth.currentUser?.email}
         </Typography>
         <Box className="sidebar-leaderboard">
+        {!isGoogleUser && (
           <Button
             style={{
               backgroundColor: "#0033ff",
@@ -270,7 +290,7 @@ const AccountPage = observer(() => {
             onClick={toggleSecondDropdown}
           >
             Change Password
-          </Button>
+          </Button>)}
           <Modal open={isSecondDropdownOpen} onClose={toggleSecondDropdown}>
             <Box
               className="change-pwd-modal"
@@ -386,69 +406,16 @@ const AccountPage = observer(() => {
           </Button>
         </Box>
       </Box>
-      <Dialog
+      <ResetBalanceConfirmationDialog
         open={state.resetConfirmationOpen}
         onClose={toggleResetConfirmation}
-        aria-labelledby="reset-confirmation-dialog-title"
-        aria-describedby="reset-confirmation-dialog-description"
-      >
-        <DialogTitle id="reset-confirmation-dialog-title">
-          Reset Balance Confirmation
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="reset-confirmation-dialog-description">
-            Resetting your balance will clear all your trade activities and
-            history. Are you sure you would like to continue? This action cannot
-            be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={toggleResetConfirmation}
-            style={{ color: theme.palette.text.secondary }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={confirmResetBalance}
-            style={{ backgroundColor: "#0033ff", color: "white" }}
-            variant="contained"
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
+        onConfirm={confirmResetBalance}
+      />
+      <PasswordChangeConfirmationDialog
         open={isConfirmationDialogOpen}
         onClose={() => setIsConfirmationDialogOpen(false)}
-        aria-labelledby="confirm-password-change-dialog-title"
-        aria-describedby="confirm-password-change-dialog-description"
-      >
-        <DialogTitle id="confirm-password-change-dialog-title">
-          Confirm Password Change
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="confirm-password-change-dialog-description">
-            Are you sure you want to change your password? This action cannot be
-            undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setIsConfirmationDialogOpen(false)}
-            style={{ color: theme.palette.text.secondary }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirmPasswordChange}
-            style={{ backgroundColor: "#0033ff", color: "white" }}
-            variant="contained"
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleConfirmPasswordChange}
+      />
       <LogoutConfirmationDialog
         open={logoutConfirmationOpen}
         onClose={handleLogoutConfirmation}

@@ -385,14 +385,6 @@ class AuthStore {
   }
 
   async setUpdateName(updatedName: string) {
-    if (updatedName.length < 3 || updatedName.length > 15) {
-      authStore.setAlert({
-        open: true,
-        message: "Display name should be between 3 to 15 characters",
-        type: "error",
-      });
-      return;
-    }
     this.user = { ...this.user, ...{ displayName: updatedName } };
     await updateDoc(doc(db, "users", auth.currentUser!.uid), {
       displayName: updatedName,

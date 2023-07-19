@@ -6,11 +6,6 @@ import {
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Tooltip,
   Typography,
   useTheme,
@@ -26,18 +21,55 @@ import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { Trade } from "../../pages/TradeHistoryPage";
 import { MarketName, MarketSymbols } from "../../arrays/MarketArray";
 import LogoutConfirmationDialog from "./LogoutDialog";
+import ResetBalanceConfirmationDialog from "./ResetBalanceDialog";
 
 const UserSidebar = () => {
-  const navigate = useNavigate();
-  const theme = useTheme();
+  //user sidebar structure for logged in users
+  const [userBalance, setUserBalance] = useState(0);
+  const [latestTrades, setLatestTrades] = useState<Trade[]>([]);
+  const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
   const [state, setState] = useState({
     right: false,
     resetConfirmationOpen: false,
   });
-  const [userBalance, setUserBalance] = useState(0);
-  const [latestTrades, setLatestTrades] = useState<Trade[]>([]);
-  const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
+  const navigate = useNavigate();
+  const theme = useTheme();
 
+  const toggleDrawer = (open: boolean) => () => {
+    setState({ ...state, right: open });
+  };
+
+  var userDisplayName = "";
+  var userEmail = "";
+  var userPhotoURL = "";
+  var balance = 0;
+
+  if (authStore.user !== null) {
+    userDisplayName = authStore.user?.displayName || "";
+    userEmail = authStore.user?.email || "";
+    userPhotoURL = authStore.user?.photoURL || "";
+    balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
+  }
+
+  //get user balance function to fetch user's balance from firestore
+  const getUserBalance = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    querySnapshot.forEach((doc) => {
+      const { balance } = doc.data();
+      if (auth.currentUser && auth.currentUser.uid === doc.id) {
+        setUserBalance(balance);
+      }
+    });
+  };
+  getUserBalance();
+
+  //leaderboard sorting function to display only the top three users sorted by their net worth in the user sidebar
+  const sortedLeaderboard = authStore.leaderboard
+    .slice()
+    .sort((a, b) => (b.netWorth as number) - (a.netWorth as number));
+  const topThreeUsers = sortedLeaderboard.slice(0, 3);
+
+  //fetch latest trades function to display only the latest three trades from user's collection
   const fetchLatestTrades = async () => {
     try {
       const tradesQuery = query(
@@ -52,17 +84,24 @@ const UserSidebar = () => {
       authStore.setAlert({
         open: true,
         type: "error",
-        message: "Unable to fetch latest trades. Please refresh or try again later",
+        message:
+          "Unable to fetch latest trades. Please refresh or try again later",
       });
     }
   };
 
-  useEffect(() => {
-    fetchLatestTrades();
-  }, []);
+  const formatTimestamp = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString("en-NZ");
+  };
 
-  const toggleDrawer = (open: boolean) => () => {
-    setState({ ...state, right: open });
+  const handleResetBalance = () => {
+    toggleResetConfirmation();
+  };
+
+  const confirmResetBalance = () => {
+    authStore.setResetBalance(100000);
+    toggleResetConfirmation();
   };
 
   const toggleResetConfirmation = () => {
@@ -83,61 +122,31 @@ const UserSidebar = () => {
     }
     setLogoutConfirmationOpen(false);
     toggleDrawer(false);
-  };  
-
-  const handleResetBalance = () => {
-    toggleResetConfirmation();
   };
 
-  const confirmResetBalance = () => {
-    authStore.setResetBalance(100000);
-    toggleResetConfirmation();
-  };
-
-  const getUserBalance = async () => {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    querySnapshot.forEach((doc) => {
-      const { balance } = doc.data();
-      if (auth.currentUser && auth.currentUser.uid === doc.id) {
-        setUserBalance(balance);
-      }
-    });
-  };
-  getUserBalance();
-
-  const sortedLeaderboard = authStore.leaderboard
-    .slice()
-    .sort((a, b) => (b.netWorth as number) - (a.netWorth as number));
-
-  const topThreeUsers = sortedLeaderboard.slice(0, 3);
-
-  var userDisplayName = "";
-  var userEmail = "";
-  var userPhotoURL = "";
-  var balance = 0;
-
-  if (authStore.user !== null) {
-    userDisplayName = authStore.user?.displayName || "";
-    userEmail = authStore.user?.email || "";
-    userPhotoURL = authStore.user?.photoURL || "";
-    balance = Number(authStore.user?.balance?.toFixed(2)) || 100000;
-  }
-
-  const formatTimestamp = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString("en-NZ");
-  };
+  useEffect(() => {
+    fetchLatestTrades();
+  }, []);
 
   return (
     <div>
       <Box className="navbar-auth" onClick={toggleDrawer(true)}>
-          <Box className="navbar-balance">
-            <Box>
-            <Typography style={{display: 'flex', justifyContent: 'flex-end', fontSize: '10px', color: theme.palette.text.secondary}}>Demo Funds</Typography>
+        <Box className="navbar-balance">
+          <Box>
+            <Typography
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                fontSize: "10px",
+                color: theme.palette.text.secondary,
+              }}
+            >
+              Demo Funds
+            </Typography>
             <EmptyWallet size={22} variant="Bold" className="sidebar-wallet" />
             {userBalance.toFixed(2) || balance.toFixed(2)} USD
-            </Box>
           </Box>
+        </Box>
         <Avatar
           className="sidebar-picture"
           src={userPhotoURL}
@@ -162,16 +171,25 @@ const UserSidebar = () => {
               <div className="sidebar-username">
                 {authStore.user?.displayName || authStore.user?.email}
               </div>
-              <Typography style={{display: 'flex', justifyContent: 'flex-start', fontSize: '10px', color: theme.palette.text.secondary}}>Demo Funds</Typography>
+              <Typography
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  fontSize: "10px",
+                  color: theme.palette.text.secondary,
+                }}
+              >
+                Demo Funds
+              </Typography>
               <Tooltip placement="left-end" title="Demo Funds" arrow>
-              <div className="sidebar-usrbalance">
-                <EmptyWallet
-                  size={20}
-                  variant="Bold"
-                  className="sidebar-wallet"
-                />
-                {userBalance.toFixed(2) || balance.toFixed(2)} USD
-              </div>
+                <div className="sidebar-usrbalance">
+                  <EmptyWallet
+                    size={20}
+                    variant="Bold"
+                    className="sidebar-wallet"
+                  />
+                  {userBalance.toFixed(2) || balance.toFixed(2)} USD
+                </div>
               </Tooltip>
             </div>
           </div>
@@ -326,39 +344,11 @@ const UserSidebar = () => {
           </Box>
         </div>
       </Drawer>
-
-      <Dialog
+      <ResetBalanceConfirmationDialog
         open={state.resetConfirmationOpen}
         onClose={toggleResetConfirmation}
-        aria-labelledby="reset-confirmation-dialog-title"
-        aria-describedby="reset-confirmation-dialog-description"
-      >
-        <DialogTitle id="reset-confirmation-dialog-title">
-          Reset Balance Confirmation
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="reset-confirmation-dialog-description">
-            Resetting your balance will clear all your trade activities and
-            history. Are you sure you would like to continue? This action cannot
-            be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={toggleResetConfirmation}
-            style={{ color: theme.palette.text.secondary }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={confirmResetBalance}
-            style={{ backgroundColor: "#0033ff", color: "white" }}
-            variant="contained"
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={confirmResetBalance}
+      />
       <LogoutConfirmationDialog
         open={logoutConfirmationOpen}
         onClose={handleLogoutConfirmation}

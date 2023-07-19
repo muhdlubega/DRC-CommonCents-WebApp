@@ -11,7 +11,8 @@ import authStore from "../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { InfoCircle, MedalStar } from "iconsax-react";
-import leaderboard from "../assets/images/leaderboard-icon.svg";
+import leaderboard from "../assets/images/leaderboard-icon-removebg-preview.png";
+import Confetti from 'react-confetti';
 
 const LeaderboardPage = observer(() => {
   const theme = useTheme();
@@ -36,8 +37,6 @@ const LeaderboardPage = observer(() => {
 
   return (
     <Box className="leaderboard-main">
-      {/* <Box className="background-circle"></Box> */}
-      {/* <img className="leaderboard-award" src={award}></img> */}
       <Typography variant="h6" className="leaderboard-info">
         Leaderboard
         <Box className="leaderboard-info-icon" onClick={openQuoteModal}>
@@ -89,9 +88,9 @@ const LeaderboardPage = observer(() => {
                 style={{
                   transform:
                     index === 1
-                      ? "translate(-20vw, -50%)"
+                      ? "translate(-20vw, -80%)"
                       : index === 2
-                      ? "translate(20vw, -150%)"
+                      ? "translate(20vw, -180%)"
                       : "0",
                 }}
               >
@@ -101,10 +100,10 @@ const LeaderboardPage = observer(() => {
                     color: theme.palette.text.primary,
                   }}
                 >
-                  <Typography style={{ fontWeight: 700, fontSize: "3vw" }}>
+                  <Typography style={{ fontWeight: 700, fontSize: "1.5vw", marginBottom: '-0.1vw' }}>
                     {user.displayName || user.email}
                   </Typography>
-                  <Typography style={{ fontSize: "2vw" }}>
+                  <Typography style={{ fontSize: "1.2vw", marginBottom: '-1.5vw' }}>
                     {user?.netWorth?.toFixed(2)} USD
                   </Typography>
                   <Box className="leaderboard-tthree-imgbox">
@@ -153,6 +152,10 @@ const LeaderboardPage = observer(() => {
             ))}
         </ol>
       </Box>
+      <Confetti
+        width={window.innerWidth}
+        height={window.innerHeight}
+      />
     </Box>
   );
 });

@@ -144,7 +144,7 @@ const LiveData = observer(() => {
             <Typography variant="h6" className="synthetic-title">What are synthetic indices?</Typography>
             <img src={synthetics} alt="synthetic indices"/>
             <Typography className="synthetic-text">
-              Synthetic indices in forex are financial instruments that mimic
+              Synthetic indices are financial instruments that mimic
               the behavior of real-world indices. They are created by
               synthesizing the price movements of various underlying assets such
               as stocks, currencies, and commodities, using a mathematical

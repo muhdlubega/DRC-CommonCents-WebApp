@@ -61,6 +61,10 @@
     }
 }
 
+.navbar-title.active {
+    color: #0033ff;
+  }
+
 .navbar-auth {
     display: flex;
     justify-content: flex-end;
@@ -82,6 +86,10 @@
         color: #3366ff;
     }
 }
+
+.navbar-item.active {
+    color: #0033ff;
+  }
 
 
 
@@ -250,7 +258,6 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-
     }
 
     &-trades-img {
@@ -444,6 +451,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 0;
 }
 
 .footer-gridbox {

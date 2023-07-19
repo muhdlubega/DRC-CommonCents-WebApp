@@ -10,7 +10,7 @@ import authStore from "../../store/AuthStore";
 import { LoginCurve } from "iconsax-react";
 
 const AuthModal = observer(() => {
-
+  //auth modal structure for login and sign up
   const [value, setValue] = useState(0);
   const theme = useTheme();
 

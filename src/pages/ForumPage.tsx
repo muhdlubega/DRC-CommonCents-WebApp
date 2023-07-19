@@ -17,6 +17,7 @@ import { auth } from "../firebase";
 import authStore from "../store/AuthStore";
 import { useNavigate } from "react-router";
 import loading from "../assets/images/commoncents.svg";
+import loading2 from "../assets/images/white-blue-logo.svg";
 
 const ForumPage = observer(() => {
   const theme = useTheme();
@@ -144,7 +145,7 @@ const ForumPage = observer(() => {
 
       {sortedPosts.length === 0 ? 
       <Box style={{ flex: 3 }} className="loading-box">
-                    <img src={loading} className="loading"></img>
+                    <img src={theme.palette.mode === "dark" ? loading2 : loading} className="loading"></img>
                   </Box>
                    : (<Box style={{ flex: 3 }}>
         {sortedPosts.map((post) => (
@@ -211,7 +212,6 @@ const ForumPage = observer(() => {
                   <form
                     style={{ display: "flex" }}
                     onSubmit={(e) => {
-                      // forumStore.setHasNewPost(!forumStore.hasNewPost);
                       forumStore.handleSubmitComment(e, post.id!);
                     }
                   }
@@ -221,7 +221,7 @@ const ForumPage = observer(() => {
                       inputProps={{ maxLength: 3000 }}
                       label="Share your thoughts.."
                       onChange={(e) => forumStore.setContent(e.target.value)}
-                      onClick={(e) =>
+                      onClick={() =>
                         setNewPost(!newPost)
                       }
                       variant="filled"
