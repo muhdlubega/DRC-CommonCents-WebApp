@@ -6,9 +6,10 @@ import phone from "../../assets/images/phoneplaceholder.png";
 import authStore from "../../store/AuthStore";
 
 const Banner = () => {
-  const animationControls = useAnimation();
-  const navigate = useNavigate();
+  //intro banner for the homepage
   const theme = useTheme();
+  const navigate = useNavigate();
+  const animationControls = useAnimation();
 
   useEffect(() => {
     animationControls.start({ y: 0, opacity: 1, transition: { duration: 2 } });

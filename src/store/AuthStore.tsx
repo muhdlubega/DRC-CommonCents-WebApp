@@ -44,6 +44,7 @@ export interface Summary {
 }
 
 class AuthStore {
+  //contains authentication-related services related to Firebase for user data
   currency: string = "USD";
   symbol: string = "$";
   alert: Alert = {
@@ -115,6 +116,7 @@ class AuthStore {
   }
 
   handleSignUp = async () => {
+    //error check to ensure passwords match
     if (this.password !== this.confirmPassword) {
       authStore.setAlert({
         open: true,
@@ -124,6 +126,7 @@ class AuthStore {
       return;
     }
 
+    //error check to ensure password is atleast 8 characters long using regexp
     const lengthTest = /^.{8,}$/;
     if (!lengthTest.test(authStore.password)) {
       authStore.setAlert({
@@ -134,6 +137,7 @@ class AuthStore {
       return;
     }
 
+    //error check to ensure password meets criteria using regexp
     const caseTest = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.!@#$%^&*]).{8,}$/;
     if (!caseTest.test(authStore.password)) {
       authStore.setAlert({

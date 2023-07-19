@@ -32,6 +32,7 @@ export interface Comment {
 }
 
 class ForumStore {
+  //contains forum data with forum fetch and update functions
   hasNewPost: boolean = false;
   title: string = "";
   details: string = "";

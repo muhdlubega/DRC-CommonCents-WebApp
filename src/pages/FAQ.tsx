@@ -2,6 +2,7 @@ import { FAQArray } from "../arrays/FAQArray";
 import { Link } from "react-router-dom";
 
 const FAQ = () => {
+  //FAQ page for usual questions stored in array
   return (
     <div className="faq-title">
       <h5 className="faq-title2">Frequently Asked Questions</h5>

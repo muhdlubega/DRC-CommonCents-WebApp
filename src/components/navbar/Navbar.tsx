@@ -20,9 +20,11 @@ import { useState } from "react";
 import themeStore, { themes } from "../../store/ThemeStore";
 
 const Header = observer(() => {
+  //navbar to link all the pages and the user sidebar and used globally
+  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const theme = useTheme();
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
   const [state, setState] = useState({
     right: false,
   });
@@ -77,8 +79,6 @@ const Header = observer(() => {
       borderRadius: 20 / 2,
     },
   }));
-
-  const isSmallScreen = useMediaQuery("(max-width: 767px)");
 
   return (
     <AppBar

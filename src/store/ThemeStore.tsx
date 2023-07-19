@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { action, makeObservable, observable } from "mobx";
 
 export const lightTheme = createTheme({
   palette: {
@@ -12,12 +13,13 @@ export const darkTheme = createTheme({
   },
 });
 
-import { action, makeObservable, observable } from "mobx";
 export const themes = {
   light: "light",
   dark: "dark",
 };
+
 export class ThemeStore {
+  //global theme settings for light/dark mode
   mode = themes.light;
   darkMode: boolean = true;
 

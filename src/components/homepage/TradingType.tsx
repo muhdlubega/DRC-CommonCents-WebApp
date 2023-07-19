@@ -3,7 +3,9 @@ import { TradeType } from "../../arrays/TradeTypeArray";
 import { Box, Typography, useTheme } from "@mui/material";
 
 const TradingType = () => {
+  //carousel of infographics on different market types
   const theme = useTheme();
+
   const responsive = {
     0: {
       items: 1,

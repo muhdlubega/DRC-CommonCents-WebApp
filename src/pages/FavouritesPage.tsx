@@ -6,12 +6,7 @@ import { auth } from "../firebase";
 import { Clock, Heart, Trash } from "iconsax-react";
 
 const FavoritesPage = observer(() => {
-  useEffect(() => {
-    if (auth.currentUser) {
-      forumStore.getUserFavourites();
-    }
-  }, [forumStore.userFavourites]);
-
+  //page containing favorited posts from the forums page
   const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - timestamp;
@@ -26,6 +21,12 @@ const FavoritesPage = observer(() => {
       return `${Math.floor(timeDiff / 86400000)} day(s) ago`;
     }
   };
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      forumStore.getUserFavourites();
+    }
+  }, [forumStore.userFavourites]);
 
   return (
     <div style={{minHeight: '600px'}}>

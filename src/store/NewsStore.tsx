@@ -18,6 +18,7 @@ export interface NewsItem {
 }
 
 class NewsStore {
+  //contains newspage data for AlphaVantage API fetch
   news: NewsItem[] = [];
   selectedTopic: string = topics_array[0];
 

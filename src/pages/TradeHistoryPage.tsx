@@ -33,6 +33,7 @@ export interface Trade {
 }
 
 const TradeHistoryPage = observer(() => {
+  //history of trading simulation results for the buy/sell system
   const [tradeData, setTradeData] = useState<Trade[]>([]);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -55,35 +56,38 @@ const TradeHistoryPage = observer(() => {
     return date.toLocaleString("en-NZ");
   };
 
+  //function used together with react date picker to filter trade data from date
   const handleDateSelect = (date: Date | null) => {
     setSelectedDate(date);
-  };  
+  };
+
+  //fetch trade data logic to fetch data from user's firebase collection
+  const fetchTradeData = async () => {
+    try {
+      const tradeHistoryRef = collection(
+        db,
+        "users",
+        auth.currentUser!.uid,
+        "tradeHistory"
+      );
+      const snapshot = await getDocs(tradeHistoryRef);
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Trade[];
+
+      setTradeData(data);
+    } catch (error) {
+      authStore.setAlert({
+        open: true,
+        message:
+          "Unable to fetch trade history currently. Please refresh or try again later",
+        type: "error",
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchTradeData = async () => {
-      try {
-        const tradeHistoryRef = collection(
-          db,
-          "users",
-          auth.currentUser!.uid,
-          "tradeHistory"
-        );
-        const snapshot = await getDocs(tradeHistoryRef);
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Trade[];
-        
-        setTradeData(data);
-      } catch (error) {
-        authStore.setAlert({
-          open: true,
-          message: "Unable to fetch trade history currently. Please refresh or try again later",
-          type: "error",
-        });
-      }
-    };
-
     fetchTradeData();
     authStore.getUserNetWorth();
   }, []);
@@ -93,20 +97,38 @@ const TradeHistoryPage = observer(() => {
       <Typography variant="h6" className="account-title trade-history-title">
         Trade History
         <Box className="trade-filter">
-        <Button style={{ color: "#0033ff" }} onClick={handleSortClick}>
-          Sort {sortOrder === "asc" ? "Newest to Oldest" : "Oldest to Newest"}
-        </Button>
-        <ReactDatePicker isClearable className="trade-date-picker" dateFormat="dd/MM/yyyy" todayButton="Today" placeholderText="FILTER FROM DATE" selected={selectedDate} onChange={handleDateSelect} />
+          <Button style={{ color: "#0033ff" }} onClick={handleSortClick}>
+            Sort {sortOrder === "asc" ? "Newest to Oldest" : "Oldest to Newest"}
+          </Button>
+          <ReactDatePicker
+            isClearable
+            className="trade-date-picker"
+            dateFormat="dd/MM/yyyy"
+            todayButton="Today"
+            placeholderText="FILTER FROM DATE"
+            selected={selectedDate}
+            onChange={handleDateSelect}
+          />
         </Box>
       </Typography>
-      {tradeData.filter((trade) =>
-        selectedDate ? new Date(trade.timestamp).toDateString() === selectedDate.toDateString() : true
-      ).filter((trade) => trade.status !== undefined).length > 0 ? (
+      {tradeData
+        .filter((trade) =>
+          selectedDate
+            ? new Date(trade.timestamp).toDateString() ===
+              selectedDate.toDateString()
+            : true
+        )
+        .filter((trade) => trade.status !== undefined).length > 0 ? (
         <Box>
           <Grid container spacing={2}>
-            {tradeData.filter((trade) =>
-        selectedDate ? new Date(trade.timestamp).toDateString() === selectedDate.toDateString() : true
-      ).filter((trade) => trade.status !== undefined)
+            {tradeData
+              .filter((trade) =>
+                selectedDate
+                  ? new Date(trade.timestamp).toDateString() ===
+                    selectedDate.toDateString()
+                  : true
+              )
+              .filter((trade) => trade.status !== undefined)
               .sort((a, b) =>
                 sortOrder === "asc"
                   ? a.timestamp - b.timestamp
@@ -203,8 +225,8 @@ const TradeHistoryPage = observer(() => {
                     USD
                   </Typography>
                   <Typography variant="body1">
-  <strong>Ref. ID:</strong> {selectedTrade.id}
-</Typography>
+                    <strong>Ref. ID:</strong> {selectedTrade.id}
+                  </Typography>
                   <Typography variant="body1">
                     <strong>Market Type:</strong> {selectedTrade.marketType} -{" "}
                     {MarketName[selectedTrade.marketType]}
@@ -233,7 +255,8 @@ const TradeHistoryPage = observer(() => {
                     Ticks
                   </Typography>
                   <Typography variant="body1" style={{ fontSize: "12px" }}>
-                    <strong>Buy Time:</strong> {formatTimestamp(selectedTrade.timestamp)}
+                    <strong>Buy Time:</strong>{" "}
+                    {formatTimestamp(selectedTrade.timestamp)}
                   </Typography>
                 </CardContent>
               )}

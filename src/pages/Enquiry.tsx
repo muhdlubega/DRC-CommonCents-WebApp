@@ -2,14 +2,16 @@ import { Button, Grid, TextField } from "@mui/material";
 import { observer } from "mobx-react-lite";
 
 const Enquiry = observer(() => {
+  //the help and support page for user to send feedback
   const handleSubmit = () => {
     const emailInput = document.getElementById("email") as HTMLInputElement;
     const enquiryInput = document.getElementById("enquiry") as HTMLInputElement;
     const email = emailInput.value;
     const enquiry = enquiryInput.value;
 
-    const body = `Email: ${email}%0D%0A%0D%0AEnquiry:%0D%0A${enquiry}`;
+    const body = `Email for response: ${email}%0D%0A%0D%0AEnquiry:%0D%0A${enquiry}`;
 
+    //mailto function used to send body to support email
     const mailtoLink = `mailto:officialcommoncents@gmail.com?subject=CommonCents User Enquiry&body=${body}`;
 
     window.location.href = mailtoLink;

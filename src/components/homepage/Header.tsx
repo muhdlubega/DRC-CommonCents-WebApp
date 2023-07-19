@@ -4,7 +4,9 @@ import image2 from "../../assets/images/trending.svg";
 import image3 from "../../assets/images/forum-homepage.svg";
 
 const Header = () => {
+  //intro header for the homepage describing the website's features
   const theme = useTheme();
+
   return (
     <Box className="header-main">
       <Box className="header-card">

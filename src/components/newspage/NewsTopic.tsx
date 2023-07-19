@@ -26,13 +26,16 @@ interface TopicNewsCache {
 }
 
 const NewsTopic = observer(() => {
+  //contains news page content
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
+  const articlesPerPage = 40;
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const articlesPerPage = 40;
   const [searchTerm, setSearchTerm] = useState("");
-  const isSmallScreen = useMediaQuery("(max-width: 767px)");
-  const theme = useTheme();
+  const [topicNewsCache, setTopicNewsCache] = useState<TopicNewsCache>({});
 
+  //handle search logic to filter out fetched news based off search input
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const filteredValue = value.replace(/[^\w\s]/gi, "");
@@ -56,8 +59,7 @@ const NewsTopic = observer(() => {
     );
   });
 
-  const [topicNewsCache, setTopicNewsCache] = useState<TopicNewsCache>({});
-
+  //fetch news logic with catch error system for exceeded api call limit
   const fetchNews = useCallback(
     async (topic: string) => {
       if (topicNewsCache[topic]) {
@@ -90,7 +92,8 @@ const NewsTopic = observer(() => {
         } catch (error) {
           authStore.setAlert({
             open: true,
-            message: "Unable to fetch news currently. Please refresh or try again later",
+            message:
+              "Unable to fetch news currently. Please refresh or try again later",
             type: "error",
           });
         }
@@ -108,10 +111,6 @@ const NewsTopic = observer(() => {
     const endIndex = startIndex + pageSize;
     return array.slice(startIndex, endIndex);
   };
-
-  useEffect(() => {
-    fetchNews(newsStore.selectedTopic);
-  }, []);
 
   const handleTopicChange = (
     _event: React.ChangeEvent<{}>,
@@ -131,6 +130,10 @@ const NewsTopic = observer(() => {
     setCurrentPage((prevPage) => prevPage - 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  useEffect(() => {
+    fetchNews(newsStore.selectedTopic);
+  }, []);
 
   return (
     <Box className="newspage-main">
@@ -176,7 +179,10 @@ const NewsTopic = observer(() => {
       </Box>
       {filteredNews.length === 0 ? (
         <Box className="loading-box">
-          <img src={theme.palette.mode === "dark" ? loading2 : loading} className="loading"></img>
+          <img
+            src={theme.palette.mode === "dark" ? loading2 : loading}
+            className="loading"
+          ></img>
         </Box>
       ) : (
         <Box className="news-card-row">

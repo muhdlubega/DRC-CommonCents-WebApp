@@ -6,6 +6,7 @@ import TradeIntro from '../components/homepage/TradeIntro';
 import TradingType from '../components/homepage/TradingType';
 
 export const HomePage = () => {
+  //main landing page
   return (
     <div>
       <Banner/>

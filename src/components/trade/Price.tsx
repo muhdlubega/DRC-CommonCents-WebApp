@@ -4,6 +4,8 @@ import { useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 
 const Price = () => {
+  //current price display for market live data
+  //if price higher than previous color=green, if lower color=red, if no change useRef is used to retain previous colour
   const prevColorsRef = useRef<{
     close: 'green' | 'red';
     high: 'green' | 'red';

@@ -20,6 +20,7 @@ interface Tick {
 }
 
 class ChartsStore {
+  //contains charts data for live data on the homepage
   activeSymbols: string[] = [];
   data: unknown = null;
   proposalTicks: number = 0;
