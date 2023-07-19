@@ -89,7 +89,7 @@ class ProposalStore {
       //if data.msg_type received is proposal response is pushed into the proposal data array
       action(() => {
         this.proposalData.push(data.proposal);
-      })();
+      })();      
     }
   };
 

@@ -20,7 +20,7 @@ const Price = () => {
     spot: 'red',
   });
 
-  const getColor = (newValue: number, prevValue: number, prevColor: any) => {
+  const getColor = (newValue: number, prevValue: number, prevColor:  'green' | 'red') => {
     if (newValue > prevValue) return 'green';
     if (newValue === prevValue) return prevColor;
     return 'red';
