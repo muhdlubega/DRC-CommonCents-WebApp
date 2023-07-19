@@ -18,7 +18,7 @@ import { observer } from "mobx-react-lite";
 import proposalStore from "../../store/ProposalStore";
 import AuthStore from "../../store/AuthStore";
 import { MoneyRecive, MoneySend } from "iconsax-react";
-import { NorthEast, SouthEast, SouthWest } from "@mui/icons-material";
+import { NorthEast, SouthEast } from "@mui/icons-material";
 import { MarketSymbols } from "../../arrays/MarketArray";
 import contractStore from "../../store/ContractStore";
 
@@ -697,7 +697,7 @@ const Proposal = observer(() => {
                     }
                   >
                     Lower
-                    <SouthWest className="proposal-btn-icon" />
+                    <SouthEast className="proposal-btn-icon" />
                   </button>
                 </span>
                 {isSecondQuoteModalOpen && (

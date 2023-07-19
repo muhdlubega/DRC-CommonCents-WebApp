@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Typography } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { Tooltip, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import AliceCarousel from "react-alice-carousel";
 import newsStore, { NewsItem } from "../../store/NewsStore";
@@ -8,9 +8,12 @@ import { getNews } from "../../config/NewsApi";
 import { observer } from "mobx-react-lite";
 import placeholder from '../../assets/images/placeholder.png'
 import authStore from "../../store/AuthStore";
+import { MoreCircle } from "iconsax-react";
 
 const LatestNews = observer(() => {
   //latest trading news from the AlphaVantage API
+  const navigate = useNavigate();
+
   const fetchNews = async () => {
     try {
       const response = await getNews();
@@ -53,7 +56,18 @@ const LatestNews = observer(() => {
     <Box>
       {newsStore.news.length > 0 && (
       <Box>
-        <Box className="news-title">Latest News</Box>
+        <Box className="news-title">Latest News
+        <Box className="live-data-box" onClick={() => navigate("/news")}>
+        <Tooltip
+          title="See more news"
+          placement="right"
+          disableFocusListener
+          disableTouchListener
+          arrow
+        >
+          <MoreCircle size={40} />
+        </Tooltip>
+      </Box></Box>
       <Box className="news-carousel">
       <AliceCarousel
         mouseTracking

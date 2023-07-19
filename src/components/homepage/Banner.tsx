@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid, useTheme } from "@mui/material";
-import phone from "../../assets/images/phoneplaceholder.png";
+import phone from "../../assets/images/bannerphone.svg";
 import authStore from "../../store/AuthStore";
 
 const Banner = () => {

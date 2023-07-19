@@ -167,6 +167,7 @@ class ForumStore {
     }
   };
 
+  //function for sending a new post updates firestore posts collection with the respective details and an empty array for comments
   handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -209,6 +210,7 @@ class ForumStore {
     }
   };
 
+  //function for submitting comment updates firestore collection based on the post id
   handleSubmitComment = async (e: React.FormEvent, postId: string) => {
     e.preventDefault();
 

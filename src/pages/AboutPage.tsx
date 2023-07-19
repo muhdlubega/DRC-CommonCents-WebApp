@@ -2,12 +2,15 @@ import { Card, Grid, Typography, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import { motion, useAnimation } from "framer-motion";
 import member1 from "../assets/images/team1.svg";
-import member2 from "../assets/images/team2.svg";
+import member2 from "../assets/images/cassie.svg";
 import member3 from "../assets/images/team3.svg";
 import member4 from "../assets/images/team4.svg";
 import feature1 from '../assets/images/feature1.svg';
 import feature2 from '../assets/images/feature2.svg';
 import feature3 from '../assets/images/feature3.svg';
+import feature1b from '../assets/images/feature1b.svg';
+import feature2b from '../assets/images/feature2b.svg';
+import feature3b from '../assets/images/feature3b.svg';
 import commoncents from "../assets/images/commoncents.svg";
 import commoncents2 from "../assets/images/white-blue-logo.svg";
 import { useEffect } from "react";
@@ -44,9 +47,9 @@ const AboutPage = () => {
       </Box>
       <Box className="feature-about-us">
         <Box className="aboutus-feature-imgbox">
-        <img src={feature1} className="aboutus-feature-img" onClick={() => navigate("/trade/1HZ10V")}></img>
-        <img src={feature2} className="aboutus-feature-img" onClick={() => navigate("/news")}></img>
-        <img src={feature3} className="aboutus-feature-img"  onClick={() => navigate("/forum")}></img>
+        <img src={theme.palette.mode === "dark" ? feature1b : feature1} className="aboutus-feature-img" onClick={() => navigate("/trade/1HZ10V")}></img>
+        <img src={theme.palette.mode === "dark" ? feature2b :feature2} className="aboutus-feature-img" onClick={() => navigate("/news")}></img>
+        <img src={theme.palette.mode === "dark" ? feature3b :feature3} className="aboutus-feature-img"  onClick={() => navigate("/forum")}></img>
         </Box>
       </Box>
       <Box className="about-us" sx={{
