@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 
 const Error = observer(() => {
+  //error 404 page for page that does not exist
   const navigate = useNavigate();
   const animationControls = useAnimation();
 

@@ -4,6 +4,7 @@ import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAP
 const app_id = 1089;
 
 class ProposalStore {
+  //contains data for trading simulation proposals fetched from the Deriv API
   previousSpot: number = 0;
   currentSpot: number = 0;
   proposalData: any[] = [];

@@ -34,12 +34,13 @@ import loading2 from "../../assets/images/white-blue-logo.svg";
 import contractStore from "../../store/ContractStore";
 
 const Chart = observer(() => {
+  //chart logic for the trading simulation with market type, chart type, and duration choices using data from the Deriv API
   const { id } = useParams();
+  const theme = useTheme();
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery("(max-width: 767px)");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(sc1);
-  const theme = useTheme();
   AccessibilityModule(Highcharts);
 
   const latestQuote = apiStore.ticks[apiStore.ticks.length - 1]
@@ -54,6 +55,7 @@ const Chart = observer(() => {
     ?.quote as number;
   const isHigherTicks = latestQuoteTicks > previousQuoteTicks;
 
+  //chart properties for market data from Deriv API using HighCharts
   const chartData = {
     time: {
       useUTC: false,
@@ -65,7 +67,7 @@ const Chart = observer(() => {
       enabled: false,
     },
     xAxis: {
-      type: 'datetime',
+      type: "datetime",
       labels: {
         style: {
           color: theme.palette.text.secondary,
@@ -99,6 +101,8 @@ const Chart = observer(() => {
     series: [
       {
         name: apiStore.selectedSymbol,
+        //data is displayed using high, low, close and open for all charts except for ticks
+        //data for ticks displayed using quote (spot price)
         data:
           apiStore.chartType === "candlestick"
             ? apiStore.ticks.slice(-100).map((tick) => ({
@@ -151,16 +155,16 @@ const Chart = observer(() => {
     apiStore.setChartType(newChartType);
   };
 
-  const handleGranularityChange =  async (newGranularity: number) => {
-      if (newGranularity === 1) {
-        apiStore.toggleTicks(true);
-        await apiStore.subscribeTicks();
-      } else {
-        apiStore.toggleTicks(false);
-        apiStore.setGranularity(newGranularity);
-        await apiStore.subscribeTicks();
-      }
-    };
+  const handleGranularityChange = async (newGranularity: number) => {
+    if (newGranularity === 1) {
+      apiStore.toggleTicks(true);
+      await apiStore.subscribeTicks();
+    } else {
+      apiStore.toggleTicks(false);
+      apiStore.setGranularity(newGranularity);
+      await apiStore.subscribeTicks();
+    }
+  };
 
   const handleSelect = (symbol: string) => {
     navigate(`/trade/${symbol}`);
@@ -192,19 +196,19 @@ const Chart = observer(() => {
     setCurrentImage(sc1);
   };
 
-  useEffect(() => {
-    apiStore.getActiveSymbols();
-  }, []);
-
   const fetchData = async () => {
     await apiStore.subscribeTicks();
   };
 
   useEffect(() => {
+    apiStore.getActiveSymbols();
+
     if (id) {
       apiStore.setSelectedSymbol(id);
     }
+
     fetchData();
+
     return () => {
       apiStore.unsubscribeTicks();
     };
@@ -218,7 +222,9 @@ const Chart = observer(() => {
           value={apiStore.selectedSymbol || ""}
           onChange={(e) => handleSelect(e.target.value)}
           style={{
-            backgroundColor: contractStore.isProcessing ? "#888" : theme.palette.background.default,
+            backgroundColor: contractStore.isProcessing
+              ? "#888"
+              : theme.palette.background.default,
             color: theme.palette.text.primary,
           }}
           disabled={contractStore.isProcessing}
@@ -239,7 +245,9 @@ const Chart = observer(() => {
           value={apiStore.chartType}
           onChange={(e) => handleChartTypeChange(e.target.value)}
           style={{
-            backgroundColor: contractStore.isProcessing ? "#888" : theme.palette.background.default,
+            backgroundColor: contractStore.isProcessing
+              ? "#888"
+              : theme.palette.background.default,
             color: theme.palette.text.primary,
           }}
           disabled={contractStore.isProcessing}
@@ -260,7 +268,9 @@ const Chart = observer(() => {
           <Select
             className="symbols-dropdown"
             style={{
-              backgroundColor: contractStore.isProcessing ? "#888" : theme.palette.background.default,
+              backgroundColor: contractStore.isProcessing
+                ? "#888"
+                : theme.palette.background.default,
               color: theme.palette.text.primary,
             }}
             value={apiStore.isTicks ? 1 : apiStore.granularity}
@@ -316,7 +326,10 @@ const Chart = observer(() => {
       <Box className="chart-area">
         {apiStore.ticks.length === 0 ? (
           <Box className="loading-box">
-            <img src={theme.palette.mode === "dark" ? loading2 : loading} className="loading"></img>
+            <img
+              src={theme.palette.mode === "dark" ? loading2 : loading}
+              className="loading"
+            ></img>
           </Box>
         ) : (
           <HighchartsReact

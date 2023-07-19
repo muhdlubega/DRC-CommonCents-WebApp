@@ -4,6 +4,7 @@ import champion from "../../assets/images/champion3-1 1.svg";
 import { useNavigate } from "react-router-dom";
 
 const TradeIntro = () => {
+  //the bottom of the homepage with a call-to-action to link users to the trade page
   const theme = useTheme();
   const navigate = useNavigate();
 

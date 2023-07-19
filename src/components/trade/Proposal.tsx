@@ -36,6 +36,7 @@ const marksArray = [
 ];
 
 const Proposal = observer(() => {
+  //proposal structure for contract buy/sell logic in the trading simulation
   const { id } = useParams<{ id: string }>();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [isSecondQuoteModalOpen, setIsSecondQuoteModalOpen] = useState(false);
@@ -89,6 +90,7 @@ const Proposal = observer(() => {
     }
   };
 
+  //useEffect used to get proposal for mobx store everytime an input is updated
   useEffect(() => {
     if (id) {
       proposalStore.getProposal(id);
@@ -104,6 +106,7 @@ const Proposal = observer(() => {
   var payout = 0;
   var ask_price = 0;
   var longcode = "";
+
   if (apiStore.ticks.length > 0 && proposalStore.proposalData.length > 0) {
     payout = Number(
       proposalStore.proposalData[proposalStore.proposalData.length - 1].payout
@@ -436,7 +439,6 @@ const Proposal = observer(() => {
                     }
                     defaultValue={5}
                     marks={marksArray}
-                    // valueLabelDisplay="on" 
                     min={1}
                     max={10}
                     step={1}

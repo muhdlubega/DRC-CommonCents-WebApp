@@ -15,11 +15,9 @@ import leaderboard from "../assets/images/leaderboard-icon-removebg-preview.png"
 import Confetti from 'react-confetti';
 
 const LeaderboardPage = observer(() => {
+  //leaderboard page for users where they are sorted according to net worth gained from the trading simulation
   const theme = useTheme();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
-  useEffect(() => {
-    authStore.initializeLeaderboard();
-  }, []);
 
   const openQuoteModal = () => {
     setIsQuoteModalOpen(true);
@@ -32,8 +30,11 @@ const LeaderboardPage = observer(() => {
   const sortedLeaderboard = authStore.leaderboard
     .slice()
     .sort((a, b) => (b.netWorth as number) - (a.netWorth as number));
-
   const topThreeUsers = sortedLeaderboard.slice(0, 3);
+
+  useEffect(() => {
+    authStore.initializeLeaderboard();
+  }, []);
 
   return (
     <Box className="leaderboard-main">

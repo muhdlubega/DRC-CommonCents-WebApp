@@ -20,6 +20,7 @@ import loading from "../../assets/images/commoncents.svg";
 import synthetics from "../../assets/images/synthetics.svg";
 
 const LiveData = observer(() => {
+  //charts of different synthetic markets for comparison and a link to the trade page
   const theme = useTheme();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
@@ -30,18 +31,6 @@ const LiveData = observer(() => {
   const closeQuoteModal = () => {
     setIsQuoteModalOpen(false);
   };
-
-  useEffect(() => {
-    AccessibilityModule(Highcharts);
-    chartsStore.setSymbolsArray();
-
-    return () => {
-      chartsStore.activeSymbols.forEach((id) => {
-        chartsStore.setSelectedSymbol(id);
-        chartsStore.unsubscribeTicksGroup();
-      });
-    };
-  }, []);
 
   const chartData = chartsStore.symbols.map((id) => {
     const filteredTicks = chartsStore.ticks.filter(
@@ -118,6 +107,18 @@ const LiveData = observer(() => {
       previousQuote,
     };
   });
+
+  useEffect(() => {
+    AccessibilityModule(Highcharts);
+    chartsStore.setSymbolsArray();
+
+    return () => {
+      chartsStore.activeSymbols.forEach((id) => {
+        chartsStore.setSelectedSymbol(id);
+        chartsStore.unsubscribeTicksGroup();
+      });
+    };
+  }, []);
 
   return (
     <Box>

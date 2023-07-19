@@ -3,6 +3,7 @@ import Price from '../components/trade/Price'
 import Proposal from '../components/trade/Proposal'
 
 const TradePage = () => {
+  //trade page router
   return (
     <div>
         <div className="product-container">

@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import authStore from "../store/AuthStore";
 
 const LoginAccess = observer(() => {
+  //error 401 page for pages which requires login access
   const animationControls = useAnimation();
 
   useEffect(() => {

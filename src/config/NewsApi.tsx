@@ -6,6 +6,8 @@ export type Query = {
   page?: number;
 }
 
+//AlphaVantage API endpoints import using Axios
+
 const BASE_URL = "https://www.alphavantage.co/query?function=NEWS_SENTIMENT";
 const API_KEY : string | undefined = import.meta.env.VITE_NEWS_API;
 

@@ -6,11 +6,12 @@ import SocialMedia3 from "../../assets/images/twitter.svg";
 import { ArrowCircleUp } from "iconsax-react";
 
 const Footer = () => {
+  //website footer to be used globally
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
+
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  const isSmallScreen = useMediaQuery("(max-width: 767px)");
 
   return (
     <Box className="footer">

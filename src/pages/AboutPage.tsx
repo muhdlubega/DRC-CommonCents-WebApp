@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AboutPage = () => {
+  //page containing info on the webpage, features, and the team
   const theme = useTheme();
   const navigate = useNavigate();
   const animationControls = useAnimation();

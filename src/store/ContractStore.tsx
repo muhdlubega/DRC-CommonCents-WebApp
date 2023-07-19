@@ -12,6 +12,7 @@ import proposalStore from "./ProposalStore";
 import apiStore from "./ApiStore";
 
 class ContractStore {
+  //contains buy/sell logic for the trading process
   timestamp: number = 0;
   isProcessing: boolean = false;
   sellSuccessful: boolean = false;

@@ -10,6 +10,7 @@ import placeholder from '../../assets/images/placeholder.png'
 import authStore from "../../store/AuthStore";
 
 const LatestNews = observer(() => {
+  //latest trading news from the AlphaVantage API
   const fetchNews = async () => {
     try {
       const response = await getNews();
@@ -25,19 +26,6 @@ const LatestNews = observer(() => {
     }
   };
 
-  useEffect(() => {
-    fetchNews();
-  }, []);
-  
-  const responsive = {
-    0: {
-      items: 1,
-    },
-    1080: {
-      items: 3,
-    },
-  };
-
   const items = newsStore.news.map((article: NewsItem | null) => {
     if (!article) return null;
     return (
@@ -47,6 +35,19 @@ const LatestNews = observer(() => {
       </Link>
     );
   });
+
+  const responsive = {
+    0: {
+      items: 1,
+    },
+    1080: {
+      items: 3,
+    },
+  };
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
 
   return (
     <Box>

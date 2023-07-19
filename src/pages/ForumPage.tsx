@@ -20,14 +20,13 @@ import loading from "../assets/images/commoncents.svg";
 import loading2 from "../assets/images/white-blue-logo.svg";
 
 const ForumPage = observer(() => {
+  //contains forum posts for users to upload, comment, and favorite
   const theme = useTheme();
   const navigate = useNavigate();
   const [newPost, setNewPost] = useState(false);
 
-  useEffect(() => {
-    forumStore.initializePosts();
-  }, [newPost]);
-
+  //format timestamp logic compares time difference between time posted and current time
+  //compared time is then formatted in terms of minutes, hours or days
   const formatTimestamp = (timestamp: number) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - timestamp;
@@ -52,6 +51,10 @@ const ForumPage = observer(() => {
   const sortedPosts = forumStore.posts
     .slice()
     .sort((a, b) => b.timestamp - a.timestamp);
+
+  useEffect(() => {
+    forumStore.initializePosts();
+  }, [newPost]);
 
   return (
     <div className="forum-main">

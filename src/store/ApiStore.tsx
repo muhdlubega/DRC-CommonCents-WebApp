@@ -14,6 +14,7 @@ export interface Tick {
 }
 
 class ApiStore {
+  //contains main trading data from the Deriv API for charts and buy/sell function
   granularity: number = 60;
   activeSymbols: any[] = [];
   data: unknown = null;
@@ -152,6 +153,7 @@ class ApiStore {
   }
 
   subscribeTicks = async () => {
+    //subscribe ticks logic sends a different request for ticks chart
     this.ticks_history_request = this.isTicks
       ? {
           ticks_history: this.selectedSymbol,
@@ -171,6 +173,7 @@ class ApiStore {
           style: "candles",
         };
 
+    //unsubscribe first before subscribing and reconnecting to websocket to clear the previous data
     this.unsubscribeTicks();
     this.connectWebSocket();
 
@@ -221,13 +224,10 @@ class ApiStore {
         const epoch = candle.epoch;
 
         if (currentTime === null || epoch * 1000 !== currentTime) {
-          // Start a new candle
           if (currentCandle !== null) {
-            // Add the completed candle to the list
             candlesticks.push(currentCandle);
           }
 
-          // Create a new candle
           currentCandle = {
             epoch: epoch,
             open: Number(candle.open),
@@ -237,7 +237,6 @@ class ApiStore {
           };
           currentTime = epoch * 1000;
         } else {
-          // Update the current candle with new values
           currentCandle!.high = Math.max(currentCandle!.high!, candle.high);
           currentCandle!.low = Math.min(currentCandle!.low!, candle.low);
           currentCandle!.close = Number(candle.close);
@@ -264,6 +263,7 @@ class ApiStore {
         })
       );
 
+      //if data.msg.type received is history (for tick request) add ticks into the tick array
       this.setTicks([...this.ticks, ...historyTicks]);
 
       this.connection?.removeEventListener(
