@@ -212,7 +212,6 @@ const ForumPage = observer(() => {
                   <form
                     style={{ display: "flex" }}
                     onSubmit={(e) => {
-                      // forumStore.setHasNewPost(!forumStore.hasNewPost);
                       forumStore.handleSubmitComment(e, post.id!);
                     }
                   }
@@ -222,7 +221,7 @@ const ForumPage = observer(() => {
                       inputProps={{ maxLength: 3000 }}
                       label="Share your thoughts.."
                       onChange={(e) => forumStore.setContent(e.target.value)}
-                      onClick={(e) =>
+                      onClick={() =>
                         setNewPost(!newPost)
                       }
                       variant="filled"
