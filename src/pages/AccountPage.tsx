@@ -36,7 +36,9 @@ const AccountPage = observer(() => {
   const [updatedName, setUpdatedName] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showOldPassword, setShowOldPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isSecondDropdownOpen, setIsSecondDropdownOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
@@ -260,7 +262,7 @@ const AccountPage = observer(() => {
               borderRadius: "10px",
               marginBottom: "1vw",
               width: "100px",
-              fontSize: "9px",
+              fontSize: "12px",
               color: "white",
             }}
             onClick={handleUpdateName}
@@ -306,7 +308,7 @@ const AccountPage = observer(() => {
                   variant="outlined"
                   className="change-pwd-modal-txtfield"
                   label="Enter Your Current Password"
-                  type={showPassword ? "text" : "password"}
+                  type={showOldPassword ? "text" : "password"}
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   fullWidth
@@ -314,10 +316,10 @@ const AccountPage = observer(() => {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
+                          onClick={() => setShowOldPassword(!showOldPassword)}
                           edge="end"
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showOldPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -348,7 +350,7 @@ const AccountPage = observer(() => {
                   variant="outlined"
                   className="change-pwd-modal-txtfield"
                   label="Confirm Your New Password"
-                  type={showPassword ? "text" : "password"}
+                  type={showConfirmPassword ? "text" : "password"}
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
                   fullWidth
@@ -356,10 +358,10 @@ const AccountPage = observer(() => {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           edge="end"
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
                     ),

@@ -38,7 +38,7 @@ const Footer = () => {
       <Box className="footer-container">
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={6} md={4} lg={3} className="ft-1">
-            <a href="/">
+            <a href="https://drive.google.com/file/d/1kCZqjp23VxEM-BSQS6vD2-nu6cuPPYYI/view?usp=drive_link">
               <img
                 className="footer-download-btn"
                 src={Image1}

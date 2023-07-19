@@ -18,6 +18,7 @@ interface SignupProps {
 const Signup = observer(({}: SignupProps) => {
   //signup structure for auth modal using firebase
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const theme = useTheme();
 
   return (
@@ -60,7 +61,7 @@ const Signup = observer(({}: SignupProps) => {
       <TextField
         variant="outlined"
         label="Confirm Password"
-        type={showPassword ? "text" : "password"}
+        type={showConfirmPassword ? "text" : "password"}
         value={authStore.confirmPassword}
         onChange={(e) => authStore.setConfirmPassword(e.target.value)}
         fullWidth
@@ -68,10 +69,10 @@ const Signup = observer(({}: SignupProps) => {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 edge="end"
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           ),

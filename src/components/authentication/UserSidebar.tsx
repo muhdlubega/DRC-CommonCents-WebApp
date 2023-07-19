@@ -181,7 +181,7 @@ const UserSidebar = () => {
               >
                 Demo Funds
               </Typography>
-              <Tooltip placement="left-end" title="Demo Funds" arrow>
+              <Tooltip placement="left-end" title="This demo funds is used for the trading simulation on the Trade page. Try it out now!" arrow>
                 <div className="sidebar-usrbalance">
                   <EmptyWallet
                     size={20}
