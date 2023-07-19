@@ -94,6 +94,7 @@ class ContractStore {
       }
       authStore.setBalance(newBalance);
 
+      //timeout set to call sell function after tick duration ends
       setTimeout(
         () => this.handleSell(isHigher),
         proposalStore.duration * 1000
@@ -154,6 +155,7 @@ class ContractStore {
       authStore.setBalance(updatedBalance);
     }
   
+    //previous spot price from beginning of tick duration and current spot price from end of tick duration compared
     const askPrice =
       proposalStore.proposalData[proposalStore.proposalData.length - 1]
         .ask_price;
@@ -178,6 +180,7 @@ class ContractStore {
         const currentSpotValue = currentSpot;
 
         if (isHigher) {
+          //check if win condition is met for higher (current spot price above previous spot price) and add payout to balance
           if (currentSpotValue > previousSpotValue) {
             const updatedBalance = currentBalance + additionalAmount;
             authStore.setBalance(updatedBalance);
@@ -206,6 +209,7 @@ class ContractStore {
             authStore.setTotalAmountLost(authStore.totalAmountLost + askPrice);
           }
         } else {
+          //check if win condition is met for lower (current spot price below previous spot price) and add payout to balance
           if (previousSpotValue > currentSpotValue) {
             const updatedBalance = currentBalance + additionalAmount;
             authStore.setBalance(updatedBalance);
@@ -265,6 +269,7 @@ class ContractStore {
         netWorth,
         timestamp: this.timestamp,
       };
+      //add trade details into user's firestore collection
       await addDoc(
         collection(db, "users", auth.currentUser!.uid, "tradeHistory"),
         tradeData
