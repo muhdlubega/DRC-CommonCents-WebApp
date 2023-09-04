@@ -54,7 +54,7 @@ const Price = () => {
 
     return (
       <Box>
-        <Box className="pricecandle-container">
+        <Box className="pricecandle-container onboarding04">
           <Card className="price-card">
             Close:&ensp; <Box sx={{ color: closeColor }}>{close.toFixed(4)}</Box>
           </Card>
@@ -86,7 +86,7 @@ const Price = () => {
 
     return (
       <Box>
-        <Box className="pricetick-container">
+        <Box className="pricetick-container onboarding04">
           <Card className="price-card">
             Spot Price:&ensp; <Box sx={{ color: spotColor }}>{spot.toFixed(4)}</Box>
           </Card>

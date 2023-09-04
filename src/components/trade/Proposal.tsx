@@ -345,7 +345,7 @@ const Proposal = observer(() => {
                         alt={id!}
                       />
                       <Box>
-                        <Typography>Contract Type: CALL</Typography>
+                        <Typography>Contract Type: RISE</Typography>
                         <Typography>{`Payout ${payout} USD for asking price of ${ask_price} USD`}</Typography>
                         <Typography>{longcode}</Typography>
                       </Box>
@@ -408,7 +408,7 @@ const Proposal = observer(() => {
                         alt={id!}
                       />
                       <Box>
-                        <Typography>Contract Type: PUT</Typography>
+                        <Typography>Contract Type: FALL</Typography>
                         <Typography>{`Payout ${payout} USD for asking price of ${ask_price} USD`}</Typography>
                         <Typography>{longcode}</Typography>
                       </Box>
@@ -426,8 +426,8 @@ const Proposal = observer(() => {
               </Box>
             </Box>
           ) : (
-            <Box className="proposal-area">
-              <Box className="proposal-ticks">
+            <Box className="proposal-area onboarding05">
+              <Box className="proposal-ticks onboarding06">
                 <Typography className="proposal-ticks-txt">Ticks:</Typography>
                 <Box className="duration-change-slider">
                   <Slider
@@ -481,7 +481,7 @@ const Proposal = observer(() => {
                   />
                 </Box>
               </Box>
-              <Box className="proposal-btn-group">
+              <Box className="proposal-btn-group onboarding07">
                 <Button
                   style={{
                     backgroundColor:
@@ -533,7 +533,7 @@ const Proposal = observer(() => {
                   Stake
                 </Button>
               </Box>
-              <Box className="proposal-input-container">
+              <Box className="proposal-input-container onboarding08">
                 <Button
                   variant="outlined"
                   className="proposal-input-btn left"
@@ -581,7 +581,7 @@ const Proposal = observer(() => {
                   : "Input value between 1 to 500 USD"}
               </Typography>
               <Box
-                className="proposal-btn-choices"
+                className="proposal-btn-choices onboarding09"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
@@ -647,7 +647,7 @@ const Proposal = observer(() => {
                         alt={id!}
                       />
                       <Box>
-                        <Typography>Contract Type: CALL</Typography>
+                        <Typography>Contract Type: RISE</Typography>
                         <Typography>{`Payout ${payout} USD for asking price of ${ask_price} USD`}</Typography>
                         <Typography>{longcode}</Typography>
                       </Box>
@@ -718,7 +718,7 @@ const Proposal = observer(() => {
                         alt={id!}
                       />
                       <Box>
-                        <Typography>Contract Type: PUT</Typography>
+                        <Typography>Contract Type: FALL</Typography>
                         <Typography>{`Payout ${payout} USD for asking price of ${ask_price} USD`}</Typography>
                         <Typography>{longcode}</Typography>
                       </Box>
@@ -726,6 +726,7 @@ const Proposal = observer(() => {
                   </Modal>
                 )}
               </Box>
+              <Box className="onboarding10">
               {authStore.totalAmountWon !== 0 && (
                 <Card className="proposal-summary-card">
                   <Box>
@@ -779,11 +780,13 @@ const Proposal = observer(() => {
                   See full trade history {">"}
                 </Typography>
               </Box>
+              </Box>
+              <Typography style={{alignItems: "flex-end", justifyContent: "flex-end", fontSize: "12px", textAlign: "justify", padding: "10px"}}>This simulation is a parallel of a simple options trading process for beginners. For a more comprehensive trading demo or live veritable trading for beginners, intermediate and advanced users check out <a href='https://deriv.com/'>Deriv.com</a></Typography>
             </Box>
           )}
         </Box>
       ) : (
-        <Box className="proposal-login-box">
+        <Box className="proposal-login-box onboarding05">
           <Typography variant="body1">
             <a className="proposal-login-link" onClick={authStore.handleOpen}>
               Login

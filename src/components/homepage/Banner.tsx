@@ -3,6 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid, useTheme } from "@mui/material";
 import phone from "../../assets/images/bannerphone.svg";
+import derivapi from "../../assets/images/derivapi.svg";
 import authStore from "../../store/AuthStore";
 
 const Banner = () => {
@@ -58,6 +59,14 @@ const Banner = () => {
             >
               {authStore.user ? "Learn Trading Now!" : "Create an Account"}
             </motion.button>
+            <motion.div>
+              <motion.p >Powered by
+              <motion.img style={{margin:"0 0 10px 10px"}}
+            src={derivapi}
+            alt="deriv-api-logo"
+          />
+              </motion.p>
+            </motion.div>
           </Box>
         </motion.div>
       </Grid>

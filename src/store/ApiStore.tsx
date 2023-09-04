@@ -1,5 +1,7 @@
 import { action, makeObservable, observable } from "mobx";
 import DerivAPIBasic from "https://cdn.skypack.dev/@deriv/deriv-api/dist/DerivAPIBasic";
+// import { MarketName } from "../arrays/MarketArray";
+// import 
 
 const app_id = 1089;
 
@@ -28,7 +30,7 @@ class ApiStore {
   ticks_history_request: Record<string, number | string> = {
     ticks_history: this.selectedSymbol,
     adjust_start_time: 1,
-    count: 500,
+    count: 100,
     granularity: this.granularity,
     end: "latest",
     start: 1680040550,
@@ -152,13 +154,24 @@ class ApiStore {
     this.ticks_history_request.ticks_history = symbol;
   }
 
+  // setSelectedSymbol(marketName: string) {
+  //   const symbol = Object.keys(MarketName).find(
+  //     key => MarketName[key] === marketName
+  //   );
+  
+  //   if (symbol) {
+  //     this.selectedSymbol = symbol;
+  //     this.ticks_history_request.ticks_history = symbol;
+  //   }
+  // }
+  
   subscribeTicks = async () => {
     //subscribe ticks logic sends a different request for ticks chart
     this.ticks_history_request = this.isTicks
       ? {
           ticks_history: this.selectedSymbol,
           adjust_start_time: 1,
-          count: 500,
+          count: 100,
           end: "latest",
           start: 1680040550,
           style: "ticks",
@@ -166,7 +179,7 @@ class ApiStore {
       : {
           ticks_history: this.selectedSymbol,
           adjust_start_time: 1,
-          count: 500,
+          count: 100,
           granularity: this.granularity,
           end: "latest",
           start: 1680040550,

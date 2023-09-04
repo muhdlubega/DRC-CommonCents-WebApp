@@ -32,12 +32,16 @@ import loading from "../../assets/images/commoncents.svg";
 import loading2 from "../../assets/images/white-blue-logo.svg";
 import contractStore from "../../store/ContractStore";
 import { ShowChart } from "@mui/icons-material";
+import { useTour } from "@reactour/tour";
+import authStore from "../../store/AuthStore";
+// import { MarketName } from "../../arrays/MarketArray";
 
 const Chart = observer(() => {
   //chart logic for the trading simulation with market type, chart type, and duration choices using data from the Deriv API
   const { id } = useParams();
   const theme = useTheme();
   const navigate = useNavigate();
+  const { setIsOpen } = useTour();
   const isSmallScreen = useMediaQuery("(max-width: 767px)");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(sc1);
@@ -191,10 +195,10 @@ const Chart = observer(() => {
     setCurrentImage(imageArray[newIndex]);
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-    setCurrentImage(sc1);
-  };
+  // const handleOpenModal = () => {
+  //   setIsModalOpen(true);
+  //   setCurrentImage(sc1);
+  // };
 
   const fetchData = async () => {
     await apiStore.subscribeTicks();
@@ -218,7 +222,7 @@ const Chart = observer(() => {
     <Box>
       <Box className="chart-main">
         <Select
-          className="symbols-dropdown"
+          className="symbols-dropdown onboarding01"
           value={apiStore.selectedSymbol || ""}
           onChange={(e) => handleSelect(e.target.value)}
           style={{
@@ -237,11 +241,17 @@ const Chart = observer(() => {
                 <MenuItem key={symbol.symbol} value={symbol.symbol}>
                   {symbol.display_name}
                 </MenuItem>
+                // <MenuItem
+                //   key={symbol.symbol}
+                //   value={MarketName[symbol.display_name]}
+                // >
+                //   {symbol.display_name}
+                // </MenuItem>
               )
           )}
         </Select>
         <Select
-          className="symbols-dropdown"
+          className="symbols-dropdown onboarding02"
           value={apiStore.chartType}
           onChange={(e) => handleChartTypeChange(e.target.value)}
           style={{
@@ -266,7 +276,7 @@ const Chart = observer(() => {
         </Select>
         <Box className="symbols-last-item">
           <Select
-            className="symbols-dropdown"
+            className="symbols-dropdown onboarding03"
             style={{
               backgroundColor: contractStore.isProcessing
                 ? "#888"
@@ -302,25 +312,26 @@ const Chart = observer(() => {
               Days
             </MenuItem>
           </Select>
-
-          <Box
-            component="span"
-            className="chart-onboarding"
-            onClick={handleOpenModal}
-          >
-            <Tooltip
-              title="Show Onboarding"
-              disableFocusListener
-              disableTouchListener
-              arrow
+          {authStore.user && (
+            <Box
+              component="span"
+              className="chart-onboarding"
+              onClick={() => setIsOpen(true)}
             >
-              <MessageQuestion
-                style={{ color: theme.palette.text.primary }}
-                size={40}
-                className="chart-onboarding-icon"
-              />
-            </Tooltip>
-          </Box>
+              <Tooltip
+                title="Show Onboarding"
+                disableFocusListener
+                disableTouchListener
+                arrow
+              >
+                <MessageQuestion
+                  style={{ color: theme.palette.text.primary }}
+                  size={40}
+                  className="chart-onboarding-icon"
+                />
+              </Tooltip>
+            </Box>
+          )}
         </Box>
       </Box>
       <Box className="chart-area">

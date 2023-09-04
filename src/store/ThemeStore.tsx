@@ -20,7 +20,7 @@ export const themes = {
 
 export class ThemeStore {
   //global theme settings for light/dark mode
-  mode = themes.light;
+  mode = themes.dark;
   darkMode: boolean = true;
 
   constructor() {
