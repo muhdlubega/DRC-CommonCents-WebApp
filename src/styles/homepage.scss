@@ -1,12 +1,25 @@
 // banner styling
 
 .banner-main {
-    height: 820px;
+    height: 800px;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    // position: relative;
+    background-image: url("../assets/images/banner_bg1.jpg");
+    background-size: cover;
+    transform: scale(1, 1.2);
+    overflow-x: hidden;
 }
+
+// .banner-bg {
+//     background-image: url("../assets/images/banner_bg1.jpg");
+//     background-size: cover;
+//     height: 1000px;
+//     // position: relative;
+//     // top: 0;
+//     // z-index: -1;
+// }
 
 .banner-grid {
     display: flex;
@@ -15,6 +28,8 @@
 }
 
 .banner-text {
+    transform: scale(1, 0.8) !important;
+    margin-left: -600px;
     display: flex;
     align-items: center;
     justify-content: center;

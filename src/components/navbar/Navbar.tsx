@@ -12,7 +12,7 @@ import UserSidebar from "../authentication/UserSidebar";
 import AuthStore from "../../store/AuthStore";
 import { observer } from "mobx-react-lite";
 import logo from "../../assets/images/commoncents.svg";
-import logo2 from "../../assets/images/white-blue-logo.svg"
+import logo2 from "../../assets/images/white-blue-logo.svg";
 import { Switch } from "@mui/material";
 import { styled } from "@mui/system";
 import { ArrowRight2, HambergerMenu } from "iconsax-react";
@@ -51,7 +51,7 @@ const Header = observer(() => {
         },
         "& + .MuiSwitch-track": {
           opacity: 1,
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: "grey",
         },
       },
     },
@@ -84,27 +84,32 @@ const Header = observer(() => {
     <AppBar
       position="static"
       className="navbar-container"
+      elevation={0}
       sx={{
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: "transparent",
         color: theme.palette.text.primary,
       }}
     >
       <Box className="navbar-main">
-        { theme.palette.mode === "dark" ?
-        <img
-        src={logo2}
-        className="navbar-logo"
-        onClick={() => navigate("/")}
-      ></img> :
-        <img
-          src={logo}
-          className="navbar-logo"
-          onClick={() => navigate("/")}
-        ></img>}
+        {theme.palette.mode === "dark" ? (
+          <img
+            src={logo2}
+            className="navbar-logo"
+            onClick={() => navigate("/")}
+          ></img>
+        ) : (
+          <img
+            src={logo}
+            className="navbar-logo"
+            onClick={() => navigate("/")}
+          ></img>
+        )}
         <Typography
           variant="h6"
           onClick={() => navigate("/")}
-          className={`navbar-title ${location.pathname === "/" ? "active" : ""}`}
+          className={`navbar-title ${
+            location.pathname === "/" ? "active" : ""
+          }`}
         >
           CommonCents
         </Typography>
@@ -112,17 +117,34 @@ const Header = observer(() => {
         <Typography
           onClick={() => navigate("/trade/1HZ10V")}
           // className="navbar-item"
-          className={`navbar-item ${location.pathname === "/trade/1HZ10V" ? "active" : ""}`}
+          className={`navbar-item ${
+            location.pathname === "/trade/1HZ10V" ? "active" : ""
+          }`}
         >
           Trade
         </Typography>
-        <Typography onClick={() => navigate("/news")} className={`navbar-item ${location.pathname === "/news" ? "active" : ""}`}>
+        <Typography
+          onClick={() => navigate("/news")}
+          className={`navbar-item ${
+            location.pathname === "/news" ? "active" : ""
+          }`}
+        >
           News
         </Typography>
-        <Typography onClick={() => navigate("/forum")} className={`navbar-item ${location.pathname === "/forum" ? "active" : ""}`}>
+        <Typography
+          onClick={() => navigate("/forum")}
+          className={`navbar-item ${
+            location.pathname === "/forum" ? "active" : ""
+          }`}
+        >
           Forum
         </Typography>
-        <Typography onClick={() => navigate("/about")} className={`navbar-item ${location.pathname === "/about" ? "active" : ""}`}>
+        <Typography
+          onClick={() => navigate("/about")}
+          className={`navbar-item ${
+            location.pathname === "/about" ? "active" : ""
+          }`}
+        >
           About
         </Typography>
         {isSmallScreen ? null : (

@@ -188,8 +188,7 @@ const Proposal = observer(() => {
                               contractStore.isProcessing
                             ? "gray"
                             : "1px solid blue",
-                        backgroundColor:
-                          theme.palette.mode === "dark" ? "white" : "white",
+                        backgroundColor: "white",
                       },
                     }}
                   />

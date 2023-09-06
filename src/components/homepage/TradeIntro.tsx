@@ -1,6 +1,7 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import champion from "../../assets/images/champion3-1 1.svg";
+// import champion from "../../assets/images/champion3-1 1.svg";
+import phone from "../../assets/images/bannerphone.svg";
 import { useNavigate } from "react-router-dom";
 
 const TradeIntro = () => {
@@ -19,7 +20,7 @@ const TradeIntro = () => {
       }}
     >
       <Box className="trade-intro-imgbox" sx={{ flex: 1 }}>
-        <img src={champion} alt="Trading Image" className="trade-intro-img" />
+        <img src={phone} alt="Trading Image" className="trade-intro-img" />
       </Box>
       <Box className="trade-intro-box">
         <Typography className="trade-intro-text" variant="h5">

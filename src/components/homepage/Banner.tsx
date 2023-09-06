@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid, useTheme } from "@mui/material";
-import phone from "../../assets/images/bannerphone.svg";
+// import phone from "../../assets/images/bannerphone.svg";
+// import bg from "../../assets/images/banner_bg1.jpg"
 import derivapi from "../../assets/images/derivapi.svg";
 import authStore from "../../store/AuthStore";
 
@@ -17,8 +18,10 @@ const Banner = () => {
   }, [animationControls]);
 
   return (
+    <>
+    <div className="banner-bg"></div>
     <Grid container className="banner-main">
-      <Grid item xs={12} md={6} className="banner-grid">
+      {/* <Grid item xs={12} md={6} className="banner-grid"> */}
         <motion.div
           className="banner-text"
           initial={{ y: -50, opacity: 0 }}
@@ -69,8 +72,17 @@ const Banner = () => {
             </motion.div>
           </Box>
         </motion.div>
-      </Grid>
-      <Grid item xs={12} md={6}>
+        {/* <Box className="banner-img-container">
+          <motion.img
+            initial={{ y: -50, opacity: 0 }}
+            animate={animationControls}
+            className="banner-image"
+            src={bg}
+            alt="background-image"
+          />
+        </Box> */}
+      {/* </Grid> */}
+      {/* <Grid item xs={12} md={6}>
         <Box className="banner-img-container">
           <motion.img
             initial={{ y: -50, opacity: 0 }}
@@ -80,8 +92,9 @@ const Banner = () => {
             alt="trading-image"
           />
         </Box>
-      </Grid>
+      </Grid> */}
     </Grid>
+    </>
   );
 };
 
